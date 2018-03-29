@@ -1,0 +1,404 @@
+#+TITLE: On the Machine Illusion
+#+SUBTITLE: Study of Adversarial Samples
+#+DATE: 2018 April
+#+AUTHOR: Zhitao Gong
+#+EMAIL: gong@auburn.edu
+#+OPTIONS: H:2 ^:{} toc:nil
+#+STARTUP: hideblocks showcontent
+
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [dvipsnames]
+
+#+LATEX_HEADER: \usepackage{svg}
+#+LATEX_HEADER: \usepackage{mathtools}
+#+LATEX_HEADER: \usepackage{clrscode3e}
+#+LATEX_HEADER: \usepackage{lmodern}
+#+LATEX_HEADER: \usepackage{xcolor}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{physics}
+#+LATEX_HEADER: \usepackage{tikz}
+#+LATEX_HEADER: \usepackage[backend=biber,style=alphabetic]{biblatex}
+
+# #+LATEX_HEADER: \fvset{fontsize=\footnotesize}
+# #+LATEX_HEADER: \fvset{frame=lines}
+# #+LATEX_HEADER: \fvset{framesep=5pt}
+#+LATEX_HEADER: \institute{Auburn University}
+#+LATEX_HEADER: \addbibresource{~/.local/data/bibliography/nn.bib}
+#+LATEX_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Outline}\tableofcontents[currentsection]\end{frame}}
+#+LATEX_HEADER: \beamertemplatenavigationsymbolsempty
+#+LATEX_HEADER: \setbeamertemplate{footline}[frame number]
+#+LATEX_HEADER: \setbeamertemplate{background}{\tikz[overlay,remember picture]\node[opacity=0.2]at(current page.north east)[anchor=north east]{\includegraphics[width=1cm]{img/au.png}};}
+
+#+LATEX_HEADER:  \setbeamersize{description width=0.5cm}
+
+#+LATEX_HEADER: \defbeamertemplate*{bibliography item}{triangletext}{\insertbiblabel}
+#+LATEX_HEADER: \renewcommand*{\bibfont}{\tiny}
+#+LATEX_HEADER: \renewcommand*{\citesetup}{\scriptsize}
+
+#+LATEX_HEADER: \DeclareMathOperator{\sign}{sign}
+#+LATEX_HEADER: \DeclareMathOperator{\sigmoid}{sigmoid}
+#+LATEX_HEADER: \DeclareMathOperator{\argmax}{arg\,max}
+#+LATEX_HEADER: \DeclareMathOperator{\argmin}{arg\,min}
+
+* Introduction
+
+** Adversarial Samples
+
+** Adversarial For Humans
+
+http://www.psy.ritsumei.ac.jp/~akitaoka/uzu3e.html
+
+#+ATTR_LaTeX: :width .5\textwidth
+#+CAPTION: Concentric rings made up of squares appear to intertwine
+[[file:img/adv-human.jpg]]
+
+* The Implications of Adversarial Samples
+
+* Generating Adversarials
+
+** Model Gradient-Based Methods
+
+** Fast Gradient Method (FGM)
+
+*** @@latex:@@                                                     :B_action:
+:PROPERTIES:
+:BEAMER_env: action
+:BEAMER_act: <+->
+:END:
+
+This is a white-box attack method.  The noise \(z\) is either proportional to
+the loss gradient sign cite:goodfellow2014-explaining or value
+cite:miyato2015-distributional.
+
+#+BEGIN_EXPORT latex
+\begin{equation*}
+ \begin{aligned}
+  x^\prime &= x + \epsilon \sign\nabla_x L\quad\text{or}\\
+  x^\prime &= x + \epsilon\nabla_x L
+ \end{aligned}
+\end{equation*}
+#+END_EXPORT
+
+*** @@latex:@@                                                     :B_action:
+:PROPERTIES:
+:BEAMER_env: action
+:BEAMER_act: <+->
+:END:
+
+#+ATTR_LaTeX: :width \textwidth
+[[file:img/fgsm_mnist.png]]
+
+** DeepFool
+
+*** @@latex:@@                                                     :B_action:
+:PROPERTIES:
+:BEAMER_env: action
+:BEAMER_act: <+->
+:END:
+
+Consider the input \(x\) as a point in a high dimension space.  We iteratively
+move \(x\) to the nearest decision boundaries.
+cite:moosavi-dezfooli2015-deepfool
+
+*** @@latex:@@                                                     :B_action:
+:PROPERTIES:
+:BEAMER_env: action
+:BEAMER_act: <+->
+:END:
+
+#+ATTR_LaTeX: :width \textwidth
+[[file:img/deepfool_mnist.png]]
+
+** Perturbation Minimization Methods
+
+** Carlini-Wagner (CW)
+
+*** @@latex:@@                                                     :B_action:
+:PROPERTIES:
+:BEAMER_env: action
+:BEAMER_act: <+->
+:END:
+
+#+BEGIN_EXPORT latex
+\begin{equation*}
+ \begin{aligned}
+  \min_w&\|x^\prime - x\|_2^2 + c\cdot f(x^\prime)\\
+  x^\prime &= \sigmoid(w, T) = \frac{1}{1 + e^{-Tw}}\\
+  f(x) &= \max(\max\{Z_i : i\neq t\} - Z_t, -\kappa)
+ \end{aligned}
+\end{equation*}
+#+END_EXPORT
+
+*** @@latex:@@                                                     :B_action:
+:PROPERTIES:
+:BEAMER_env: action
+:BEAMER_act: <+->
+:END:
+
+#+ATTR_LaTeX: :width \textwidth
+[[file:img/cw2_mnist_binary_search.png]]
+
+** One-Pixel Attack
+
+cite:su2017-one
+
+** Auxiliary Model Methods
+
+** Adversarial transformation network
+
+cite:baluja2017-adversarial
+
+** GAN-Based
+
+cite:xiao2018-generating
+
+* Defending Adversarials
+
+** Not Working Yet
+
+** Adversarial Training
+
+** Binary Classifier
+
+** Statistic Signatures
+
+* Facts about Adversarials
+
+** Transferability
+
+Adversarial examples transfer among different neural networks (intra-technique),
+even different machine learning techniques (cross-technique), e.g., SVM, linear
+regression, etc. This enables black-box attack of remote systems.
+
+#+ATTR_LaTeX: :width .55\textwidth
+#+CAPTION: Adversarial Example Transferability \cite{papernot2016-transferability}
+[[file:img/adv-transfer.png]]
+
+** Adversarial Direction
+
+Adding random noise are unlikely to generate adversarial samples.  Adversarial
+examples usually follow a specific direction
+cite:goodfellow2014-explaining,gilmer2018-adversarial.
+
+Illustrated on synthetic concentric sphere dataset cite:gilmer2018-adversarial.
+
+*** Dummy                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.33
+:END:
+
+[[file:img/t1.png]]
+
+random direction
+
+*** Dummy                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.33
+:END:
+
+[[file:img/t2.png]]
+
+adversarial direction
+
+*** Dummy                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.33
+:END:
+
+[[file:img/t3.png]]
+
+adversarial direction
+
+** Distribution of Adversarial Samples
+
+  #+CAPTION: Borrowed from \cite{nguyen2014-deep}
+  [[file:img/image-space.png]]
+
+** Fun Examples
+
+- Adversarial Printout https://www.youtube.com/watch?v=zQ_uMenoBCk
+- Adversarial turtle https://www.youtube.com/watch?v=XaQu7kkQBPc
+- Adversarial on RL https://www.youtube.com/watch?v=gCMNRnWc-s0
+- Adversarial patch https://www.youtube.com/watch?v=i1sp4X57TL4
+
+* Road Map
+
+** Binary Classifier as A Defense
+
+** Adversarial Texts
+
+- [X] Implementation of widely used adversarial generating methods
+- [X] Models for comparison
+- [ ] Transferability of adversarial texts
+- [ ] Detection, and possibly auto-correction of adversarial texts
+
+* Beyond the Horizon
+
+** The Big Picture
+
+** Theoretical Frameworks
+
+- Statistical Mechanics :: is a branch of theoretical physics that uses
+     probability theory to study the average behaviour of a mechanical system
+     whose exact state is uncertain.
+- Dynamical Systems :: is an area of mathematics used to describe the behavior
+     of the complex dynamical systems, usually by employing differential
+     equations or difference equations.
+
+** Neural Network Theory
+
+* COMMENT Introduction
+
+** Adversarial Images
+
+Created on MNIST dataset.
+
+[file:img/compare.png]
+
+** Adversarial Texts
+
+Created on IMDB and Reuters datasets.  The unchanged text pieces are omitted for
+brevity, denoted by \textbf{[\(\boldsymbol\ldots\)]}.  The changed words are
+\colorbox{red!10}{highlighted}.
+
+#+ATTR_LaTeX: :width \textwidth
+[[file:img/deepfool-eps40.pdf]]
+
+** What Adversarial Samples Are
+
+*** @@latex:@@                                                     :B_action:
+:PROPERTIES:
+:BEAMER_env: action
+:BEAMER_act: <+->
+:END:
+
+For notations, \(f\) denotes a classifier \(\mathcal{R}^m\to\{1,\ldots,k\}\),
+which maps the input \(x\in\mathcal{R}^m\) to a discrete label
+\(y\in\{1,\ldots,k\}\).  For a given input \(x\), we aim to find an adversarial
+example \(x^\prime\), such that
+1. the noise \(z = x^\prime-x\) is very small, e.g., \(\|z\|_p\) is small, and
+2. \(f(x^\prime)\neq f(x)\)
+
+*** @@latex:@@                                                     :B_action:
+:PROPERTIES:
+:BEAMER_env: action
+:BEAMER_act: <+->
+:END:
+
+The classifier \(f\) could be any model, e.g., neural nets, Support Vector
+Classifier (SVC), random forest, naive Bayesian, etc.
+
+** Neural Nets as Classifiers
+
+For neural nets, the last layer is usually a softmax layer.  The true label will
+be one-hot encoded.
+
+#+ATTR_LaTeX: :width .7\textwidth
+#+CAPTION: DNN Architecture Demo \cite{papernot2016-practical}
+[[file:img/dnn.png]]
+
+
+* COMMENT Case Study: Attacking Text Classification Model
+
+** Word-Level CNN
+
+#+CAPTION: Architecture for sentence classification with CNN \cite{kim2014-convolutional}
+#+ATTR_LaTeX: :width \textwidth
+[[file:img/textcnn.png]]
+
+** Text Embedding
+
+"wait for the video" \(\xrightarrow{\text{tokenize}}\) ["wait", "for", "the",
+"video"] \(\xrightarrow{\text{indexer}}\) [2, 20, 34, 8]
+\(\xrightarrow{\text{embedding}}\) \(\mathbb{R}^{4\times D}\), where \(D\) is
+the embedding size.
+
+- Each sentence with be converted to \(\mathbb{R}^{T\times D}\) before being fed
+  into the convolution layer, where \(T\) is the sentence length.
+- We usually truncate/pad sentences to the same length so that we could do
+  /batch training/.
+
+** Attacking Word-Level CNN
+
+- \(f\) is the well-trained word-level CNN model,
+- \(x\) is the input sentence with word converted to indices.  In other words,
+  \(x\in\mathbb{N}^T\), where \(T\) is the maximum sentence length.
+
+#+BEGIN_EXPORT latex
+\begin{codebox}
+ \Procname{$\proc{Attack-Word-CNN}(f, x)$}
+ \li \For $i \gets 1$ \To $\attrib{x}{length}$
+ \li \Do $z_i \gets \proc{Embedding}(x_i)$\End
+ \li $z^\prime \gets \proc{FGSM}(f, z)$
+ \li \For $i \gets 1$ \To $\attrib{z^\prime}{length}$
+ \li \Do $x^\prime_i \gets \proc{Nearest-Embedding}(z^\prime_i)$
+ \li $s_i \gets \proc{Reverse-Embedding}(x^\prime_i) $\End
+ \li \Return $s$
+\end{codebox}
+#+END_EXPORT
+
+Result https://gongzhitaao.org/adversarial-text/
+
+* COMMENT Adversarial Defense
+
+** Adversarial Training
+
+Given a training set \(\mathcal{X}\), standard training chooses weights \(w\) as
+
+\[w^* = \argmin_w\mathbb{E}_{x\in\mathcal{X}}L(x; f_w)\]
+
+Adversarial training instead choose an \epsilon-ball and solves the min-max
+formulation
+
+\[w^* = \argmin_w\mathbb{E}_{x \in \mathcal{X}}\left[\max_{\delta \in
+[-\epsilon,\epsilon]^N} L(x + \delta; f_w)\right]\]
+
+cite:goodfellow2014-explaining,madry2017-towards solve the inner maximization
+problem by mixing dynamically generated adversarial samples into training data.
+
+** More
+
+- Thermometer encoding cite:anonymous2018-thermometer
+- Input transformation cite:guo2017-countering
+- Randomization cite:xie2017-mitigating
+- \(\ldots\)
+
+* COMMENT Case Study: Binary Classifier as Defense
+
+** Separating Adversarial from Clean
+
+Taking advantage of the observation that the adversarial noise follows a
+specific direction cite:goodfellow2014-explaining.  We build a simple classifier
+to separate adversarial from clean data cite:gong2017-adversarial.
+
+#+BEGIN_EXPORT latex
+\begin{table}[htbp]
+  \caption{\label{tbl:eps-sensitivity-cifar10}
+    FGSM \(\epsilon\) sensitivity on CIFAR10}
+  \centering
+  \begin{tabular}{lcll}
+    \toprule
+    & \phantom{a} & \multicolumn{2}{c}{\(\eval{f_2}_{\epsilon=0.03}\)} \\
+    \cmidrule{3-4}
+    \(\epsilon\) && \(X_{test}\) & \(X^{adv(f_1)}_{test}\)\\
+    \midrule
+    0.3 && 0.9996 & 1.0000\\
+    0.1 && 0.9996 & 1.0000\\
+    0.03 && 0.9996 & 0.9997\\
+    0.01 && 0.9996 & \textbf{0.0030}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+#+END_EXPORT
+
+Limitation: different hyperparameters, different adversarial algorithms may
+elude the binary classifier or adversarial training.
+
+* Bibliography
+
+** @@latex:@@
+:PROPERTIES:
+:BEAMER_opt: allowframebreaks
+:END:
+
+#+LaTeX: \printbibliography
