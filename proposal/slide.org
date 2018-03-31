@@ -44,6 +44,10 @@
 
 ** Adversarial Samples
 
+- MNIST samples
+- ImageNet samples
+- Text samples
+
 ** Adversarial For Humans
 
 http://www.psy.ritsumei.ac.jp/~akitaoka/uzu3e.html
@@ -54,9 +58,31 @@ http://www.psy.ritsumei.ac.jp/~akitaoka/uzu3e.html
 
 * The Implications of Adversarial Samples
 
+** The Model Robustness
+
+** Local Generalization Breaks
+
+We believed that imperceptibly tiny perturbations of a given image do not
+normally change the underlying class
+cite:szegedy2013-intriguing,bengio2009-learning.
+
+NOTE: need an image, the center is the clean image, surrounded by image with
+random noise, and adversarial images.
+
+** Date Distribution
+
+** Topology of the Loss Surface
+
 * Generating Adversarials
 
 ** Model Gradient-Based Methods
+
+A class of /white-box/ methods, i.e., they need to access the model's parameter
+in order to generate the adversarial samples.
+
+- Fast gradient sign method (FGSM) cite:goodfellow2014-explaining
+- DeepFool cite:moosavi-dezfooli2015-deepfool
+- Jacobian-based saliency map approach (JSMA) cite:papernot2015-limitations
 
 ** Fast Gradient Method (FGM)
 
