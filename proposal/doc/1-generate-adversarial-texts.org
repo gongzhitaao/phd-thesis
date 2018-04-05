@@ -64,9 +64,10 @@ view) to argue which metric is better.
 We briefly review recent work on generating adversarial images and texts in
 Chapter ref:chp:textadv:related-work.  Our adversarial text framework is
 detailed in Chapter ref:chp:textadv:adversarial-text-framework.  Experiments and
-preliminary results are reported in Chapter ref:chp:textadv:experiment.  We
-conclude this part and provide directions for future work in
-Chapter ref:chp:textadv:conclusion.
+preliminary results are reported in Chapter ref:chp:textadv:experiment.
+
+# We conclude this part and provide directions for future work in
+# Chapter ref:chp:textadv:conclusion.
 
 * Related Work
 :PROPERTIES:
