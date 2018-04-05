@@ -44,7 +44,7 @@
 
 #+LaTeX: \setcounter{page}{0}\afterpage{\pagenumbering{Roman}}
 #+LaTeX: \TitlePage
-#+LaTeX: \onehalfspacing
+#+LaTeX: \singlespacing
 
 * Abstract                                                           :ignore:
 
