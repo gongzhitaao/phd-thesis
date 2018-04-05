@@ -1,0 +1,159 @@
+#+TITLE: On the Machine Illusion
+#+AUTHOR: Zhitao Gong
+#+DATE: April 12, 2018
+
+#+KEYWORDS: Adversarial, Security, Deep Learning, Computer Vision, NLP
+
+#+STARTUP: content hideblocks
+#+OPTIONS: toc:nil H:4
+
+#+LATEX_CLASS: report
+#+LATEX_CLASS_OPTIONS: [12pt, dvipsnames]
+#+LATEX_HEADER: \usepackage{auphd}
+#+LATEX_HEADER: \usepackage{afterpage}
+#+LATEX_HEADER: \usepackage{algorithmic}
+#+LATEX_HEADER: \usepackage{algorithm}
+#+LATEX_HEADER: \usepackage[backend=biber]{biblatex}
+#+LATEX_HEADER: \usepackage{booktabs}
+#+LATEX_HEADER: \usepackage{caption}
+#+LATEX_HEADER: \usepackage[inline]{enumitem}
+#+LATEX_HEADER: \usepackage{makeidx}
+#+LATEX_HEADER: \usepackage{multirow}
+#+LATEX_HEADER: \usepackage{physics}
+#+LATEX_HEADER: \usepackage{subcaption}
+#+LATEX_HEADER: \usepackage{threeparttable}
+#+LATEX_HEADER: \usepackage{tikz}
+#+LATEX_HEADER: \usepackage{xcolor}
+
+#+LATEX_HEADER: \renewcommand\maketitle{}
+#+LATEX_HEADER: \addbibresource{~/.local/data/bibliography/nn.bib}
+
+#+LATEX_HEADER: \DeclareMathOperator{\argmax}{arg\,max}
+#+LATEX_HEADER: \DeclareMathOperator{\argmin}{arg\,min}
+#+LATEX_HEADER: \DeclareMathOperator{\sign}{sign}
+#+LATEX_HEADER: \newcommand\pred[1]{\overline{#1}}
+#+LATEX_HEADER: \newcommand\given{\:\vert\:}
+
+#+LATEX_HEADER: \copyrightyear{2018}
+#+LATEX_HEADER: \keywords{Adversarial, Security, Deep Learning, Computer Vision, NLP}
+#+LATEX_HEADER: \adviser{Dr. Wei-Shinn Ku}
+#+LATEX_HEADER: \professor{Wei-Shinn Ku, Associate Professor of Computer Science and Software Engineering}
+#+LATEX_HEADER: \professor{Anh Nguyen, Assistant Professor of Computer Science and Software Engineering}
+#+LATEX_HEADER: \professor{Shiwen Mao, Professor of Electrical and Computer Engineering}
+#+LATEX_HEADER: \professor{Xiao Qin, Professor of Computer Science and Software Engineering}
+
+#+LaTeX: \setcounter{page}{0}\afterpage{\pagenumbering{Roman}}
+#+LaTeX: \TitlePage
+#+LaTeX: \onehalfspacing
+
+* Abstract                                                           :ignore:
+
+#+BEGIN_abstract
+
+The existence of adversarial samples reveals yet another quirk in neural nets.
+The clean samples, when perturbed with very small carefully chosen noise (e.g.,
+change of color for a few pixels in an image, or replacement of a few words in a
+text piece), may be turned into adversarial ones.  Despite that they are almost
+the same (visually or semantically) as the original one from the perspective of
+human beings, the adversarial samples will trick the well-trained neural nets
+into wrong predictions with very high confidence (probabilities).  The
+investigation into this phenomenon has important implications both in practice
+and in theory.  In the real word, more and more tasks are automated by neural
+nets, e.g., inappropriate comments and images filtering, computer virus
+detection, spam filtering, etc.  For example, the adversarial samples might be
+wrongly leveraged to bypass the machine models.  The replacement of a few
+seemingly non-important words in a sentence could turn a hateful comment into a
+"good" one, from the machine's point of view.  This may potentially cause severe
+social problems if our models are not made more robust and intelligent.  On the
+other hand, to explain this phenomenon rigorously, some of our preconceived
+intuitions and hypothesis about neural nets need to be revised, e.g., the
+generalization hypothesis, training dynamics, etc.  We are still far away from a
+unified theory explaining how neural nets work, this study will at least provide
+us more insight towards our final goal.
+
+Some pieces of my work are finished.  In our first work, we propose a simple yet
+effective binary classifier to filter out the adversarial samples.  Furthermore,
+we also discuss in details the limitations of our approach, which is,
+unfortunately, shared among many other proposed defense methods.  In our second
+and ongoing work, we propose a model gradient-based framework to generate
+adversarial samples for text models.  The main difficulty to generate
+adversarial texts with model gradient-based methods is that the input space is
+discrete, which makes it unclear to how to accumulate the small noise directly
+on the inputs.  We work around this problem by searching for adversarials in the
+embedding space and then reconstruct the adversarial texts from the noise
+embeddings.  Our third work is yet concretized.  The high level direction will
+be that we first study the adversarial samples in classical machine learning
+models (e.g., linear models, support vector machine (SVM), nearest neighbors),
+for which the training dynamics and solutions are well-understood, and for which
+the solutions can usually be laid out in explicit forms.  With intuitions and
+ideas gathered from these models, we then search for possible analogies in the
+realm of neural network.
+
+#+END_abstract
+
+* COMMENT Acknowledgments                                            :ignore:
+
+#+BEGIN_acknowledgments
+
+I would like to thank Ms. Jiao Yu for her insightful discussion and
+contribution.  We both work on this work.  Ms. Yu worked on the particle filter
+and snapshot queries, while I focus on Kalman filter and continuous queries.
+
+In addition, I would also like to thank Dr. Ku for his invaluable guidance
+during my research.  I learned how to think like a researcher and how to narrow
+down areas of focus through our weekly discussion.  I also greatly appreciate
+his patience for my really slow research progress.
+
+#+END_acknowledgments
+
+* Table of Contents                                                  :ignore:
+
+#+LaTeX: \tableofcontents
+
+* List of Figures                                                    :ignore:
+
+#+LaTeX: \listoffigures
+
+* List of Tables                                                     :ignore:
+
+#+LaTeX: \listoftables
+#+LaTeX: \afterpage{\setcounter{page}{0}\pagenumbering{arabic}}
+
+* Introduction
+:PROPERTIES:
+:CUSTOM_ID: part:introduction
+:END:
+
+#+INCLUDE: "0-introduction.org"
+
+* Generating Adversarial Samples
+:PROPERTIES:
+:CUSTOM_ID: part:generate-adversarial-samples
+:END:
+
+#+INCLUDE: "1-generate-adversarial-texts.org"
+
+* Defending Adversarial Samples
+:PROPERTIES:
+:CUSTOM_ID: part:defend-adversarial-samples
+:END:
+
+#+INCLUDE: "2-defend-adversarial-samples.org"
+
+* COMMENT Harness Adversarial Samples
+:PROPERTIES:
+:CUSTOM_ID: part:harness-adversarial-samples
+:END:
+
+#+INCLUDE: "3-harness-adversarial-samples.org"
+
+* Conclusion
+:PROPERTIES:
+:CUSTOM_ID: part:conclusion
+:END:
+
+#+INCLUDE: "4-conclusion.org"
+
+* References                                                         :ignore:
+
+\printbibliography

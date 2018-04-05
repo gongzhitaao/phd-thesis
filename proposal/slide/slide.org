@@ -18,6 +18,7 @@
 #+LATEX_HEADER: \usepackage{physics}
 #+LATEX_HEADER: \usepackage{tikz}
 #+LATEX_HEADER: \usepackage[backend=biber,style=alphabetic]{biblatex}
+#+LATEX_HEADER: \usepackage[scaled=0.85]{newtxtt}
 
 # #+LATEX_HEADER: \fvset{fontsize=\footnotesize}
 # #+LATEX_HEADER: \fvset{frame=lines}
@@ -27,7 +28,7 @@
 #+LATEX_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Outline}\tableofcontents[currentsection]\end{frame}}
 #+LATEX_HEADER: \beamertemplatenavigationsymbolsempty
 #+LATEX_HEADER: \setbeamertemplate{footline}[frame number]
-#+LATEX_HEADER: \setbeamertemplate{background}{\tikz[overlay,remember picture]\node[opacity=0.2]at(current page.north east)[anchor=north east]{\includegraphics[width=1cm]{img/au.png}};}
+#+LATEX_HEADER: \setbeamertemplate{background}{\tikz[overlay,remember picture]\node at(current page.north east)[anchor=north east]{\includegraphics[width=1cm]{img/au-15.png}};}
 
 #+LATEX_HEADER:  \setbeamersize{description width=0.5cm}
 
@@ -44,8 +45,8 @@
 
 ** Adversarial Samples
 
-- MNIST samples
 - ImageNet samples
+- MNIST samples
 - Text samples
 
 ** Adversarial For Humans
@@ -184,6 +185,19 @@ cite:xiao2018-generating
 
 ** Adversarial Training
 
+Given a training set \(\mathcal{X}\), standard training chooses weights \(w\) as
+
+\[w^* = \argmin_w\mathbb{E}_{x\in\mathcal{X}}L(x; f_w)\]
+
+Adversarial training instead choose an \epsilon-ball and solves the min-max
+formulation
+
+\[w^* = \argmin_w\mathbb{E}_{x \in \mathcal{X}}\left[\max_{\delta \in
+[-\epsilon,\epsilon]^N} L(x + \delta; f_w)\right]\]
+
+cite:goodfellow2014-explaining,madry2017-towards solve the inner maximization
+problem by mixing dynamically generated adversarial samples into training data.
+
 ** Binary Classifier
 
 ** Statistic Signatures
@@ -251,16 +265,87 @@ adversarial direction
 
 ** Binary Classifier as A Defense
 
+Taking advantage of the observation that the adversarial noise follows a
+specific direction cite:goodfellow2014-explaining.  We build a simple classifier
+to separate adversarial from clean data cite:gong2017-adversarial.
+
+#+BEGIN_EXPORT latex
+\begin{table}[htbp]
+  \caption{\label{tbl:eps-sensitivity-cifar10}
+    FGSM \(\epsilon\) sensitivity on CIFAR10}
+  \centering
+  \begin{tabular}{lcll}
+    \toprule
+    & \phantom{a} & \multicolumn{2}{c}{\(\eval{f_2}_{\epsilon=0.03}\)} \\
+    \cmidrule{3-4}
+    \(\epsilon\) && \(X_{test}\) & \(X^{adv(f_1)}_{test}\)\\
+    \midrule
+    0.3 && 0.9996 & 1.0000\\
+    0.1 && 0.9996 & 1.0000\\
+    0.03 && 0.9996 & 0.9997\\
+    0.01 && 0.9996 & \textbf{0.0030}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+#+END_EXPORT
+
+*Limitation*: different hyperparameters, different adversarial algorithms may
+elude the binary classifier or adversarial training.
+
 ** Adversarial Texts
 
 - [X] Implementation of widely used adversarial generating methods
 - [X] Models for comparison
 - [ ] Transferability of adversarial texts
 - [ ] Detection, and possibly auto-correction of adversarial texts
+- [ ] Comparison of different attacking method
+
+** Word-Level CNN
+
+#+CAPTION: Architecture for sentence classification with CNN \cite{kim2014-convolutional}
+#+ATTR_LaTeX: :width \textwidth
+[[file:img/textcnn.png]]
+
+** Text Embedding
+
+"wait for the video" \(\xrightarrow{\text{tokenize}}\) ["wait", "for", "the",
+"video"] \(\xrightarrow{\text{indexer}}\) [2, 20, 34, 8]
+\(\xrightarrow{\text{embedding}}\) \(\mathbb{R}^{4\times D}\), where \(D\) is
+the embedding size.
+
+- Each sentence with be converted to \(\mathbb{R}^{T\times D}\) before being fed
+  into the convolution layer, where \(T\) is the sentence length.
+- We usually truncate/pad sentences to the same length so that we could do
+  /batch training/.
+
+** Attacking Text Model
+
+- \(f\) is the well-trained text model with embedding as the first layer.
+- \(x\) is the input sentence, pre-processed into indices.
+
+#+BEGIN_EXPORT latex
+\begin{codebox}
+ \Procname{$\proc{Attack-Text-Model}(f, x)$}
+ \li \For $i \gets 1$ \To $\attrib{x}{length}$
+ \li \Do $z_i \gets \proc{Embedding}(x_i)$\End
+ \li $z^\prime \gets \proc{Adv}(f, z)$
+ \li \For $i \gets 1$ \To $\attrib{z^\prime}{length}$
+ \li \Do $x^\prime_i \gets \proc{Nearest-Embedding}(z^\prime_i)$
+ \li $s_i \gets \proc{Reverse-Embedding}(x^\prime_i) $\End
+ \li \Return $s$
+\end{codebox}
+#+END_EXPORT
+
+Preliminary result https://github.com/gongzhitaao/adversarial-text
 
 * Beyond the Horizon
 
 ** The Big Picture
+
+- The topology of loss surface
+- The dynamics of neural network training procedure
+- The topology of weight space
+- The neural nets architecture
 
 ** Theoretical Frameworks
 
@@ -271,15 +356,13 @@ adversarial direction
      of the complex dynamical systems, usually by employing differential
      equations or difference equations.
 
-** Neural Network Theory
-
 * COMMENT Introduction
 
 ** Adversarial Images
 
 Created on MNIST dataset.
 
-[file:img/compare.png]
+[[file:img/compare.png]]
 
 ** Adversarial Texts
 
@@ -322,103 +405,6 @@ be one-hot encoded.
 #+ATTR_LaTeX: :width .7\textwidth
 #+CAPTION: DNN Architecture Demo \cite{papernot2016-practical}
 [[file:img/dnn.png]]
-
-
-* COMMENT Case Study: Attacking Text Classification Model
-
-** Word-Level CNN
-
-#+CAPTION: Architecture for sentence classification with CNN \cite{kim2014-convolutional}
-#+ATTR_LaTeX: :width \textwidth
-[[file:img/textcnn.png]]
-
-** Text Embedding
-
-"wait for the video" \(\xrightarrow{\text{tokenize}}\) ["wait", "for", "the",
-"video"] \(\xrightarrow{\text{indexer}}\) [2, 20, 34, 8]
-\(\xrightarrow{\text{embedding}}\) \(\mathbb{R}^{4\times D}\), where \(D\) is
-the embedding size.
-
-- Each sentence with be converted to \(\mathbb{R}^{T\times D}\) before being fed
-  into the convolution layer, where \(T\) is the sentence length.
-- We usually truncate/pad sentences to the same length so that we could do
-  /batch training/.
-
-** Attacking Word-Level CNN
-
-- \(f\) is the well-trained word-level CNN model,
-- \(x\) is the input sentence with word converted to indices.  In other words,
-  \(x\in\mathbb{N}^T\), where \(T\) is the maximum sentence length.
-
-#+BEGIN_EXPORT latex
-\begin{codebox}
- \Procname{$\proc{Attack-Word-CNN}(f, x)$}
- \li \For $i \gets 1$ \To $\attrib{x}{length}$
- \li \Do $z_i \gets \proc{Embedding}(x_i)$\End
- \li $z^\prime \gets \proc{FGSM}(f, z)$
- \li \For $i \gets 1$ \To $\attrib{z^\prime}{length}$
- \li \Do $x^\prime_i \gets \proc{Nearest-Embedding}(z^\prime_i)$
- \li $s_i \gets \proc{Reverse-Embedding}(x^\prime_i) $\End
- \li \Return $s$
-\end{codebox}
-#+END_EXPORT
-
-Result https://gongzhitaao.org/adversarial-text/
-
-* COMMENT Adversarial Defense
-
-** Adversarial Training
-
-Given a training set \(\mathcal{X}\), standard training chooses weights \(w\) as
-
-\[w^* = \argmin_w\mathbb{E}_{x\in\mathcal{X}}L(x; f_w)\]
-
-Adversarial training instead choose an \epsilon-ball and solves the min-max
-formulation
-
-\[w^* = \argmin_w\mathbb{E}_{x \in \mathcal{X}}\left[\max_{\delta \in
-[-\epsilon,\epsilon]^N} L(x + \delta; f_w)\right]\]
-
-cite:goodfellow2014-explaining,madry2017-towards solve the inner maximization
-problem by mixing dynamically generated adversarial samples into training data.
-
-** More
-
-- Thermometer encoding cite:anonymous2018-thermometer
-- Input transformation cite:guo2017-countering
-- Randomization cite:xie2017-mitigating
-- \(\ldots\)
-
-* COMMENT Case Study: Binary Classifier as Defense
-
-** Separating Adversarial from Clean
-
-Taking advantage of the observation that the adversarial noise follows a
-specific direction cite:goodfellow2014-explaining.  We build a simple classifier
-to separate adversarial from clean data cite:gong2017-adversarial.
-
-#+BEGIN_EXPORT latex
-\begin{table}[htbp]
-  \caption{\label{tbl:eps-sensitivity-cifar10}
-    FGSM \(\epsilon\) sensitivity on CIFAR10}
-  \centering
-  \begin{tabular}{lcll}
-    \toprule
-    & \phantom{a} & \multicolumn{2}{c}{\(\eval{f_2}_{\epsilon=0.03}\)} \\
-    \cmidrule{3-4}
-    \(\epsilon\) && \(X_{test}\) & \(X^{adv(f_1)}_{test}\)\\
-    \midrule
-    0.3 && 0.9996 & 1.0000\\
-    0.1 && 0.9996 & 1.0000\\
-    0.03 && 0.9996 & 0.9997\\
-    0.01 && 0.9996 & \textbf{0.0030}\\
-    \bottomrule
-  \end{tabular}
-\end{table}
-#+END_EXPORT
-
-Limitation: different hyperparameters, different adversarial algorithms may
-elude the binary classifier or adversarial training.
 
 * Bibliography
 

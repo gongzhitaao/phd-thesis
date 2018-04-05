@@ -1,0 +1,76 @@
+# Part 0 - Introduction
+
+* Problem Overview
+:PROPERTIES:
+:CUSTOM_ID: chp:problem-overview
+:END:
+
+Artificial intelligence (AI) helps us in many challenging tasks, e.g.,
+recommendation systems, search, computer vision (CV), natural language
+processing (NLP), machine translations (MT), etc.  The workhorse behind AI are
+the numerous machine learning models, including classical models (e.g.,
+generalized linear models, SVM) and deep learning models (e.g., neural nets,
+deep reinforcement learning).  Deep learning models, especially neural
+nets-based models, achieve state-of-the-art results in many fields.  However,
+these models are not well understood yet.
+
+cite:szegedy2013-intriguing shows that the state-of-the-art image models may be
+tricked into wrong predictions when the test images are perturbed with carefully
+crafted noise.  Furthermore, these perturbed images appear visually almost the
+same as the original ones from the perspective of human beings.  These images
+are called /adversarial images/ cite:szegedy2013-intriguing.  Many followup work
+show that the adversarial samples are more universal than expected.  Figure
+ref:fig:mnistdemo gives an example of the adversarial images.  In Figure
+ref:fig:mnistdemo, the first of column FGSM, FGVM, JSMA and DeepFool show
+adversarial images crafted from a clean MNIST cite:lecun2010-mnist.  The first
+column is the clean image.  The second row visualize the noise scale (the
+different between adversarial image and the original one) in heatmap.  Since the
+pixel values are normalized to \((0, 1)\) before being fed into the
+classification models, the noise value range is \((-1, 1)\).  The predicted
+label and confidence for each image is shown at the bottom of each column.
+
+#+ATTR_LaTeX: :width .8\textwidth
+#+CAPTION: Adversarial images from MNIST dataset.
+#+NAME: fig:mnistdemo
+[[file:img/imgdemo.pdf]]
+
+All the neural nets-based image classification models are vulnerable to
+adversarial samples.  Another study cite:papernot2016-transferability shows that
+even classical machine learning models are affected by the adversarial samples
+to some degree.  Furthermore, many work on generating adversarial samples
+indicate that it is very cheap and easy to compute the noise.  Worse still,
+cite:papernot2016-transferability demonstrates that the adversarial samples
+exhibit transferability.  In other words, adversarial samples crafted for one
+model are likely to be adversarial for a different model, e.g., another model
+with different hyperparameters, or even different techniques.
+
+* Road Maps
+:PROPERTIES:
+:CUSTOM_ID: chp:road-maps
+:END:
+
+In a series of work, we plan to investigate the adversarial phenomenon in
+detail, both empirically and theoretically.  Concretely, we have planned out
+three projects, each with a different focus on this problem.
+1. *Generate adversarial texts*.  Lots of work in literature focuses on
+   generating images adversarials.  The difficulty are two-folds.  First, the
+   input space is discrete, which makes it unclear how to iteratively accumulate
+   small noise to change the input.  Second, the quality evaluation of the
+   generated texts are intrinsically difficult.  Besides human evaluation, we
+   have yet found better ways to compare the quality of two text piece.  We
+   propose a framework to workaround the first problem.  Preliminary results
+   show that our framework can be applied to a wide range of text models.  The
+   details are discussed in Part ref:part:generate-adversarial-samples.
+2. *Defend adversarials*.  As the adversarial samples may severely degrade the
+   performance of machine learning models, we are empirically evaluating
+   different defensive methods to detect and filter adversarial samples.
+   Specifically, in one of our work, we are experimenting with binary classifier
+   to separate adversarial samples from clean ones.  The preliminary results
+   demonstrate that it works well in practice.  However, there are limitations
+   to this binary-classifier approach.  The details are in Part
+   ref:part:defend-adversarial-samples.
+3. *Input space topology*.  A few work
+   cite:tabacof2015-exploring,goodfellow2014-explaining,warde-farley2016-adversarial
+   have empirically studied the distribution of adversarial samples.  We plan to
+   start off from the previous work and follow this direction further.  The
+   details are still vague and need further refinement.
