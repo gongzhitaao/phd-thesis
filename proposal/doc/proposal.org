@@ -147,7 +147,7 @@ his patience for my really slow research progress.
 
 #+INCLUDE: "3-harness-adversarial-samples.org"
 
-* Conclusion
+* COMMENT Conclusion
 :PROPERTIES:
 :CUSTOM_ID: part:conclusion
 :END:

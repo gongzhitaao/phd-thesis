@@ -75,12 +75,12 @@ preliminary results are reported in Chapter ref:chp:textadv:experiment.
 :END:
 
 The existence of adversarial samples was first discussed
-in cite:szegedy2013-intriguing.  There has been an abundance of work on
-attacking methods to generate adversarial images.  These adversarial images
-raise concerns about the wide applications of deep neural
-nets cite:kurakin2016-adversarial.  As a result, many work have investigated the
-defense against these adversarial samples.  However, so far as we see in
-literature, the attacking is much easier and cheaper than defense.
+in cite:szegedy2013-intriguing.  There has been an abundance of work on methods
+to generate adversarial images.  These adversarial images raise concerns about
+the wide applications of deep neural nets cite:kurakin2016-adversarial.  As a
+result, many work have investigated the defense against these adversarial
+samples.  However, so far as we see in literature, the attacking is much easier
+and cheaper than defense.
 
 For notation, \(x\) denotes the input, \(y\) the prediction, \(f\) the target
 model such that \(y = f(x)\), \(L\) the loss function, \(x^*\) the adversarial
@@ -106,7 +106,7 @@ noise.
 :END:
 
 This class of methods compute the noise based on Jacobian or loss gradients of
-the target models, thus requiring full knowledge of the target model.  Fast
+the target models, thus requiring a full knowledge of the target model.  Fast
 gradient method (FGM) cite:goodfellow2014-explaining and its variants, iterative
 FGM and targeted FGM cite:kurakin2016-adversarial, add to the whole image the
 noise that is proportional to either \(\nabla L_x\) (FGVM) or \(\sign(\nabla
@@ -130,11 +130,12 @@ subtle noise compared to other gradient methods.
 
 This class of methods are usually black-box, i.e., using the target model only
 as an oracle without knowledge of its parameters, gradients, etc.  Generally
-speaking, this class minimize \(\|x^* - x\|_p\) subject to \(f(x^*)\neq f(x)\)
+speaking, this class minimizes \(\|x^* - x\|_p\) subject to \(f(x^*)\neq f(x)\)
 and \(x^*\) is in the input domain.  This formulation is a box-constrained
 optimization problem, L-BFGS is used in cite:szegedy2013-intriguing to solve it.
-In order to utilize more optimization methods, CW cite:carlini2016-towards
-proposes a refinement of the above formulation by minimizing \(\|s(x^*) -
+In order to utilize more optimization methods, cite:carlini2016-towards proposes
+a refinement of the above formulation.  Instead of working in the original image
+space, it searches for noise in a transformed space by minimizing \(\|s(x^*) -
 x\|_p - L_{s(x^*)}\), where \(s\) is a squashing function that keeps \(x^*\)
 within the input domain, e.g., =sigmoid= for images in the domain \([0, 1]\).
 Based on the reformulation, many work provide interesting insight into
@@ -160,19 +161,13 @@ cite:zhao2017-generating proposes to first create a mapping between the input
 space and a random noise space, and then search in the noise space for potential
 adversarials which are verified by being mapped back to the input space.  To
 create the mapping between input and noise space, the authors propose an
-autoencoder structure which consists of
-#+BEGIN_EXPORT latex
-\begin{enumerate*}
- \item an encoder \(G\), a generator network that maps the random noise \(z\) to
- the input \(x\), \(G(z) = x\), and
- \item a decoder \(I\) (referred to as \textsl{inverter}), another generator
- network that maps the input to the random noise, \(I(x) = z\).
-\end{enumerate*}
-#+END_EXPORT
-Generative Adversarial Network (GAN) cite:goodfellow2014-generative is used for
-both generator networks.  The whole network is trained end-to-end by minimizing
-the loss \(\mathbb{E}_x\|G(I(z)) - x\|_p + \lambda\mathbb{E}_z\|I(G(x)) -
-z\|_p\).
+autoencoder structure which consists of a) an encoder \(G\), a generator network
+that maps the random noise \(z\) to the input \(x\), \(G(z) = x\), and b) a
+decoder \(I\) (referred to as \textsl{inverter}), another generator network that
+maps the input to the random noise, \(I(x) = z\).  Generative Adversarial
+Network (GAN) cite:goodfellow2014-generative is used for both generator
+networks.  The whole network is trained end-to-end by minimizing the loss
+\(\mathbb{E}_x\|G(I(z)) - x\|_p + \lambda\mathbb{E}_z\|I(G(x)) - z\|_p\).
 
 ** Generate Adversarial Texts
 :PROPERTIES:
@@ -292,8 +287,8 @@ observations.
 2. The embedded word vectors preserve the subtle semantic relationships among
    words cite:mikolov2013-efficient,mikolov2013-distributed.  For example,
    =vec("clothing")= is closer to =vec("shirt")= as =vec("dish")= to
-   =vec("bowl")=, while =vec("clothing")= is far away, in the sense of
-   \(p\)-norm, from =vec("dish")= since they are not semantically
+   =vec("bowl")=, while =vec("clothing")= is far away from =vec("dish")= in
+   terms of \(p\)-norm, since they are not semantically
    related cite:mikolov2013-linguistic.  This property assures that it is more
    likely to replace the victim words with a semantically related one rather
    than a random one.
@@ -323,8 +318,7 @@ may change.  In that case, WMD is more flexible and accurate.
 
 We evaluate our framework on three text classification problems.
 Section ref:sec:textadv:dataset details on the data preprocessing.  The
-adversarial attacking algorithms which we use are
-(FGM) cite:goodfellow2014-explaining and
+adversarial algorithms we use are (FGM) cite:goodfellow2014-explaining and
 DeepFool cite:moosavi-dezfooli2015-deepfool.  We tried JSMA, however, due to the
 mechanism of JSMA, it is not directly applicable in our framework.  We report in
 Section ref:sec:textadv:results the original model accuracy, accuracy on
