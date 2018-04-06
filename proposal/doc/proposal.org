@@ -156,4 +156,4 @@ his patience for my really slow research progress.
 
 * References                                                         :ignore:
 
-\printbibliography
+#+LaTeX: \printbibliography

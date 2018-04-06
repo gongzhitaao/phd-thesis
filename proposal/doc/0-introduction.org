@@ -21,13 +21,14 @@ same as the original ones from the perspective of human beings.  These images
 are called /adversarial images/ cite:szegedy2013-intriguing.  Many followup work
 show that the adversarial samples are more universal than expected.  Figure
 ref:fig:mnistdemo gives an example of the adversarial images.  In Figure
-ref:fig:mnistdemo, the first of column FGSM, FGVM, JSMA and DeepFool show
-adversarial images crafted from a clean MNIST cite:lecun2010-mnist.  The first
-column is the clean image.  The second row visualize the noise scale (the
-different between adversarial image and the original one) in heatmap.  Since the
-pixel values are normalized to \((0, 1)\) before being fed into the
-classification models, the noise value range is \((-1, 1)\).  The predicted
-label and confidence for each image is shown at the bottom of each column.
+ref:fig:mnistdemo, the first row of column FGSM, FGVM, JSMA and DeepFool show
+adversarial images crafted from a clean image from MNIST cite:lecun2010-mnist,
+the first image in the first row.  The second row visualizes the noise scale
+(i.e., the pixel difference between adversarial image and the original one) in
+heatmap.  Since the pixel values are normalized to \((0, 1)\) before being fed
+into the classification models, the noise value range is \((-1, 1)\).  The
+predicted label and confidence for each image is shown at the bottom of each
+column.
 
 #+ATTR_LaTeX: :width .8\textwidth
 #+CAPTION: Adversarial images from MNIST dataset.
@@ -51,11 +52,12 @@ with different hyperparameters, or even different techniques.
 
 In a series of work, we plan to investigate the adversarial phenomenon in
 detail, both empirically and theoretically.  Concretely, we have planned out
-three projects, each with a different focus on this problem.
-1. *Generate adversarial texts*.  Lots of work in literature focuses on
-   generating images adversarials.  The difficulty are two-folds.  First, the
-   input space is discrete, which makes it unclear how to iteratively accumulate
-   small noise to change the input.  Second, the quality evaluation of the
+three projects, each with a different focus regarding this problem.
+1. *Generate adversarial texts*.  Lots of work in literature focus on generating
+   images adversarials.  The difficulty of generating adversarial texts are
+   two-folds.  First, the input space is discrete, which makes it unclear how to
+   perturb the input by iteratively accumulating small noise, as is commonly
+   done in generating adversarial images.  Second, the quality evaluation of the
    generated texts are intrinsically difficult.  Besides human evaluation, we
    have yet found better ways to compare the quality of two text piece.  We
    propose a framework to workaround the first problem.  Preliminary results
@@ -63,11 +65,11 @@ three projects, each with a different focus on this problem.
    details are discussed in Part ref:part:generate-adversarial-samples.
 2. *Defend adversarials*.  As the adversarial samples may severely degrade the
    performance of machine learning models, we are empirically evaluating
-   different defensive methods to detect and filter adversarial samples.
-   Specifically, in one of our work, we are experimenting with binary classifier
-   to separate adversarial samples from clean ones.  The preliminary results
-   demonstrate that it works well in practice.  However, there are limitations
-   to this binary-classifier approach.  The details are in Part
+   different defensive methods to detect adversarial samples.  Specifically, in
+   one of our work, we are experimenting with binary classifier to separate
+   adversarial samples from clean ones.  The preliminary results demonstrate
+   that it works well in practice.  However, there are limitations to this
+   binary-classifier approach.  The details are in Part
    ref:part:defend-adversarial-samples.
 3. *Input space topology*.  A few work
    cite:tabacof2015-exploring,goodfellow2014-explaining,warde-farley2016-adversarial

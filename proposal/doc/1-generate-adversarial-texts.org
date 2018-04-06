@@ -18,9 +18,9 @@ algorithms have been proposed to enhance the robustness of the deep neural nets,
 e.g., adversarial training cite:goodfellow2014-explaining.  Only a few attempts
 have been made in the text domain.  We think it is worthwhile to investigate
 adversarial samples for text models as well.  In this work, we propose a simple
-and effective framework to adapt the adversarial methods for images to text
-domain.  Specifically, we focus on model gradient-based methods to generate
-adversarial images since they are very fast in practice.
+yet effective framework to adapt the adversarial methods for images to text
+domain.  Specifically, we first focus on model gradient-based methods since they
+are very fast in practice.
 
 ** Problems
 :PROPERTIES:
@@ -34,13 +34,13 @@ The major problems to generate adversarial texts are two-folds:
    well in image domain as image models usually take inputs in a continuous
    domain \([0, 1]\).
 2. /The quality evaluation is intrinsically difficult/.  This is mainly because
-   the quality of sentences is rather subjective.  Besides, the judging
+   the quality of a sentence is rather subjective.  Besides, the judging
    criteria, if any, may vary based on situations, and even evolve over time.
    To illustrate the intricacies involved, let's compare an actual utterance
    from Master Yoda, /Much to learn, you still have/, with the usually way of
    speaking, /You still have much to learn/.  Which is better?  Are they equally
-   good?  Start Wars fans will definitely favor the Yoda-style, while
-   successfully both convey exactly the same meaning.
+   good?  Start Wars fans will definitely favor the Yoda-style, while both
+   sentences successfully convey the same meaning.
 
 The first problem is relatively easier to solve.  In this work, we propose a
 general framework with slightly modified model gradient-based methods.  We first
@@ -583,6 +583,20 @@ fact that some features are more important than others.  Since FGVM does not
 follow the optimal direction as DeepFool does, it usually needs larger
 perturbation.  In other words, compared to DeepFool, FGVM may change more words
 in practice.
+
+* Next Step
+:PROPERTIES:
+:CUSTOM_ID: chp:textadv:next-step
+:END:
+
+1. Test our framework against seq2seq models, possibly in the domain of machine
+   translation.  The hallucination in neural machine translation (NMT) is a
+   related question.  When fed with some meaningless and repeated tokens, NMT
+   models may output some legit translations.  As far as I know, searching for
+   such triggering tokens are mainly by trial-and-error.  It is possible that we
+   could generate such triggering tokens in our framework.
+2. Incorporate other classes of image adversarial methods into our framework.
+3. Provide more strong arguments for our choice of WMD as the evaluation metric.
 
 * COMMENT Conclusion
 :PROPERTIES:
