@@ -1,5 +1,5 @@
 #+TITLE: On the Machine Illusion
-#+SUBTITLE: Study of Adversarial Samples
+#+SUBTITLE: Proposal of Study on Adversarial Samples
 #+DATE: April 12, 2018
 #+AUTHOR: Zhitao Gong
 #+EMAIL: gong@auburn.edu
@@ -31,12 +31,13 @@
 #+LATEX_HEADER: \defbeamertemplate*{bibliography item}{triangletext}{\insertbiblabel}
 #+LATEX_HEADER: \renewcommand*{\bibfont}{\tiny}
 #+LATEX_HEADER: \renewcommand*{\citesetup}{\scriptsize}
+#+LATEX_HEADER: \makeatletter\def\mathcolor#1#{\@mathcolor{#1}}\def\@mathcolor#1#2#3{\protect\leavevmode\begingroup\color#1{#2}#3\endgroup}\makeatother
 
 #+LATEX_HEADER: \DeclareMathOperator{\sign}{sign}
 #+LATEX_HEADER: \DeclareMathOperator{\sigmoid}{sigmoid}
 #+LATEX_HEADER: \DeclareMathOperator{\softmax}{softmax}
-#+LATEX_HEADER: \DeclareMathOperator{\argmax}{arg\,max}
-#+LATEX_HEADER: \DeclareMathOperator{\argmin}{arg\,min}
+#+LATEX_HEADER: \DeclareMathOperator*{\argmax}{arg\,max}
+#+LATEX_HEADER: \DeclareMathOperator*{\argmin}{arg\,min}
 
 #+MACRO: empty @@latex:@@
 #+MACRO: cs231n [[http://cs231n.stanford.edu][cs231n]]
@@ -101,7 +102,8 @@ Some neurons get part of input from its output.
 ** Notations
 
 For clarity, we use the following notations in this slide.
-- \(f\) denotes the neural nets model, \(\theta\) the model's parameters.
+- \(f\) denotes the neural nets model, \(\theta\) the model's parameters,
+  and sometimes \(f_\theta\) for brevity.
 - \(x\) is the input, \(y\) the model's output, such that \(y = f(x)\) or \(y =
   f(x; \theta)\) to emphasize the parameters.
 - \(z\) is the un-normalized logits, i.e., \(y = \sigmoid(z)\) or \(y =
@@ -156,11 +158,12 @@ This phenomenon is interesting both in practice and in theory.
 1. It undermines the models' reliability.
 2. Hard to ignore due to it being transferable and universal.
 3. It provides new insights into neural networks:
-   - Local generalization does not seems to hold.
+   - Local generalization does not seem to hold.
    - Data distribution: they appear in dense regions.
    - Trade-off between robustness and generalization.
+   - \(\cdots\)
 
-* Generate Image Adversarials
+* Generate Adversarial Images
 
 ** Model Gradient-based Methods
 
@@ -241,41 +244,9 @@ Intuitions behind the adversarial methods
 #+CAPTION: Data space hypothesis \cite{nguyen2014-deep}
 [[file:img/image-space.png]]
 
-* Generate Text Adversarials
+* Generate Adversarial Texts
 
-** Overview
-
-1. Three basic operations are available, /replacement/, /insertion/, and
-   /deletion/.
-2. They may work at character, word or sentence level.
-
-Difficulties we face:
-1. The text space is discrete.  Moving the data points in small steps following
-   a certain direction does not work, directly.
-2. Text quality is hard to measure.  /Much to learn, you still have/ (the
-   Yoda-style) v.s. /You still have much to learn/ (the mundane-style)
-
-** Methods in Text Space
-
-It needs to solve two basic problems:
-1. what to change, e.g., random cite:anonymous2018-adversarial, \(\nabla
-   L\) cite:liang2017-deep, manually select cite:samanta2017-towards.
-2. change to what, e.g., random, synonyms or nearest neighbors in embedding
-   space.
-
-cite:jia2017-adversarial /manually/ construct distracting yet legit whole
-sentences to fool search-based QA systems.
-
-** Methods in Transformed Space
-
-Map to the Gaussian noise space cite:zhao2017-generating using
-GAN cite:goodfellow2014-generative
-
-[[file:img/gan.jpg]]
-
-[[file:img/autoencoder-textadv.png]]
-
-** Tmp
+** Text Embedding Layer
 
 #+CAPTION: Architecture for sentence classification with CNN \cite{kim2014-convolutional}
 #+ATTR_LaTeX: :width \textwidth
@@ -294,84 +265,93 @@ the embedding size.
   /batch training/.
 - Embedding may also be on the character-level.
 
-* Defending Adversarials
+** Problem Overview
 
-** Adversarial Training
+Difficulties we face:
+1. The text space is discrete.  Moving the data points in small steps following
+   a certain direction does not work, directly.
+2. Text quality is hard to measure.  /Much to learn, you still have/ (the
+   Yoda-style) v.s. /You still have much to learn/ (the mundane-style)
 
-Given a training set \(\mathcal{X}\), standard training chooses weights \(w\) as
+General directions:
+1. Three basic operations are available, /replacement/, /insertion/, and
+   /deletion/.
+2. They may work at character, word or sentence level.
 
-\[w^* = \argmin_w\mathbb{E}_{x\in\mathcal{X}}L(x; f_w)\]
+** Methods in Text Space
 
-Adversarial training instead choose an \epsilon-ball and solves the min-max
-formulation
+This class of methods need to solve two problems:
+1. what to change, e.g., random cite:anonymous2018-adversarial, \(\nabla
+   L\) cite:liang2017-deep, manually picking cite:samanta2017-towards.
+2. change to what, e.g., random, synonyms cite:samanta2017-towards or nearest
+   neighbors in embedding space cite:anonymous2018-adversarial, or forged
+   facts cite:jia2017-adversarial,liang2017-deep.
 
-\[w^* = \argmin_w\mathbb{E}_{x \in \mathcal{X}}\left[\max_{\delta \in
-[-\epsilon,\epsilon]^N} L(x + \delta; f_w)\right]\]
+** Methods in Transformed Space
+
+Autoencoder cite:hinton2006-reducing is used to map between texts and a
+continuous space cite:zhao2017-generating.  The embedded space is smooth.
+
+#+ATTR_LaTeX: :width .7\textwidth
+[[file:img/Autoencoder_structure.png]]
+
+** Adversarial Text Framework
+
+We propose another method in the embedding space.
+
+#+BEGIN_EXPORT latex
+{\small
+  \begin{codebox}
+   \Procname{$\proc{Generate-Adversarial-Texts}(f, x)$}
+   \li \For $i \gets 1$ \To $\attrib{x}{length}$
+   \li \Do $z_i \gets \proc{Embedding}(x_i)$\End
+   \li $z^\prime \gets \proc{Adv}(f, z)$
+   \li \For $i \gets 1$ \To $\attrib{z^\prime}{length}$
+   \li \Do $x^\prime_i \gets \proc{Nearest-Embedding}(z^\prime_i)$
+   \li $s_i \gets \proc{Reverse-Embedding}(x^\prime_i) $\End
+   \li \Return $s$
+  \end{codebox}
+}
+#+END_EXPORT
+
+Assumptions:
+1. The text embedding space preserve the semantic relations.
+2. Important features get more noise.
+
+Result: https://github.com/gongzhitaao/adversarial-text
+
+** Next Step
+
+1. Find appropriate quality measurement for texts, e.g., language model scores,
+   Word Mover's Distance (WMD).
+2. Find a way to control the quality of generated adversarial texts.
+3. Test the transferability of adversarial texts.
+
+* Defend Adversarial Samples
+
+** Enhance Model
+
+Basic ideas: incorporate adversarial samples during training process, and/or
+improve architectures.
+
+Given a training set \(\mathcal{X}\), instead of minimizing
+
+\[\theta^* = \argmin_\theta\mathbb{E}_{x\in\mathcal{X}}L(x; f_\theta)\]
+
+we expand each data point a bit
+
+\[\theta^* =
+\argmin_\theta\mathbb{E}_{x\in\mathcal{X}}\left[\mathcolor{red}{\max_{\delta \in
+[-\epsilon,\epsilon]^N}} L(x \mathcolor{red}{+ \delta}; f_\theta)\right]\]
 
 cite:goodfellow2014-explaining,madry2017-towards solve the inner maximization
 problem by mixing dynamically generated adversarial samples into training data.
 
-** Binary Classifier
+** Preprocess Inputs
 
-** Statistic Signatures
-
-* Facts about Adversarials
-
-** Transferability
-
-Adversarial examples transfer among different neural networks (intra-technique),
-even different machine learning techniques (cross-technique), e.g., SVM, linear
-regression, etc. This enables black-box attack of remote systems.
-
-#+ATTR_LaTeX: :width .55\textwidth
-#+CAPTION: Adversarial Example Transferability \cite{papernot2016-transferability}
-[[file:img/adv-transfer.png]]
-
-** Adversarial Direction
-
-Adding random noise are unlikely to generate adversarial samples.  Adversarial
-examples usually follow a specific direction
-cite:goodfellow2014-explaining,gilmer2018-adversarial.
-
-Illustrated on synthetic concentric sphere dataset cite:gilmer2018-adversarial.
-
-*** Dummy                                                             :BMCOL:
-:PROPERTIES:
-:BEAMER_col: 0.33
-:END:
-
-[[file:img/t1.png]]
-
-random direction
-
-*** Dummy                                                             :BMCOL:
-:PROPERTIES:
-:BEAMER_col: 0.33
-:END:
-
-[[file:img/t2.png]]
-
-adversarial direction
-
-*** Dummy                                                             :BMCOL:
-:PROPERTIES:
-:BEAMER_col: 0.33
-:END:
-
-[[file:img/t3.png]]
-
-adversarial direction
-
-** Distribution of Adversarial Samples
-
-** Fun Examples
-
-- Adversarial Printout https://www.youtube.com/watch?v=zQ_uMenoBCk
-- Adversarial turtle https://www.youtube.com/watch?v=XaQu7kkQBPc
-- Adversarial on RL https://www.youtube.com/watch?v=gCMNRnWc-s0
-- Adversarial patch https://www.youtube.com/watch?v=i1sp4X57TL4
-
-* Road Map
+Without re-training the models, this direction focuses on the inputs.
+1. Transform inputs to (hopefully) recover the bad samples.
+2. Filter out bad samples by image statistics.
 
 ** Binary Classifier as A Defense
 
@@ -383,7 +363,7 @@ to separate adversarial from clean data cite:gong2017-adversarial.
 \begin{table}[htbp]
   \caption{\label{tbl:eps-sensitivity-cifar10}
     FGSM \(\epsilon\) sensitivity on CIFAR10}
-  \centering
+  \centering\small
   \begin{tabular}{lcll}
     \toprule
     & \phantom{a} & \multicolumn{2}{c}{\(\eval{f_2}_{\epsilon=0.03}\)} \\
@@ -402,63 +382,33 @@ to separate adversarial from clean data cite:gong2017-adversarial.
 *Limitation*: different hyperparameters, different adversarial algorithms may
 elude the binary classifier or adversarial training.
 
-** Adversarial Texts
+Results: https://github.com/gongzhitaao/adversarial-classifier
 
-- [X] Implementation of widely used adversarial generating methods
-- [X] Models for comparison
-- [ ] Transferability of adversarial texts
-- [ ] Detection, and possibly auto-correction of adversarial texts
-- [ ] Comparison of different attacking method
+** Next Step
 
-** Text Embedding
+1. Closely investigate the limitation of binary classifier approach.
+2. Detect and/or recover adversarial texts
 
-"wait for the video" \(\xrightarrow{\text{tokenize}}\) ["wait", "for", "the",
-"video"] \(\xrightarrow{\text{indexer}}\) [2, 20, 34, 8]
-\(\xrightarrow{\text{embedding}}\) \(\mathbb{R}^{4\times D}\), where \(D\) is
-the embedding size.
+** {{{empty}}}
 
-- Each sentence with be converted to \(\mathbb{R}^{T\times D}\) before being fed
-  into the convolution layer, where \(T\) is the sentence length.
-- We usually truncate/pad sentences to the same length so that we could do
-  /batch training/.
+#+BEGIN_CENTER
+GENERATION IS CHEAP,\\
+DEFENSE IS DIFFICULT.
+#+END_CENTER
 
-** Attacking Text Model
+* Summary
 
-- \(f\) is the well-trained text model with embedding as the first layer.
-- \(x\) is the input sentence, pre-processed into indices.
+** Adversarial Samples
 
-#+BEGIN_EXPORT latex
-\begin{codebox}
- \Procname{$\proc{Attack-Text-Model}(f, x)$}
- \li \For $i \gets 1$ \To $\attrib{x}{length}$
- \li \Do $z_i \gets \proc{Embedding}(x_i)$\End
- \li $z^\prime \gets \proc{Adv}(f, z)$
- \li \For $i \gets 1$ \To $\attrib{z^\prime}{length}$
- \li \Do $x^\prime_i \gets \proc{Nearest-Embedding}(z^\prime_i)$
- \li $s_i \gets \proc{Reverse-Embedding}(x^\prime_i) $\End
- \li \Return $s$
-\end{codebox}
-#+END_EXPORT
+1. All classification models are affected.
+2. Seems to exist in dense regions.
+3. Distribute along only certain directions.
+4. Transfer to different models or techniques.
+5. \(\cdots\)
 
-Preliminary result https://github.com/gongzhitaao/adversarial-text
-
-* Beyond the Horizon
-
-** The Big Picture
-
-- The topology of loss surface
-- The dynamics of neural network training procedure
-- The topology of weight space
-- The neural nets architecture
-
-** Theoretical Frameworks
-
-- Statistical Mechanics :: is a branch of theoretical physics that uses
-     probability theory to study the average behaviour of a mechanical system
-     whose exact state is uncertain.
-- Dynamical Systems :: is an area of mathematics used to describe the behavior
-     of the complex dynamical systems, usually by employing differential
-     equations or difference equations.
+#+BEGIN_CENTER
+ALL EMPIRICAL AND HYPOTHESIS SO FAR
+#+END_CENTER
 
 * Bibliography
 
