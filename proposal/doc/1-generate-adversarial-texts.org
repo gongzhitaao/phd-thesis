@@ -100,74 +100,67 @@ two require much less knowledge about the model, thus more practical.  In
 addition, noise minimization are usually more effective and generate more subtle
 noise.
 
-*** Model Gradient-based
+*** Move Data Points
 :PROPERTIES:
-:CUSTOM_ID: subsec:textadv:model-gradient-based
+:CUSTOM_ID: subsec:textadv:move-data-points
 :END:
 
-This class of methods compute the noise based on Jacobian or loss gradients of
-the target models, thus requiring a full knowledge of the target model.  Fast
-gradient method (FGM) cite:goodfellow2014-explaining and its variants, iterative
-FGM and targeted FGM cite:kurakin2016-adversarial, add to the whole image the
-noise that is proportional to either \(\nabla L_x\) (FGVM) or \(\sign(\nabla
-L_x)\) (FGSM).  Jacobian-based saliency map approach
-(JSMA) cite:papernot2015-limitations, on the contrary, perturbs one pixel at a
-time.  It chooses the pixel with the highest saliency score, which is calculated
-as \(-\nabla y_t\cdot\nabla y_o\) subject to \(\nabla y_t > 0\), where \(y_t\)
-is the probability for the target class, and \(y_o\) is the sum of probabilities
-of all other classes.  Intuitively, JSMA tries to increase the probability of
-the target class while decreasing others.
-DeepFool cite:moosavi-dezfooli2015-deepfool iteratively finds the optimal
-direction in which we need to /travel/ the minimum distance to cross the
-decision boundary of the target model.  Although in non-linear case, the
-optimality is not guaranteed, in practice, however, DeepFool usually finds very
-subtle noise compared to other gradient methods.
+#+CAPTION: Image space hypothesis \cite{nguyen2014-deep}
+#+NAME: fig:image-space
+[[file:img/image-space.png]]
 
-*** Adversarial Noise Minimization
-:PROPERTIES:
-:CUSTOM_ID: subsec:textadv:adversarial-noise-minimization
-:END:
+This class of methods move data points following a specific direction.  It's
+been shown that it is unlikely to arrive at an adversarial sample by following a
+random direction cite:szegedy2013-intriguing.  There are many different choices
+for the direction selection.
+1. Direction where loss for the correct samples increases, e.g., Fast gradient
+   method (FGM) cite:goodfellow2014-explaining and its variants, iterative FGM
+   and targeted FGM cite:kurakin2016-adversarial, add to the whole image the
+   noise that is proportional to either \(\nabla L_x\) (FGVM) or \(\sign(\nabla
+   L_x)\) (FGSM).
+2. Direction where loss for the adversarial samples decreases, e.g.,
+   cite:szegedy2013-intriguing
+3. Direction where the increases the probability for the correct label and/or
+   decreases the others.  JSMA cite:papernot2015-limitations perturbs at one
+   time one pixel with the highest saliency score \(-\nabla y_t\cdot\nabla y_o\)
+   subject to \(\nabla y_t > 0\), where \(y_t\) is the probability for the
+   target class, and \(y_o\) is the sum of probabilities of all other classes.
+   CW cite:carlini2016-towards minimizes \(\|s(x^*) - x\|_p - f_{s(x^*)}\) where
+   \(s\) is a squashing function (=sigmoid= for example) that keeps \(x^*\)
+   within the input domain.
+4. Direction towards the boundary.  DeepFool cite:moosavi-dezfooli2015-deepfool
+   iteratively approximates the direction to the nearest decision boundary.
+   Although in non-linear case, the direction cannot be explicitly derived, in
+   practice, however, DeepFool usually finds very subtle noise compared to other
+   gradient methods.
 
-This class of methods are usually black-box, i.e., using the target model only
-as an oracle without knowledge of its parameters, gradients, etc.  Generally
-speaking, this class minimizes \(\|x^* - x\|_p\) subject to \(f(x^*)\neq f(x)\)
-and \(x^*\) is in the input domain.  This formulation is a box-constrained
-optimization problem, L-BFGS is used in cite:szegedy2013-intriguing to solve it.
-In order to utilize more optimization methods, cite:carlini2016-towards proposes
-a refinement of the above formulation.  Instead of working in the original image
-space, it searches for noise in a transformed space by minimizing \(\|s(x^*) -
-x\|_p - L_{s(x^*)}\), where \(s\) is a squashing function that keeps \(x^*\)
-within the input domain, e.g., =sigmoid= for images in the domain \([0, 1]\).
-Based on the reformulation, many work provide interesting insight into
-adversarial images.  cite:moosavi-dezfooli2016-universal shows that, instead of
-applying different noise to each image, it is possible to apply the same noise,
-i.e., a universal perturbation, to different images, such that the resulting
-images still trick the target model in most cases.  The one-pixel change may
-also turn a clean image into an adversarial one cite:su2017-one.
+Base on the DeepFool method, cite:moosavi-dezfooli2016-universal shows that,
+instead of applying different noise to each image, it is possible to apply the
+same noise, i.e., a universal perturbation, to different images, such that the
+resulting images still trick the target model in most cases.  The one-pixel
+change may also turn a clean image into an adversarial one cite:su2017-one.
 
 *** Generative Model-based
 :PROPERTIES:
 :CUSTOM_ID: subsec:textadv:generative-model-based
 :END:
 
-Similar to the noise minimization, this class also formulates the problem as an
-optimization problem.  The difference is that, instead of performing the
-optimization directly, this class trains a separate model to map the input to
-noise or adversarial samples.  Adversarial transformation network
-(ATN) cite:baluja2017-adversarial trains a separate model \(g\) that minimizes
-\(\beta\|x^*-x\|_p + \|f(x^*)-f(x)\|_{p^\prime}\), where \(g(x) = x^*\).  The
-ATN may be used to generate adversarial noise or samples from the clean input.
-cite:zhao2017-generating proposes to first create a mapping between the input
-space and a random noise space, and then search in the noise space for potential
-adversarials which are verified by being mapped back to the input space.  To
-create the mapping between input and noise space, the authors propose an
-autoencoder structure which consists of a) an encoder \(G\), a generator network
-that maps the random noise \(z\) to the input \(x\), \(G(z) = x\), and b) a
-decoder \(I\) (referred to as \textsl{inverter}), another generator network that
-maps the input to the random noise, \(I(x) = z\).  Generative Adversarial
-Network (GAN) cite:goodfellow2014-generative is used for both generator
-networks.  The whole network is trained end-to-end by minimizing the loss
-\(\mathbb{E}_x\|G(I(z)) - x\|_p + \lambda\mathbb{E}_z\|I(G(x)) - z\|_p\).
+Another end-to-end methods is to train a model (e.g., autoencoder, GAN) to map
+the clean samples to adversarial noise or adversarial samples.  Adversarial
+transformation network (ATN) cite:baluja2017-adversarial trains a separate model
+\(g\) that minimizes \(\beta\|x^*-x\|_p + \|f(x^*)-f(x)\|_{p^\prime}\), where
+\(g(x) = x^*\).  cite:zhao2017-generating proposes to first create a mapping
+between the input space and a random noise space, and then search in the noise
+space for potential adversarials which are verified by being mapped back to the
+input space.  To create the mapping between input and noise space, the authors
+propose an autoencoder structure which consists of a) an encoder \(G\), a
+generator network that maps the random noise \(z\) to the input \(x\), \(G(z) =
+x\), and b) a decoder \(I\) (referred to as \textsl{inverter}), another
+generator network that maps the input to the random noise, \(I(x) = z\).
+Generative Adversarial Network (GAN) cite:goodfellow2014-generative is used for
+both generator networks.  The whole network is trained end-to-end by minimizing
+the loss \(\mathbb{E}_x\|G(I(z)) - x\|_p + \lambda\mathbb{E}_z\|I(G(x)) -
+z\|_p\).
 
 ** Generate Adversarial Texts
 :PROPERTIES:
