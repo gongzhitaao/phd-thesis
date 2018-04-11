@@ -165,82 +165,24 @@ This phenomenon is interesting both in practice and in theory.
 
 * Generate Adversarial Images
 
-** Model Gradient-based Methods
-
-A class of /white-box/ methods, i.e., they need to access the model's parameters
-in order to generate the adversarial samples.
-
-- Fast gradient method (FGSM) cite:goodfellow2014-explaining adds to the input
-  the noise that is proportional to either \(\nabla L_x\) or \(\sign(\nabla
-  L_x)\).
-- DeepFool cite:moosavi-dezfooli2015-deepfool iteratively finds the optimal
-  direction in which we need to /travel/ the minimum distance to cross the
-  decision boundary of the target model.
-- Jacobian-based saliency map approach (JSMA) cite:papernot2015-limitations
-  perturbs one pixel at a time, the one with the highest score which is
-  calculated as \(-\nabla y_t\cdot\sum\nabla y_o\) subject to \(\nabla y_t > 0\).
-
-** Noise Minimization Methods
-
-*** {{{empty}}} :B_only:
-:PROPERTIES:
-:BEAMER_act: 1
-:BEAMER_env: only
-:END:
-
-This class directly formulates the problem as an optimization problem.
-
-#+BEGIN_EXPORT latex
-\begin{equation*} \label{eq:noise-minimization}
- \begin{aligned}
-  \text{minimize } & \|x^* - x\|_p \\
-  \text{ s.t. } & f(x^*)\neq f(x) \text{ and } x^*\in\mathcal D
- \end{aligned}
-\end{equation*}
-#+END_EXPORT
-
-\(\mathcal D\) is the input domain, e.g., \([0, 1]\) for images.
-\(\|\cdot\|_p\) is the \(p\)-norm.  This is difficult to solve in itself because
-1. it is a box-constrained optimization, and
-2. the constraint \(f(x^*)\neq f(x)\) is not smooth.
-
-*** {{{empty}}} :B_only:
-:PROPERTIES:
-:BEAMER_act: 2
-:BEAMER_env: only
-:END:
-
-Instead of solving the optimization directly, cite:carlini2016-towards removes
-the constraints by a variable substitution trick.
-
-#+BEGIN_EXPORT latex
-\begin{equation*}
- \begin{aligned}
-  \text{minimize } & \|x^* - x\|^2_2 + c\cdot f(x) \text{ where }\\
-  x^* & = \sigmoid(w) \\
-  f(x) & = \max\left(\max\left(z_o - z_t\right), -\kappa\right)
- \end{aligned}
-\end{equation*}
-#+END_EXPORT
-
-In this case, \(w\) is unconstrained.
-
-** Generative Model-based Methods
-
-This class use another model to generate the adversarials or noise.
-- Adversarial transformation network cite:baluja2017-adversarial
-- GAN-based cite:xiao2018-generating,zhao2017-generating
-
-** Summary
+** Overview
 
 Intuitions behind the adversarial methods
-1. Move the data point across the decision boundary.
-2. Perturb the data point so that the loss increases, e.g.,
-   - reverse direction of gradients on the loss surface, or
-   - direction where the probability for the correct(wrong) class
-     decreases(increases).
+1. Move the data points
+   - towards the decision
+     boundary cite:moosavi-dezfooli2015-deepfool,moosavi-dezfooli2016-universal,
+   - in the direction where loss increases for the clean
+     samples cite:goodfellow2014-explaining,kurakin2016-adversarial, or
+     decreases for the for the adversarial
+     decreases cite:szegedy2013-intriguing, or
+   - increase the probability for the correct label and/or decrease the
+     others cite:papernot2015-limitations,carlini2016-towards.
+2. Map between clean and adversarial data
+   points cite:zhao2017-generating,baluja2017-adversarial,xiao2018-generating.
 
-#+ATTR_LaTeX: :width .8\textwidth
+** Intuition
+
+#+ATTR_LaTeX: :width .9\textwidth
 #+CAPTION: Data space hypothesis \cite{nguyen2014-deep}
 [[file:img/image-space.png]]
 
@@ -327,7 +269,7 @@ Result: https://github.com/gongzhitaao/adversarial-text
 2. Find a way to control the quality of generated adversarial texts.
 3. Test the transferability of adversarial texts.
 
-* Defend Adversarial Samples
+* Defend against Adversarial Samples
 
 ** Enhance Model
 
