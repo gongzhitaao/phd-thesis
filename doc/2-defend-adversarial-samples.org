@@ -30,7 +30,7 @@ network systems.
 
 #+CAPTION: Adversarial samples.
 #+NAME: fig:adv-example
-[[file:img/ex_adv_mnist.pdf]]
+[[file:ex_adv_mnist.pdf]]
 
 ** Proposed Defense
 :PROPERTIES:
@@ -268,7 +268,7 @@ of defensive training are similar to the binary classifier approach.
 
 #+CAPTION: Adversarial training \cite{huang2015-learning,kurakin2016-adversarial-1} does not work properly.
 #+NAME: fig:adv-training-not-working
-[[file:img/adv-training-not-working.pdf]]
+[[file:adv-training-not-working.pdf]]
 
 Figure ref:fig:adv-training-not-working is a church window plot
 \cite{warde-farley2016-adversarial}.  Each pixel \((i, j)\) (row index and

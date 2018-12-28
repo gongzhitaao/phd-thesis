@@ -107,7 +107,7 @@ noise.
 
 #+CAPTION: Image space hypothesis \cite{nguyen2014-deep}
 #+NAME: fig:image-space
-[[file:img/image-space.png]]
+[[file:image-space.png]]
 
 This class of methods move data points following a specific direction.  It's
 been shown that it is unlikely to arrive at an adversarial sample by following a
@@ -420,7 +420,7 @@ Figure ref:fig:model-imdb.
 #+ATTR_LaTeX: :width .6\textwidth :placement [!ht]
 #+CAPTION: CNN model for text classification.
 #+NAME: fig:model-imdb
-[[file:img/model-imdb.pdf]]
+[[file:model-imdb.pdf]]
 
 Where \(B\) denotes batch size, \(L\) the maximum sentence length, \(D\) the
 word vector space dimension.  In our experiment, we have \(B=128\), and
@@ -516,7 +516,7 @@ changed words, \(L\) the sentence length.  The corresponding changed words are
 #+ATTR_LaTeX: :float multicolumn :width \textwidth
 #+CAPTION: Adversarial texts generated via FGVM.
 #+NAME: fig:textdemo-fgvm
-[[file:img/fgvm-eps50.pdf]]
+[[file:fgvm-eps50.pdf]]
 
 We first evaluate two versions of FGM, i.e., FGSM and FGVM.  Their example
 results are shown in Figure ref:fig:textdemo-fgsm and
@@ -528,7 +528,7 @@ close to zero.
 #+ATTR_LaTeX: :float multicolumn :width \textwidth
 #+CAPTION: Adversarial texts generated via FGSM.
 #+NAME: fig:textdemo-fgsm
-[[file:img/fgsm-eps35.pdf]]
+[[file:fgsm-eps35.pdf]]
 
 *** DeepFool
 :PROPERTIES:
@@ -539,7 +539,7 @@ close to zero.
 #+ATTR_LaTeX: :float multicolumn :width \textwidth
 #+CAPTION: Adversarial texts generated via DeepFool.
 #+NAME: fig:textdemo-deepfool
-[[file:img/deepfool-eps40.pdf]]
+[[file:deepfool-eps40.pdf]]
 
 Adversarial examples are shown in Figure ref:fig:textdemo-deepfool.  We
 experiment with different overshoot values (also denoted as \epsilon in the

@@ -33,7 +33,7 @@ column.
 #+ATTR_LaTeX: :width .8\textwidth
 #+CAPTION: Adversarial images from MNIST dataset.
 #+NAME: fig:mnistdemo
-[[file:img/imgdemo.pdf]]
+[[file:imgdemo.pdf]]
 
 All the neural nets-based image classification models are vulnerable to
 adversarial samples.  Another study cite:papernot2016-transferability shows that
