@@ -1,0 +1,331 @@
+% Style-option file for Auburn University Master's Thesis.
+% See the file ausample.tex for an example of its use.
+% Initial version 22-Dec-1989 by Darrel Hankerson.
+% Updated version 22-Oct-2009 by Christopher Wilson.
+% Use with:
+%     \documentclass[11pt]{report}
+%     \usepackage{aums,ulem}
+
+%%Change Log:
+%%Changed 2009/11/19: Changed \year to \copyrightyear to fix issue with the TikZ package
+
+\typeout{Document Style Option 'aums' <22 Oct 2009>}
+\ProvidesPackage{aums}
+
+\oddsidemargin0in  \textwidth6.5in  \topmargin-.5in  \textheight9in
+\def\@topvspace{.6in}
+
+\clubpenalty=10000 % penalty for creating club line at bottom of page
+\widowpenalty=10000 % penalty for creating widow line at top of page
+\brokenpenalty=10000 % penalty for page break after a hyphenated line
+\parindent=2em
+
+% Removed 09-Nov-04
+% \pagestyle{myheadings} \def\@oddhead{\hfil\thepage\hfil}
+
+\newenvironment{romanpages}{\pagestyle{plain}\def\thepage{\roman{page}}}{
+ \clearpage\addtocounter{page}{-1}\xdef\romanpages{\arabic{page}}%
+ \setcounter{page}{1}}
+
+
+%\def\@ul#1{\def\@cr{\def\@cr{\\}}\@@ul#1\\\relax\\}
+%\def\@@ul#1\\{\ifx\relax#1\let\next=\relax
+%\else\let\next=\@@ul\@cr\underline{#1} \fi\next}
+
+
+\newcounter{professor}
+\def\professor#1{ % Save the professors; swap first 2 names. -- Update: No longer swapping.
+ \stepcounter{professor}
+ \ifcase \arabic{professor}
+  \or \setcounter{enumi}{1}
+  \or \setcounter{enumi}{2}
+  \else \setcounter{enumi}{\arabic{professor}}
+ \fi
+ \expandafter\def\csname professor\arabic{enumi}\endcsname{#1}}
+
+
+%\def\previousdegree#1{\xdef\@previousdegree{\@previousdegree\par(#1)}}
+\def\previousdegree#1{\g@addto@macro\@previousdegree{\par(#1)}}
+\def\@previousdegree{}
+
+\def\adviser#1{\def\@adviser{#1}}    \def\@adviser{\@Need{adviser}}
+\def\style#1{\def\@style{#1}}        \def\@style{\@Need{style}}
+\def\software#1{\def\@software{#1}}  \def\@software{\@Need{software}}
+\def\keywords#1{\def\@keywords{#1}}  \def\@keywords{\@Need{keywords}}
+\def\copyrightyear#1{\def\@copyrightyear{#1}}          \def\@copyrightyear{\@Need{copyrightyear}}
+
+\def\@author{\@Need{author}}
+\def\@title{\@Need{title}}
+\def\@date{\@Need{date}}
+\def\@Need#1{Put the {$\scriptstyle\backslash$\tt#1} command in your file!}
+
+\def\@degree{Master of Science}
+\def\@ThesisDissertation{Thesis}
+\def\@thesisdissertation{thesis}
+\def\@submittedto{Graduate Faculty of\\ Auburn University}
+
+
+\def\@makechapterhead#1{{\parindent 0pt
+ \begin{center}\vspace*{\@topvspace}
+ \ifnum \c@secnumdepth >\m@ne \large\textbf{\@chapapp{} \thechapter{}}\par\fi \large\textbf{#1}
+ \end{center}} }
+
+\def\@makeschapterhead#1{{\parindent 0pt
+ \begin{center}\vspace*{\@topvspace}#1\end{center}} }
+
+
+\def\chapter{\clearpage \thispagestyle{plain} \global\@topnum\z@
+\@afterindenttrue \secdef\@chapter\@schapter}
+\def\@chapter[#1]#2{\ifnum \c@secnumdepth >\m@ne
+ \refstepcounter{chapter}
+ \typeout{\@chapapp\space\thechapter.}
+ {\def\\{}
+ \addcontentsline{toc}{chapter}{\protect
+ \numberline{\thechapter}#1}}\else {\def\\{}
+ \addcontentsline{toc}{chapter}{#1}}\fi
+ \chaptermark{#1}
+ \addtocontents{lof}{\protect\addvspace{10pt}}
+\addtocontents{lot}{\protect\addvspace{10pt}} \if@twocolumn
+\@topnewpage[\@makechapterhead{#2}]
+ \else \@makechapterhead{#2}
+ \@afterheading \fi}
+\def\@schapter#1{\if@twocolumn \@topnewpage[\@makeschapterhead{#1}]
+ \else \@makeschapterhead{#1}
+ \@afterheading\fi}
+
+\def\section{\@startsection {section}{1}{\z@}{-3.5ex plus -1ex minus
+ -.2ex}{2.3ex plus .2ex}{\normalsize\bf}}
+\def\subsection{\@startsection{subsection}{2}{\z@}{-3.25ex plus -1ex minus
+ -.2ex}{1.5ex plus .2ex}{\normalsize\bf}}
+
+\def\@startsection#1#2#3#4#5#6{\if@noskipsec \leavevmode \fi
+   \par \@tempskipa #4\relax
+   \@afterindenttrue
+   \ifdim \@tempskipa <\z@ \@tempskipa -\@tempskipa \relax\fi
+   \if@nobreak \everypar{}\else
+     \addpenalty{\@secpenalty}\addvspace{\@tempskipa}\fi \@ifstar
+     {\@ssect{#3}{#4}{#5}{#6}}{\@dblarg{\@sect{#1}{#2}{#3}{#4}{#5}{#6}}}}
+
+% Removed 02-Apr-01
+%\def\ApprovalPage{\newpage\thispagestyle{empty}{\def\thanks##1{}
+%\def\@ApprovalPage{%
+%\parbox[t]{.45\textwidth}{\underline{\hspace*{.45\textwidth}}\\
+%\csname professor\arabic{enumi}\endcsname}}
+%\begin{center}\vspace*{\@topvspace}
+%{\sc\@title \par} \addvspace{36pt} {\lineskip .75em
+%\begin{tabular}[t]{c}\@author
+%\end{tabular}\par}
+%\vfill\singlespace\setcounter{enumii}{\arabic{professor}}
+%\ifodd\c@professor \else\stepcounter{enumii}\fi
+%\begin{tabular}{@{}l@{\hspace{.09\textwidth}}l}\setcounter{enumi}{1}%
+%Certificate of Approval: \\[48pt]
+%\@whilenum \c@enumi<\c@enumii\do{\def\@and{&}%
+%\@ApprovalPage
+%\ifnum\c@enumi < \c@professor
+% \ifodd\c@enumi \@and \else \\ \mbox{}\\[24pt] \fi
+%\fi
+%\stepcounter{enumi}}
+%\end{tabular}\par
+%\ifodd\c@professor \@ApprovalPage \fi
+%\end{center}\newpage}\gdef\ApprovalPage{}}
+
+%%Removed 2009
+%\def\ApprovalPage{\newpage\thispagestyle{empty}{\def\thanks##1{}
+%\def\@ApprovalPage{%
+%\parbox[t]{.45\textwidth}{\underline{\hspace*{.45\textwidth}}\\
+%\csname professor\arabic{enumi}\endcsname}}
+%\begin{center}\vspace*{\@topvspace}
+%{\sc\@title \par} \addvspace{36pt}
+%  \vspace*{0.5in}\singlespace
+%  Except where reference is made to the work of others, the work
+%  described in this
+%  \@thesisdissertation{} is my own or was done in collaboration
+%  with my advisory committee.
+%  This \@thesisdissertation{} does not include proprietary or classified
+%  information.
+%  \par\vspace*{0.6in}
+%  \underline{\hspace*{3.5in}}\\
+%  \@author
+%\vfill\setcounter{enumii}{\arabic{professor}}
+%\ifodd\c@professor \else\stepcounter{enumii}\fi
+%\begin{tabular}{@{}l@{\hspace{.09\textwidth}}l}\setcounter{enumi}{1}%
+%Certificate of Approval: \\[48pt]
+%\@whilenum \c@enumi<\c@enumii\do{\def\@and{&}%
+%\@ApprovalPage
+%\ifnum\c@enumi < \c@professor
+% \ifodd\c@enumi \@and \else \\ \mbox{}\\[24pt] \fi
+%\fi
+%\stepcounter{enumi}}
+%\end{tabular}\par
+%\ifodd\c@professor \@ApprovalPage \fi
+%\end{center}\newpage}\gdef\ApprovalPage{}}
+
+
+\def\@TitlePage{
+        A \@thesisdissertation{} submitted to the Graduate Faculty of \\
+        Auburn University \\
+        in partial fulfillment of the \\
+        requirements for the Degree of \\
+        \@degree{}
+}
+
+%%Title page underwent significant changes, 2009
+\def\TitlePage{\newpage\thispagestyle{empty}{
+\let\footnotesize\small \let\footnoterule\relax
+%\vspace*{1ex}% 12-Jul-90 Problem with rubber lengths on this page?
+\begin{center}\vspace*{\@topvspace}
+{\singlespace\textbf{\@title} \par} \addvspace{12pt} by\\ \addvspace{12pt} {\lineskip .75em
+\begin{tabular}[t]{c}\@author
+\end{tabular}\par}
+\end{center} \par \addvspace{36pt}
+%\@thanks
+\begin{center}%\renewcommand{\baselinestretch}{3}\small\normalsize
+        %\vfil
+        \singlespace
+        \@TitlePage \\
+        \addvspace{12pt}
+        Auburn, Alabama\\
+        \@date \\
+        \addvspace{48pt}
+        Keywords: \@keywords \\
+        \addvspace{24pt}
+        Copyright~\@copyrightyear~by~\@author   \\
+        \addvspace{24pt}
+        Approved by\\
+        \addvspace{12pt}
+\setcounter{enumii}{\arabic{professor}}
+\setcounter{enumi}{1}%
+\@whilenum \c@enumi<\c@enumii\do{%
+{\csname professor\arabic{enumi}\endcsname}\\
+\stepcounter{enumi}}
+{\csname professor\arabic{enumi}\endcsname}\\
+\end{center}
+\setcounter{footnote}{0}
+\gdef\@thanks{}\newpage}\gdef\TitlePage{}\gdef\@TitlePage{}}
+
+%\def\vita{\newpage\begin{center}\vspace*{\@topvspace}\sc Vita \end{center}
+%\par}
+%\def\endvita{\newpage}
+
+\def\acknowledgments{\newpage\begin{center}\vspace*{\@topvspace}
+\addcontentsline{toc}{chapter}{Acknowledgments} Acknowledgments \end{center}\par}
+\def\endacknowledgments{\newpage}
+
+%%Copyright page no longer included, 2009.
+
+%\def\CopyrightPage{\newpage{\def\thanks##1{}%
+%\begin{center}\vspace*{\@topvspace}
+%{\sc\@title \par} \addvspace{36pt} {\lineskip .75em
+%\begin{tabular}[t]{c}\@author
+%\end{tabular}\par}
+%\end{center}
+%\singlespace
+%%
+%% Grad school demands V shape text, 2005.  Match their example.
+%% Breakage can occur on font changes.
+%%
+%\begin{center}
+%Permission is granted to Auburn University to make copies of this
+%\@thesisdissertation{} at its \\
+%discretion, upon the request of individuals or institutions and at \\
+%their expense.  The author reserves all publication rights.
+%\end{center}
+%\addvspace{48pt}
+%\begin{flushright}
+%\parbox{.4\textwidth}{\underline{\hspace*{.4\textwidth}}\\Signature of
+%Author}\\[48pt]
+%\parbox{.4\textwidth}{\underline{\hspace*{.4\textwidth}}\\Date of Graduation}
+%\end{flushright}
+%%
+%% Removed Feb 2006
+%%\addvspace{24pt}\noindent Copy sent to:
+%%\begin{center}
+%%\underline{Name} \hspace{.7\textwidth} \underline{Date}
+%%\end{center}
+%%
+%\newpage}\gdef\CopyrightPage{}}
+
+\def\abstract{\newpage
+\begin{center}\vspace*{\@topvspace}
+\addcontentsline{toc}{chapter}{Abstract}{\large\textbf{Abstract}}\par\addvspace{12pt}
+\end{center}\par}
+\def\endabstract{\newpage}
+
+
+%\def\StylePage{\newpage% \thispagestyle{empty}
+%\vspace*{\bigskipamount}\vspace*{\@topvspace}\sloppy
+%Style manual or journal used {{\expandafter\em\@style}\hspace*{\fill}}
+%\par\addvspace{\bigskipamount}
+%Computer software used {{\expandafter\em\@software}\hspace*{\fill}}\par
+%\newpage% \addtocounter{page}{-1} % No page number for style-page
+%\gdef\StylePage{}}
+
+\def\contentsname{Table of Contents}
+\def\tableofcontents{\@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn
+ \fi\chapter*{\large\textbf{\contentsname}
+\@mkboth{{\contentsname}}{{\contentsname}} }
+{\doublespacing\@starttoc{toc}}\if@restonecol\twocolumn\fi}
+
+\def\listfigurename{List of Figures}
+\def\listoffigures{\@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn
+\fi\chapter*{\large\textbf{\listfigurename}\@mkboth
+{{\listfigurename}}{{\listfigurename}}}
+\addcontentsline{toc}{chapter}{\listfigurename} {\@starttoc{lof}}\if@restonecol
+\twocolumn\fi}
+
+% {\vspace{-\bigskipamount}\singlespace\@starttoc{lof}}\if@restonecol
+% \twocolumn\fi}
+
+\def\l@figure{\par\addvspace{\bigskipamount}\pagebreak[2]
+ \@dottedtocline{1}{0.1em}{2.3em}}
+\def\listtablename{List of Tables}
+\def\listoftables{\@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn
+ \fi\chapter*{\large\textbf{\listtablename}\@mkboth
+ {{\listtablename}}{{\listtablename}}}
+ \addcontentsline{toc}{chapter}{\listtablename}
+ {\vspace{-\bigskipamount}\singlespace\@starttoc{lot}}\if@restonecol
+ \twocolumn\fi}
+\let\l@table\l@figure
+
+%\def\l@chapter#1#2{\pagebreak[3]
+%   \vskip 1.0em plus 1pt  % space above chapter line
+%   \@tempdima 1.5em       % width of box holding chapter number
+%   \begingroup
+%     \parindent \z@ \rightskip \@pnumwidth
+%     \addtolength{\leftskip}{\@tempdima}% 24-May-91
+%     \parfillskip -\@pnumwidth
+%%     \bf                  % Boldface.
+%     \leavevmode          % TeX command to enter horizontal mode.
+%     {\hspace*{-\@tempdima}#1}\hfil  \hbox to\@pnumwidth{\hss #2}\par
+%   \endgroup}
+\def\l@chapter#1#2{\@dottedtocline{0}{0em}{2.3em}{#1}{#2}}
+
+\def\thebibliography#1{\chapter*{Bibliography\@mkboth
+ {BIBLIOGRAPHY}{BIBLIOGRAPHY}\addcontentsline{toc}{chapter}{Bibliography}}
+ \list
+ {[\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
+ \advance\leftmargin\labelsep
+ \usecounter{enumi}}
+ \def\newblock{\hskip .11em plus .33em minus .07em}
+ \sloppy\clubpenalty4000\widowpenalty4000
+ \sfcode`\.=1000\relax\singlespace}
+\let\endthebibliography=\endlist
+
+% \AtEndDocument{%
+% \clearpage\addtocounter{page}{\romanpages}}
+% \usepackage{lastpage}
+
+\@ifpackageloaded{hyperref}{
+ \def\PAGEREF{\pageref*}
+ }{
+ \def\PAGEREF{\pageref}
+}
+
+% We need to doublespace.  At a minimum, we must
+%   * Set doublespace as the default, and
+%   * make a singlespace environment.
+
+\usepackage{setspace}
+\doublespacing
+
+\endinput
