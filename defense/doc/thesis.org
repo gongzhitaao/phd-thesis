@@ -3109,10 +3109,10 @@ In this dissertation, we empirically study an emerging problem in machine
 learning community, i.e., the adversarial samples.  In our first work, we
 propose to build a binary classifier to separate the adversarial samples from
 the clean one.  This follows from the observation that the neural networks are
-sensitive to individual pixel values (which is why we have adversarial samples
-in the first place).  We demonstrate that the binary classifier approach could
-only successfully recognize the adversarial samples the are generated with the
-same adversarial method.  In other words, the classifier may not generalize
+sensitive to individual pixel values (which is exactly why we have adversarial
+samples in the first place).  We demonstrate that the binary classifier approach
+could only successfully recognize the adversarial samples the are generated with
+the same adversarial method.  In other words, the classifier may not generalize
 well to adversarial samples generated with a different method or the same method
 with different set of hyper-parameters.  In our second work, we investigate the
 problem of generating text adversarial samples.  We propose a simple yet
@@ -3126,17 +3126,41 @@ are fooling the network by rendering 3D objects in /non-canonical/ poses.  The
 reveals a more severe problem since many of the poses really do exists in real
 world.
 
-In this dissertation, we mainly focus on a /descriptive/-style of exploration,
-i.e., we empirically show that the problem exists widely without giving an
-explicit solution.  The prescriptive
+We mainly focus on a /descriptive/-style of exploration, i.e., we empirically show
+that the problem exists widely without giving an explicit solution.  Many work
+are along the lines of the /prescriptive/-style, seeking a rigorous explanation.
+We have seen some primitive progress towards this direction, albeit slow due to
+the lack of understanding of deep models.  This problem is only one piece in the
+jigsaw puzzle of theories behind deep models.  As a result, progress in other
+aspects may also help towards solving this problem in the end.
 
-I would like to conclude my
+At last, I would like to conclude my thesis borrowing one image
+from cite:karparthy2016-connecting.  This image shows what machines can and
+cannot do.
 
 #+ATTR_LATEX: :width .7\textwidth
-#+CAPTION: A joke not easily understood by machine.
+#+CAPTION: A joke that is not easily understood by machines \cite{karparthy2016-connecting}.
 #+NAME: fig:joke
 [[file:img/scale.png]]
 
+What machine can do:
+1. It can create a bounding box for each object it recognizes in the image.
+2. It can precisely outline the (sub)component of each objects.
+3. It can detect faces, and possibly smiley or not.
+4. It can generate a description of the images.
+5. It can generate images of similar styles.
+6. etc.
+
+What machine cannot do
+1. It does not understand the concept of /mirror/, and all the figures in the
+   mirrors are fake.
+2. it probably cannot detect the scale the man is standing on since the white
+   color blends in with the wall.
+3. It does not understand the concept of /shadows/.
+4. it does not understand what the man on the scale is doing.
+5. It does not understand the relationships among objects, figures, etc.
+6. And the most important of all, it does not understand this joke.  Mr. Obama
+   is tipping his weight on the scale to play a trick on the man on the scale.
 * References                                                         :ignore:
 
 #+LaTeX: \printbibliography
