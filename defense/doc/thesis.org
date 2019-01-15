@@ -231,7 +231,7 @@ work cite:gong2017-adversarial.
 
 * Background
 :PROPERTIES:
-:CUSTOM_ID: part:h1-background
+:CUSTOM_ID: chp:h1-background
 :END:
 
 We investigate the adversarial phenomenon in the classification settings.  First
@@ -276,124 +276,7 @@ passed through a softmax layer \(y_i = e^{x_i}/\sum e^{x_i}\), where \(y_i\) is
 interpreted as the probability of belonging to the \(i\)-th category, and
 \(x_i\) is referred to as logit.
 
-* Defending against Adversarial Samples
-:PROPERTIES:
-:CUSTOM_ID: chp:h1-defending-against-adversarial-samples
-:END:
-
-** Introduction
-:PROPERTIES:
-:CUSTOM_ID: sec:h2-introduction-ab617
-:END:
-
-Adversarial attack has cast a shadow on the massive success of deep neural
-networks.  Despite being almost visually identical to the clean data, the
-adversarial images can fool deep neural networks into wrong predictions with
-very high confidence. In this paper, however, we show that we can build a simple
-binary classifier separating the adversarial apart from the clean data with
-accuracy over 99%. We also empirically show that the binary classifier is robust
-to a secondround adversarial attack. In other words, it is difficult to disguise
-adversarial samples to bypass the binary classifier. Further more, we
-empirically investigate the generalization limitation which lingers on all
-current defensive methods, including the binary classifier approach. And we
-hypothesize that this is the result of intrinsic property of adversarial
-crafting algorithms.
-
-As ref:fig:mnistdemo shows, although adversarial and clean images appear
-visually indiscernible, their subtle differences can successfully fool the deep
-neural networks.  This implies that deep neural networks are sensitive to these
-subtle differences.  As a result, an intuitive question is: whether it is
-possible to leverage the network's sensitivity to subtle differences to
-distinguish between adversarial and clean images?  Our experiment suggests that
-the answer is positive, but limited.  In this work, we demonstrate that a simple
-binary classifier can separate the adversarial from the original clean images
-with very high accuracy (over 99%).  However, we also notice that the binary
-classifier approach suffers from the /generalization issue./
-1. it is sensitive to a hyper-parameter used in crafting adversarial images,
-   e.g., \epsilon in fast gradient method, and
-2. it is sensitive to different adversarial crafting algorithms.
-In other words, different algorithms will generate adversarial images that
-follow different distributions.  In addition to that, we also discovered that
-this limitation is shared among other proposed defense methods against
-adversarial images, e.g., defensive
-training cite:huang2015-learning,kurakin2016-adversarial-examples, knowledge
-distillation cite:papernot2015-distillation, etc.  We empirically investigate
-the limitation and propose the hypothesis that the adversarial and original
-dataset follow different distributions.
-
-Our key contributions are:
-1. We show that binary classifier can successfully separate adversarial from
-   clean samples.
-2. The binary classifier are robust to second-round adversarial attack, in other
-   words, it is difficult to bypass the classifier with adversarial samples that
-   fools the protected model.
-3. We also show that currently proposed defense methods, including our binary
-   classifier approach, does not generalize to adversarial samples from
-   different methods.
-
-This chapter is organized as follows.  In Section ref:sec:h2-related-work-50d6a,
-we give an overview of the current literature in generating and defending
-against adversarial images.  Then, it is followed by a brief summary of the
-state-of-the-art adversarial crafting algorithms in Section
-ref:sec:h2-generating-adversarial-images.  Section ref:sec:experiment presents
-our experiment results and detailed discussions.  And we conclude in Section
-ref:sec:conclusion.
-
-** Related Work
-:PROPERTIES:
-:CUSTOM_ID: sec:h2-related-work-50d6a
-:END:
-
-The adversarial image attack on deep neural networks was first investigated in
-cite:szegedy2013-intriguing.  The authors discovered that when added some
-imperceptible carefully chosen noise, an image may be wrongly classified with
-high confidence by a well-trained deep neural network.  They also proposed an
-adversarial crafting algorithm based on optimization.  We will briefly summarize
-it in section ref:sec:crafting-adversarials.  They also proposed the hypothesis
-that the adversarial samples exist as a result of the high nonlinearity of deep
-neural network models.
-
-However, cite:goodfellow2014-explaining proposed a counter-intuitive hypothesis
-explaining the cause of adversarial samples.  They argued that adversarial
-samples are caused by the models being too /linear/, rather than /nonlinear/.
-They proposed two adversarial crafting algorithms based on this hypothesis,
-i.e., fast gradient sign method (FGSM) and least-likely class method (LLCM)
-cite:goodfellow2014-explaining.  The least-likely class method is later
-generalized to target class gradient sign method (TGSM) in
-cite:kurakin2016-adversarial-examples.
-
-cite:papernot2015-limitations proposed another gradient based adversarial
-algorithm, the Jacobian-based saliency map approach (JSMA) which can
-successfully alter the label of an image to any desired category.
-
-The adversarial images have been shown to be transferable among deep neural
-networks cite:szegedy2013-intriguing,kurakin2016-adversarial.  This poses a
-great threat to current learning systems in that the attacker needs not the
-knowledge of the target system.  Instead, the attacker can train a different
-model to create adversarial samples which are still effective for the target
-deep neural networks.  What's worse, cite:papernot2016-transferability has shown
-that adversarial samples are even transferable among different machine learning
-techniques, e.g., deep neural networks, support vector machine, decision tree,
-logistic regression, etc.
-
-Small steps have been made towards the defense of adversarial images.
-cite:kurakin2016-adversarial shows that some image transformations, e.g.,
-Gaussian noise, Gaussian filter, JPEG compression, etc., can effectively recover
-over 80% of the adversarial images.  However, in our experiment, the image
-transformation defense does not perform well on images with low resolution,
-e.g., MNIST.  Knowledge distillation is also shown to be an effective method
-against most adversarial images cite:papernot2015-distillation.  The
-restrictions of defensive knowledge distillation are 1) that it only applies to
-models that produce categorical probabilities, and 2) that it needs model
-training.  Adversarial training
-cite:kurakin2016-adversarial-1,huang2015-learning was also shown to greatly
-enhance the model robustness to adversarials.  However, as discussed in Section
-ref:subsec:generalization-limitation, defensive distillation and adversarial
-training suffers from, what we call, the generalization limitations.  Our
-experiment suggests this seems to be an intrinsic property of adversarial
-datasets.
-
-** Generating Adversarial Images
+** Adversarial Images
 :PROPERTIES:
 :CUSTOM_ID: sec:h2-generating-adversarial-images
 :END:
@@ -495,40 +378,6 @@ class predicted by the model as shown in Equation ref:eq:llcm-y.
 And it was extended to a more general case where \(y^{adv}\) could be any
 desired target class cite:kurakin2016-adversarial-1.
 
-# The following table belongs to the "Efficiency and Robustness of the
-# Classifier" section, place here only for typesetting.
-
-#+BEGIN_EXPORT latex
-\begin{table*}[htbp]
-  \caption{\label{tbl:accuracy-summary}
-    Accuracy on adversarial samples generated with FGSM/TGSM.}
-  \centering
-  \begin{tabular}{lcrrcrrrr}
-    \toprule
-    & \phantom{a} & \multicolumn{2}{c}{\(f_1\)} & \phantom{a} & \multicolumn{4}{c}{\(f_2\)} \\
-    \cmidrule{3-4} \cmidrule{6-9}
-    Dataset && \(X_{test}\) & \(X^{adv(f_1)}_{test}\) && \(X_{test}\) & \(X^{adv(f_1)}_{test}\) & \(\{X_{test}\}^{adv(f_2)}\) & \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) \\
-    \midrule
-    MNIST && 0.9914 & 0.0213 && 1.00 & 1.00 & 0.00 & 1.00\\
-    CIFAR10 && 0.8279 & 0.1500 && 0.99 & 1.00 & 0.01 & 1.00\\
-    SVHN && 0.9378 & 0.2453 && 1.00 & 1.00 & 0.00 & 1.00\\
-    \bottomrule
-  \end{tabular}
-\end{table*}
-
-#+END_EXPORT
-
-#+CAPTION: Accuracy on adversarial samples generated with FGSM/TGSM.
-#+NAME: tbl:accuracy-summary
-#+ATTR_LaTeX: :booktabs true :align l|rr|rrrr :float multicolumn
-|         |      \(f_1\) |                         |              |                         |                     \(f_2\) |                                        |
-|---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
-| Dataset | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(\{X_{test}\}^{adv(f_2)}\) | \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) |
-|---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
-| MNIST   |       0.9914 |                  0.0213 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
-| CIFAR10 |       0.8279 |                  0.1500 |         0.99 |                    1.00 |                        0.01 |                                   1.00 |
-| SVHN    |       0.9378 |                  0.2453 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
-
 **** Jacobian-based Saliency Map Approach (JSMA)
 
 Similar to the target class method, JSMA cite:papernot2015-limitations allows to
@@ -552,6 +401,124 @@ w.r.t an individual pixel, \(s_o\) is the sum of Jacobian values of all
 non-target class.  Intuitively, saliency score indicates the sensitivity of each
 output class w.r.t each individual pixel.  And we want to perturb the pixel
 towards the direction where \(p(y_t\given x)\) increases the most.
+
+* Defend against Image Adversarial Samples
+:PROPERTIES:
+:CUSTOM_ID: chp:h1-defending-against-adversarial-samples
+:END:
+
+** Introduction
+:PROPERTIES:
+:CUSTOM_ID: sec:h2-introduction-ab617
+:END:
+
+# Adversarial attack has cast a shadow on the massive success of deep neural
+# networks.  Despite being almost visually identical to the clean data, the
+# adversarial images can fool deep neural networks into wrong predictions with
+# very high confidence.  In this paper, however, we show that we can build a
+# simple binary classifier separating the adversarial apart from the clean data
+# with accuracy over 99%.  We also empirically show that the binary classifier
+# is robust to a secondround adversarial attack.  In other words, it is
+# difficult to disguise adversarial samples to bypass the binary classifier.
+# Further more, we empirically investigate the generalization limitation which
+# lingers on all current defensive methods, including the binary classifier
+# approach.  And we hypothesize that this is the result of intrinsic property of
+# adversarial crafting algorithms.
+
+As ref:fig:mnistdemo shows, although adversarial and clean images appear
+visually indiscernible, their subtle differences can successfully fool the deep
+neural networks.  The observation is that deep neural networks are sensitive to
+these subtle differences.  As a result, an intuitive question is: whether it is
+possible to leverage the network's sensitivity to subtle differences to
+distinguish between adversarial and clean images?  In this work, we explore this
+intuition and demonstrate that a simple binary classifier can separate the
+adversarial from the original clean images with very high accuracy (over 99%).
+So the answer to the above question is /yes/.  However, we also notice that the
+binary classifier approach suffers from the /generalization issue./
+1. it is sensitive to hyper-parameters used in crafting adversarial images,
+   e.g., \epsilon in fast gradient method, and
+2. it is sensitive to different adversarial crafting algorithms.
+In other words, different algorithms will generate adversarial images that
+follow different distributions.  It is insufficient to train the classifier only
+on one type of adversarial samples.  In addition to that, we also discovered
+that this limitation is shared among other proposed defense methods against
+adversarial images, e.g., defensive
+training cite:huang2015-learning,kurakin2016-adversarial-examples, defensive
+knowledge distillation cite:papernot2015-distillation, etc.  We empirically
+investigate the limitation and propose the hypothesis that the adversarial and
+original dataset follow different distributions.
+
+Our key contributions are:
+1. We show that binary classifier can successfully separate adversarial from
+   clean samples.
+2. In addition, the binary classifier are robust to second-round adversarial
+   attack, in other words, it is difficult to bypass the classifier with
+   adversarial samples that fools the protected model.
+3. However, we also show that currently proposed defense methods, including our
+   binary classifier approach, does not generalize to adversarial samples from
+   different methods.
+
+This chapter is organized as follows.  In Section ref:sec:h2-related-work-50d6a,
+we give an overview of the current literature in generating and defending
+against adversarial images.  Then, it is followed by a brief summary of the
+state-of-the-art adversarial crafting algorithms in Section
+ref:sec:h2-generating-adversarial-images.  Section ref:sec:experiment presents
+our experiment results and detailed discussions.  And we conclude in Section
+ref:sec:conclusion.
+
+** Related Work
+:PROPERTIES:
+:CUSTOM_ID: sec:h2-related-work-50d6a
+:END:
+
+The adversarial image attack on deep neural networks was first investigated in
+cite:szegedy2013-intriguing.  The authors discovered that when added some
+imperceptible carefully chosen noise, an image may be wrongly classified with
+high confidence by a well-trained deep neural network.  They also proposed an
+adversarial crafting algorithm based on optimization.  We will briefly summarize
+it in section ref:sec:crafting-adversarials.  They also proposed the hypothesis
+that the adversarial samples exist as a result of the high nonlinearity of deep
+neural network models.
+
+However, cite:goodfellow2014-explaining proposed a counter-intuitive hypothesis
+explaining the cause of adversarial samples.  They argued that adversarial
+samples are caused by the models being too /linear/, rather than /nonlinear/.
+They proposed two adversarial crafting algorithms based on this hypothesis,
+i.e., fast gradient sign method (FGSM) and least-likely class method (LLCM)
+cite:goodfellow2014-explaining.  The least-likely class method is later
+generalized to target class gradient sign method (TGSM) in
+cite:kurakin2016-adversarial-examples.
+
+cite:papernot2015-limitations proposed another gradient based adversarial
+algorithm, the Jacobian-based saliency map approach (JSMA) which can
+successfully alter the label of an image to any desired category.
+
+The adversarial images have been shown to be transferable among deep neural
+networks cite:szegedy2013-intriguing,kurakin2016-adversarial.  This poses a
+great threat to current learning systems in that the attacker needs not the
+knowledge of the target system.  Instead, the attacker can train a different
+model to create adversarial samples which are still effective for the target
+deep neural networks.  What's worse, cite:papernot2016-transferability has shown
+that adversarial samples are even transferable among different machine learning
+techniques, e.g., deep neural networks, support vector machine, decision tree,
+logistic regression, etc.
+
+Small steps have been made towards the defense of adversarial images.
+cite:kurakin2016-adversarial shows that some image transformations, e.g.,
+Gaussian noise, Gaussian filter, JPEG compression, etc., can effectively recover
+over 80% of the adversarial images.  However, in our experiment, the image
+transformation defense does not perform well on images with low resolution,
+e.g., MNIST.  Knowledge distillation is also shown to be an effective method
+against most adversarial images cite:papernot2015-distillation.  The
+restrictions of defensive knowledge distillation are 1) that it only applies to
+models that produce categorical probabilities, and 2) that it needs model
+training.  Adversarial training
+cite:kurakin2016-adversarial-1,huang2015-learning was also shown to greatly
+enhance the model robustness to adversarials.  However, as discussed in Section
+ref:subsec:generalization-limitation, defensive distillation and adversarial
+training suffers from, what we call, the generalization limitations.  Our
+experiment suggests this seems to be an intrinsic property of adversarial
+datasets.
 
 ** Experiment
 :PROPERTIES:
@@ -585,6 +552,40 @@ The code to reproduce our experiment are available
 https://github.com/gongzhitaao/adversarial-classifier.
 
 *** Efficiency and Robustness of the Classifier
+
+
+# The following table belongs to the "Efficiency and Robustness of the
+# Classifier" section, place here only for typesetting.
+
+#+BEGIN_EXPORT latex
+\begin{table*}[htbp]
+  \caption{\label{tbl:accuracy-summary}
+    Accuracy on adversarial samples generated with FGSM/TGSM.}
+  \centering
+  \begin{tabular}{lcrrcrrrr}
+    \toprule
+    & \phantom{a} & \multicolumn{2}{c}{\(f_1\)} & \phantom{a} & \multicolumn{4}{c}{\(f_2\)} \\
+    \cmidrule{3-4} \cmidrule{6-9}
+    Dataset && \(X_{test}\) & \(X^{adv(f_1)}_{test}\) && \(X_{test}\) & \(X^{adv(f_1)}_{test}\) & \(\{X_{test}\}^{adv(f_2)}\) & \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) \\
+    \midrule
+    MNIST && 0.9914 & 0.0213 && 1.00 & 1.00 & 0.00 & 1.00\\
+    CIFAR10 && 0.8279 & 0.1500 && 0.99 & 1.00 & 0.01 & 1.00\\
+    SVHN && 0.9378 & 0.2453 && 1.00 & 1.00 & 0.00 & 1.00\\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+#+END_EXPORT
+
+#+CAPTION: Accuracy on adversarial samples generated with FGSM/TGSM.
+#+NAME: tbl:accuracy-summary
+#+ATTR_LaTeX: :booktabs true :align l|rr|rrrr :float multicolumn
+|         |      \(f_1\) |                         |              |                         |                     \(f_2\) |                                        |
+|---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
+| Dataset | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(\{X_{test}\}^{adv(f_2)}\) | \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) |
+|---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
+| MNIST   |       0.9914 |                  0.0213 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
+| CIFAR10 |       0.8279 |                  0.1500 |         0.99 |                    1.00 |                        0.01 |                                   1.00 |
+| SVHN    |       0.9378 |                  0.2453 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
 
 We evaluate the binary classifier approach on MNIST, CIFAR10, and SVHN datasets.
 Of all the datasets, the binary classifier achieved accuracy over 99% and was
@@ -748,9 +749,9 @@ adversarial crafting methods and its effect on the generated adversarial space.
 Second, we will also carefully examine the cause of adversarial samples since
 intuitively the linear hypothesis does not seem right to us.
 
-* Generating Adversarial Samples
+* Generate Text Adversarial Samples
 :PROPERTIES:
-:CUSTOM_ID: part:generate-adversarial-samples
+:CUSTOM_ID: chp:h1-generating-text-adversarial-samples
 :END:
 
 ** Introduction
@@ -1507,7 +1508,10 @@ misclassified by Inception-v3 also transfer to the AlexNet and ResNet-50 image
 classifiers trained on the same ImageNet dataset, respectively, and 75.5\%
 transfer to the YOLOv3 object detector trained on MS COCO.
 
-* Draft
+* Generate /Natural/ Adversarial Images
+:PROPERTIES:
+:CUSTOM_ID: chp:h1-generate-natural-adversarial-images
+:END:
 
 ** Introduction
 
@@ -3098,8 +3102,40 @@ Figure ref:fig:nearest_val_images).
 
 * Conclusion
 :PROPERTIES:
-:CUSTOM_ID: part:conclusion
+:CUSTOM_ID: chp:h1-conclusion
 :END:
+
+In this dissertation, we empirically study an emerging problem in machine
+learning community, i.e., the adversarial samples.  In our first work, we
+propose to build a binary classifier to separate the adversarial samples from
+the clean one.  This follows from the observation that the neural networks are
+sensitive to individual pixel values (which is why we have adversarial samples
+in the first place).  We demonstrate that the binary classifier approach could
+only successfully recognize the adversarial samples the are generated with the
+same adversarial method.  In other words, the classifier may not generalize
+well to adversarial samples generated with a different method or the same method
+with different set of hyper-parameters.  In our second work, we investigate the
+problem of generating text adversarial samples.  We propose a simple yet
+effective framework to generate adversarial texts.  In our framework, we first
+find potential adversarial texts in the embedding space, then use nearest
+neighbor to map back to the word space.  The limitation of our framework is that
+we do not have a explicit way of controlling the quality of generated texts.  In
+our third work, we show that adversarial samples for deep models exist in
+abundance in the natural world.  Instead of doing pixel-hacking in 2D images, we
+are fooling the network by rendering 3D objects in /non-canonical/ poses.  The
+reveals a more severe problem since many of the poses really do exists in real
+world.
+
+In this dissertation, we mainly focus on a /descriptive/-style of exploration,
+i.e., we empirically show that the problem exists widely without giving an
+explicit solution.  The prescriptive
+
+I would like to conclude my
+
+#+ATTR_LATEX: :width .7\textwidth
+#+CAPTION: A joke not easily understood by machine.
+#+NAME: fig:joke
+[[file:img/scale.png]]
 
 * References                                                         :ignore:
 
@@ -3108,9 +3144,6 @@ Figure ref:fig:nearest_val_images).
 * Footnotes
 
 [fn:1] https://github.com/gongzhitaao/adversarial-text
-
 [fn:2] https://github.com/spotify/annoy
-
 [fn:3] https://keras.io/
-
 [fn:4] http://www.daviddlewis.com/resources/testcollections/reuters21578/
