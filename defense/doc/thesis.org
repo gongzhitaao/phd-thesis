@@ -57,6 +57,7 @@
 #+LATEX_HEADER: \DeclareMathOperator{\argmin}{arg\,min}
 #+LATEX_HEADER: \DeclareMathOperator{\sign}{sign}
 #+LATEX_HEADER: \newcommand\pred[1]{\overline{#1}}
+#+LATEX_HEADER: \newcommand\adv[1]{\widetilde{#1}}
 #+LATEX_HEADER: \newcommand\given{\:\vert\:}
 #+LATEX_HEADER: \newcommand{\class}[1]{{\small\texttt{#1}}}
 
@@ -237,22 +238,6 @@ work cite:gong2017-adversarial.
 We investigate the adversarial phenomenon in the classification settings.  First
 we clarify the notations we are using in this work.
 
-** Notations
-
-Bold lowercase characters, \(\bm{x}\), represent a column vector, where \(x_i\)
-denotes its \(i\)-th component.
-
-#+begin_export latex
-\begin{equation}
-  \label{eq:adv}
-  \argmin_\delta f(x + \delta) \text{ where } f(x) \neq f(x + \delta)
-\end{equation}
-#+end_export
-
-We are interested to find a small perturbation that could be applied to the
-input such that the model would produce a different prediction from the origin
-input.
-
 ** Neural Networks
 
 Neural network is a system of artificial neurons which are connected in a
@@ -269,64 +254,108 @@ filters in the convolution network, \(f(X) = sum(M\bigotimes X)\) where
 #+NAME: fig:neuron
 [[file:img/neuron.pdf]]
 
-For binary classification, the output, that is usually squashed to \((0, 1)\) by
-a sigmoid function \(\frac{1}{1 + e^-x}\), is interpreted as the probability of
-belonging to a class.  For multi-label classification problem, The output is
-passed through a softmax layer \(y_i = e^{x_i}/\sum e^{x_i}\), where \(y_i\) is
-interpreted as the probability of belonging to the \(i\)-th category, and
-\(x_i\) is referred to as logit.
-
-** Adversarial Images
+* Adversarial Samples
 :PROPERTIES:
 :CUSTOM_ID: sec:h2-generating-adversarial-images
 :END:
 
-The are mainly two categories of algorithms to generate adversarial samples,
-model independent and model dependent.  We briefly summarize these two classes
-of methods in this section.
+In this chapter, we briefly survey some of the widely successful adversarial
+generating algorithms for generating adversarial images, adversarial texts
 
-By conventions, we use \(X\) to represent input image set (usually a 3-dimension
-tensor), and \(Y\) to represent the label set, usually one-hot encoded.
-Lowercase represents an individual data sample, e.g., \(x\) for one input image.
-Subscript to data samples denotes one of its elements, e.g., \(x_i\) denotes one
-pixel in the image, \(y_i\) denotes probability for the \(i\)-th target class.
-\(f\) denotes the model, \(\theta\) the model parameter, \(J\) the loss
-function.  We use the superscript /adv/ to denote adversarial related variables,
-e.g., \(x^{adv}\) for one adversarial image.  \(\delta x\) denotes the
-adversarial noise for one image, i.e., \(x^{adv} = x + \delta x\).  For clarity,
-we also include the model used to craft the adversarial samples where necessary,
-e.g., \(x^{adv(f_1)}\) denotes the adversarial samples created with model
-\(f_1\).  \(\mathbb{D}\) denotes the image value domain, usually \([0, 1]\) or
-\([0, 255]\).  And \(\epsilon\) is a scalar controlling the scale of the
-adversarial noise, another hyper-parameter to choose.
+** Notations
+:PROPERTIES:
+:CUSTOM_ID: sec:h3-notations
+:END:
 
-*** Model Independent Method
+In this section, we introduction some general notations we use in this
+dissertation.  Notations specific to one algorithm or certain part of the
+analysis are introduced in each section respectively.
 
-A box-constrained minimization algorithm based on L-BFGS was the first algorithm
-proposed to generate adversarial data cite:szegedy2013-intriguing.  Concretely
-we want to find the smallest (in the sense of \(L^2\)-norm) noise \(\delta x\)
-such that the adversarial image belongs to a different category, i.e.,
-\(f(x^{adv})\neq f(x)\).
-#+BEGIN_EXPORT latex
-\begin{equation} \label{eq:guided-walk}
-  \begin{split}
-    \delta x &= \argmin_r c\norm{r}_\infty + J(x+r, y^{adv})\\
-    &\text{ s.t. } x+r\in \mathbb{D}
-  \end{split}
+We denote a well-trained classifier by \(f: R^m \to \{1\dots k\}\) which maps a
+\(k\)-dimensional input vector to a discrete label set.  We denote the input by
+\(x \in R^m\), output \(\pred{y} \in [0, 1]^k\), i.e., \(\pred{y} = f(x)\).  The
+ground truth for \(x\) is denoted by \(y\).  Note that we usually have an
+probabilistic interpretation for the output \(y\).  if we have \(k=2\), i.e.,
+binary classification, then the output layer is usually a sigmoid function, and
+\(y\) represents the probability of \(x\) belonging to class 1.  If \(k > 2\),
+i.e., multi-label classification, the output layer is usually passed through a
+softmax function which generates a probability distribution over the labels,
+i.e., \sum_i y_i = 1.  And \(y_i\) (the \(i\)-th component of \(y\)) represents
+the probability of \(x\) belonging to \(i\)-th category.
+
+If we denote the predicted label for \(x\) by \(l_x\), then
+1. In the binary classification case\(l = 1\) if \(y > 0.5\) and 0 otherwise.
+2. In the multi-label classification case, \(l_x = \argmax_i\{y_i\}\).  In this
+   case, the label is usually represented by one-hot encoding.  For example if
+   \(k = 3\), and the true label for \(x\) is 1, then \(y = [0, 1, 0]\).
+Abusing the notation a little bit wherever the meaning is clear, we use \(f(x)
+\neq f(\adv{x})\) to denote that the model \(f\) predicts different labels for
+\(x\) and \(\adv{x}\).
+
+In addition, we assume that the classifier \(f\) is associated with a continuous
+loss function \(J(y, \pred{y})\).  Common choices for the loss function \(J\)
+are cross-entropy loss, mean squared error loss (MSE), etc.
+
+Although, for simplicity, we illustrate the adversarial algorithms with a vector
+as the input, the algorithms and their variants can be applied to tensor input
+as well, e.g., an image input of size \(W\times H\times C\).
+
+We use \(\delta x\) to denote the small perturbation found by the adversarial
+algorithms.  The adversarial sample for \(x\) is denoted by \(\adv{x} = x +
+\delta x\).  Some algorithms are targeted attack, i.e., allowing to change the
+prediction of \(\adv{x}\) to a user-defined label, which is denoted as
+\(\adv{y}\).
+
+** Problem Formulation
+:PROPERTIES:
+:CUSTOM_ID: sec:h3-problem-formulation
+:END:
+
+Generally speaking, we want to find a /small/ perturbation \(\delta x\) for an
+input \(x\) such that a well-trained classifier \(f\), that correctly predicts
+\(x\), will produce a wrong prediction for \(\adv{x}\), i.e., \(f(x) \neq
+f(\adv{x})\) (e.g., see ref:fig:mnistdemo).
+
+The above is a very broad definition, different algorithms may formulate the
+problem differently.  Note that for the definition of /small/, there is no hard
+criterion, nor a widely accepted measurement.  In literature, the \(L_1\)-,
+\(L_2\)-, \(L_{\infty}\)-norms are usually used as the measurement when
+generating and comparing different adversarial algorithms.  The general
+guideline is that the perturbed inputs \(\adv{x}\) should not interfere the
+judgment of human beings.
+
+** Generating Adversarial Images
+
+*** Constrained Optimization Approach
+
+cite:szegedy2013-intriguing first explored the adversarial images following a
+constrained optimization approach.  Concretely, the authors aims to minimize
+\(\|\delta x\|_2\) subject to
+1. \(f(x + \delta) = l\)
+2. \(x + \delta \in [0, 1]^m\)
+
+#+begin_quote
+The minimizer r might not be unique, but we denote one such x + r for an
+arbitrarily chosen minimizer by D(x, l). Informally, x + r is the closest image
+to x classified as l by f . Obviously, D(x, f (x)) = f (x), so this task is
+non-trivial only if f (x) 6 = l. In general, the exact computation of D(x, l) is
+a hard problem, so we approximate it by using a box-constrained
+L-BFGS. Concretely, we find an approximation of D(x, l) by performing
+line-search to find the minimum c > 0 for which the minimizer r of the following
+problem satisfies f (x + r) = l.
+#+end_quote
+
+*** Fast Gradient Method (FGM)
+
+cite:goodfellow2014-explaining proposes the original fast gradient sign method
+(FGSM) based on the hypothesis that /neural networks are too linear to resist
+linear adversarial perturbation/.  In FGSM, we have
+#+begin_export latex
+\begin{equation}
+  \label{eq:fgsm}
+  x^{adv} = x + \epsilon\sign\{\nabla_{x}L(x, y)\}
 \end{equation}
-#+END_EXPORT
-
-*** Model Dependent Methods
-
-There are mainly three methods that rely on model gradient, i.e., fast gradient
-sign method (FGSM) cite:kurakin2016-adversarial, target class method
-cite:kurakin2016-adversarial,kurakin2016-adversarial-1 (TGSM) and Jacobian-based
-saliency map approach (JSMA) cite:papernot2015-limitations.  We will see in
-Section ref:sec:experiment that despite that they all produce highly disguising
-adversarials, FGSM and TGSM produce /compatible/ adversarial datasets which are
-complete /different/ from adversarials generated via JSMA.
-
-**** Fast Gradient Sign Method (FGSM)
+#+end_export
 
 FGSM tries to modify the input towards the direction where \(J\) increases,
 i.e., \(\dv*{J(x, y^{adv})}{x}\), as shown in Equation ref:eq:fgsm.
@@ -356,7 +385,7 @@ cite:kurakin2016-adversarial.
 \end{equation}
 #+END_EXPORT
 
-**** Target Class Gradient Sign Method (TGSM)
+*** Target Class Gradient Sign Method (TGSM)
 
 This method tries to modify the input towards the direction where
 \(p(y^{adv}\given x)\) increases.
@@ -378,7 +407,7 @@ class predicted by the model as shown in Equation ref:eq:llcm-y.
 And it was extended to a more general case where \(y^{adv}\) could be any
 desired target class cite:kurakin2016-adversarial-1.
 
-**** Jacobian-based Saliency Map Approach (JSMA)
+*** Jacobian-based Saliency Map Approach (JSMA)
 
 Similar to the target class method, JSMA cite:papernot2015-limitations allows to
 specify the desired target class.  However, instead of adding noise to the whole
@@ -3161,7 +3190,7 @@ What machine cannot do
 5. It does not understand the relationships among objects, figures, etc.
 6. And the most important of all, it does not understand this joke.  Mr. Obama
    is tipping his weight on the scale to play a trick on the man on the scale.
-* References                                                         :ignore:
+* References
 
 #+LaTeX: \printbibliography
 
