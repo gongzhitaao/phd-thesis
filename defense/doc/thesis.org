@@ -11,8 +11,9 @@
 #+LATEX_CLASS_OPTIONS: [12pt, dvipsnames]
 #+LATEX_HEADER: \usepackage{auphd}
 #+LATEX_HEADER: \usepackage{afterpage}
-#+LATEX_HEADER: \usepackage{algorithmic}
-#+LATEX_HEADER: \usepackage{algorithm}
+# #+LATEX_HEADER: \usepackage{algorithmic}
+#+LATEX_HEADER: \usepackage{clrscode3e}
+# #+LATEX_HEADER: \usepackage{algorithm}
 #+LATEX_HEADER: \usepackage[backend=biber,style=alphabetic,citestyle=alphabetic]{biblatex}
 #+LATEX_HEADER: \usepackage{bm}
 #+LATEX_HEADER: \usepackage{booktabs}
@@ -254,17 +255,21 @@ filters in the convolution network, \(f(X) = sum(M\bigotimes X)\) where
 #+NAME: fig:neuron
 [[file:img/neuron.pdf]]
 
-* Adversarial Samples
+* Adversarial Images
 :PROPERTIES:
-:CUSTOM_ID: sec:h2-generating-adversarial-images
+:CUSTOM_ID: h1-adversarial-images
 :END:
 
-In this chapter, we briefly survey some of the widely successful adversarial
-generating algorithms for generating adversarial images, adversarial texts
+In this chapter, we briefly survey some of the successful adversarial generating
+algorithms for images.  These algorithms demonstrate the basic ideas on how to
+find adversarial samples (noises) for a specific model.  Adversarial algorithms
+in other domains (e.g., sentiment analysis, speech recognition) are generally
+variants of these algorithms, and will be surveyed in the following chapters
+where appropriate.
 
 ** Notations
 :PROPERTIES:
-:CUSTOM_ID: sec:h3-notations
+:CUSTOM_ID: h2-notations
 :END:
 
 In this section, we introduction some general notations we use in this
@@ -308,7 +313,7 @@ prediction of \(\adv{x}\) to a user-defined label, which is denoted as
 
 ** Problem Formulation
 :PROPERTIES:
-:CUSTOM_ID: sec:h3-problem-formulation
+:CUSTOM_ID: h2-problem-formulation
 :END:
 
 Generally speaking, we want to find a /small/ perturbation \(\delta x\) for an
@@ -317,120 +322,307 @@ input \(x\) such that a well-trained classifier \(f\), that correctly predicts
 f(\adv{x})\) (e.g., see ref:fig:mnistdemo).
 
 The above is a very broad definition, different algorithms may formulate the
-problem differently.  Note that for the definition of /small/, there is no hard
-criterion, nor a widely accepted measurement.  In literature, the \(L_1\)-,
-\(L_2\)-, \(L_{\infty}\)-norms are usually used as the measurement when
-generating and comparing different adversarial algorithms.  The general
-guideline is that the perturbed inputs \(\adv{x}\) should not interfere the
-judgment of human beings.
+problem in different ways.  Besides, regarding the definition of \(\delta x\)
+being /small/, there is no hard criterion, nor a widely accepted measurement.  In
+literature, the \(L_1\)-, \(L_2\)-, \(L_{\infty}\)-norms are usually used as the
+measurement when generating and comparing different adversarial algorithms.  The
+general guideline is that the perturbed inputs \(\adv{x}\) should not interfere
+the judgment of human beings.
 
 ** Generating Adversarial Images
+:PROPERTIES:
+:CUSTOM_ID: h2-generating-adversarial-images
+:END:
 
 *** Constrained Optimization Approach
+:PROPERTIES:
+:CUSTOM_ID: h3-constrained-optimization-approach
+:END:
 
 cite:szegedy2013-intriguing first explored the adversarial images following a
-constrained optimization approach.  Concretely, the authors aims to minimize
-\(\|\delta x\|_2\) subject to
-1. \(f(x + \delta) = l\)
-2. \(x + \delta \in [0, 1]^m\)
+constrained optimization formulation.  Concretely, the authors aim to
 
-#+begin_quote
-The minimizer r might not be unique, but we denote one such x + r for an
-arbitrarily chosen minimizer by D(x, l). Informally, x + r is the closest image
-to x classified as l by f . Obviously, D(x, f (x)) = f (x), so this task is
-non-trivial only if f (x) 6 = l. In general, the exact computation of D(x, l) is
-a hard problem, so we approximate it by using a box-constrained
-L-BFGS. Concretely, we find an approximation of D(x, l) by performing
-line-search to find the minimum c > 0 for which the minimizer r of the following
-problem satisfies f (x + r) = l.
-#+end_quote
+- Minimize \(\|\delta x\|_2\) subject to
+  1. \(f(\adv{x}) = l\)
+  2. \(\adv{x} \in [0, 1]^m\)
+
+Note that the task in this formulation is non-trivial only if \(l_{\adv{x}} \neq
+l_x\).  The second constraint guarantees that the \(\adv{x}\) is a valid image.
+There might exist many valid minimizers and the exact solution may be
+computationally prohibitive.  The authors proposed an approximation.
+
+- Minimize \(c\|\delta x\| + J(f(\adv{x}), \adv{y})\) subject to \(\adv{x} \in
+  [0, 1]^m\).
+
+Where the scale \(c\) is determined by line search.  And the optimization is
+done by L-BFGS algorithm.  The downside of this algorithm is that
+1. most optimization routines work only in unconstrained case, and
+2. the constrained optimization take longer.
+
+The Carlini-Wagner (CW) cite:carlini2016-towards uses a reparameterization trick
+to turn it into an unconstrained optimization.  See
+Section ref:h3-carlini-wagner-cw.
 
 *** Fast Gradient Method (FGM)
+:PROPERTIES:
+:CUSTOM_ID: h3-fast-gradient-method-fgm
+:END:
+
+Fast gradient method is a class of method that relies on the \(\nabla_{x}J\).
+
+**** Fast Gradient Sign Method (FGSM)
+:PROPERTIES:
+:CUSTOM_ID: h4-fast-gradient-sign-method-fgsm
+:END:
 
 cite:goodfellow2014-explaining proposes the original fast gradient sign method
 (FGSM) based on the hypothesis that /neural networks are too linear to resist
 linear adversarial perturbation/.  In FGSM, we have
 #+begin_export latex
 \begin{equation}
-  \label{eq:fgsm}
-  x^{adv} = x + \epsilon\sign\{\nabla_{x}L(x, y)\}
+  \label{eq:fgsm-leaking}
+  \adv{x} = x + \epsilon\sign\{\nabla_{x}J(x, y)\}
 \end{equation}
 #+end_export
 
-FGSM tries to modify the input towards the direction where \(J\) increases,
-i.e., \(\dv*{J(x, y^{adv})}{x}\), as shown in Equation ref:eq:fgsm.
-#+BEGIN_EXPORT latex
-\begin{equation} \label{eq:fgsm}
-  \delta x = \epsilon\sign\left(\dv{J(x, \pred{y})}{x}\right)
+Simply put, FGSM tries to modify the input towards the direction where the
+classification loss for this sample increases.  It is referred to as the /fast
+method/ in cite:kurakin2016-adversarial-examples.
+
+However, in Equation ref:eq:fgsm-leaking, the adversarial samples are generated
+with its true label \(y\), which is assumed not known during test.  This is
+known as the label leaking problem, pointed out in
+cite:kurakin2016-adversarial-machine.  They propose a revised version of FGSM,
+where the true label \(y\) is replaced by the /predicted/ label (i.e.,
+\(\pred{y}\)) when generating adversarial examples.  The revised FGSM is as
+follows.
+#+begin_export latex
+\begin{equation}
+  \label{eq:fgsm-revised}
+  \adv{x} = x + \epsilon\sign\{\nabla_{x}J(x, \pred{y})\}
 \end{equation}
-#+END_EXPORT
+#+end_export
 
-Originally cite:kurakin2016-adversarial proposes to generate adversarial samples
-by using the true label i.e., \(y^{adv} = y^{true}\), which has been shown to
-suffer from the label leaking problem cite:kurakin2016-adversarial-1.  Instead
-of true labels, cite:kurakin2016-adversarial-1 proposes to use the /predicted/
-label, i.e., \(\pred{y} = f(x)\), to generate adversarial examples.
+**** Fast Gradient Value Method (FGVM)
+:PROPERTIES:
+:CUSTOM_ID: h4-fast-gradient-value-method-fgvm
+:END:
 
-This method can also be used iteratively as shown in Equation ref:eq:fgsm-iter.
-Iterative FGSM has much higher success rate than the one-step FGSM.  However,
-the iterative version is less robust to image transformation
-cite:kurakin2016-adversarial.
-#+BEGIN_EXPORT latex
-\begin{equation} \label{eq:fgsm-iter}
-  \begin{split}
-    x^{adv}_{k+1} &= x^{adv}_k + \epsilon\sign\left(\dv{J(x^{adv}_k, \pred{y_k})}{x}\right)\\
-    x^{adv}_0 &= x\\
-    \pred{y_k} &= f(x^{adv}_k)
-  \end{split}
+A simple variant of FGSM is fast gradient value method
+(FGVM) cite:miyato2015-distributional, where gradient values are directly used
+when computing the noise, instead of the sign of gradients.
+#+begin_export latex
+\begin{equation}
+  \label{eq:fgvm}
+  \adv{x} = x + \epsilon\nabla_{x}J(x, \pred{y})
 \end{equation}
-#+END_EXPORT
+#+end_export
 
-*** Target Class Gradient Sign Method (TGSM)
+**** Iterative Fast Gradient Method
+:PROPERTIES:
+:CUSTOM_ID: h4-iterative-fast-gradient-method
+:END:
 
-This method tries to modify the input towards the direction where
-\(p(y^{adv}\given x)\) increases.
-#+BEGIN_EXPORT latex
-\begin{equation} \label{eq:tcm}
-    \delta x = -\epsilon\sign\left(\dv{J(x, y^{adv})}{x}\right)
+An intuitive way to extent FGSM is iterative FGSM.  The authors apply it
+multiple times with small step size, and clip pixel values of intermediate
+results after each step to ensure that they are in an \epsilon-neighborhood of
+the original image.  Concretely, we have
+#+begin_export latex
+\begin{equation}
+  \label{eq:fgsm-iter}
+  \adv{x}_0 = x,\qquad \adv{x}_{n+1} = \text{CLIP}_{x, \epsilon}\left\{\adv{x}_{n} + \alpha\sign\{\nabla_{\adv{x}_n}J(\adv{x}_n, f(\adv{x}_n))\}\right\}
 \end{equation}
-#+END_EXPORT
+#+end_export
 
-Originally this method was proposed as the least-likely class method
-cite:kurakin2016-adversarial where \(y^{adv}\) was chosen as the least-likely
-class predicted by the model as shown in Equation ref:eq:llcm-y.
-#+BEGIN_EXPORT latex
-\begin{equation} \label{eq:llcm-y}
-  y^{adv} = \text{OneHotEncode}\left(\argmin f(x)\right)
+**** Least-likely Class Method
+:PROPERTIES:
+:CUSTOM_ID: h4-least-likely-class-method
+:END:
+
+The variants of FGSM so far only increases the cost of correct class, without
+specifying a desired target class.  For classification task with finer labels
+(e.g., different breeds of dogs in ImageNet), the above method may create
+uninteresting adversarial samples.  In order to create more interesting
+misclassification, cite:kurakin2016-adversarial-examples proposes to modify the
+image towards the direction where the probability for the least-likely class is
+increased.  The least-likely is defined by
+#+begin_export latex
+\begin{equation}
+  \label{eq:least-likely-class}
+  y_{ll} = \argmin_i p(y_{i}\given x)
 \end{equation}
-#+END_EXPORT
+#+end_export
 
-And it was extended to a more general case where \(y^{adv}\) could be any
-desired target class cite:kurakin2016-adversarial-1.
+The intuition is that for a well-trained classifier, the least-likely class
+should be high different from the true class.  Concretely we have
+#+begin_export latex
+\begin{equation}
+  \label{eq:least-likely-class-method}
+  \adv{x}_0 = x,\qquad \adv{x}_{n+1} = \text{CLIP}_{x, \epsilon}\{\adv{x}_n \mathbin{\textcolor{red}{-}} \alpha\sign\{\nabla_{\adv{x}_n}J(\adv{x}_n, y_{ll})\}\}
+\end{equation}
+#+end_export
+
+Notice the minus sign in the above equation.  We want to increase the
+probability instead of decreasing it.  An easy extension to the least-likely
+class method is to use desired target class instead of the least-likely one.
+This is a more generalized version of this method.
 
 *** Jacobian-based Saliency Map Approach (JSMA)
+:PROPERTIES:
+:CUSTOM_ID: h3-jacobian-based-saliency-map-approach-jsma
+:END:
 
 Similar to the target class method, JSMA cite:papernot2015-limitations allows to
 specify the desired target class.  However, instead of adding noise to the whole
 input, JSMA changes only one pixel at a time.  A /saliency score/ is calculated
-for each pixel and pixel with the highest score is chosen to be perturbed.
+for each pixel where the pixel with the highest score is chosen to be perturbed.
 #+BEGIN_EXPORT latex
 \begin{equation} \label{eq:jsma-saliency}
   \begin{split}
-    s(x_i) &= \begin{cases}
+    s(i) &= \begin{cases}
       0 & \text{ if } s_t < 0 \text{ or } s_o > 0\\
-      s_t\abs{s_o} & \text{ otherwise}
+      s_t^{(i)}\abs{s_o^{(i)}} & \text{ otherwise}
     \end{cases}\\
-    s_t &= \pdv{y_t}{x_i}\qquad s_o = \sum_{j\neq t}\pdv{y_j}{x_i}
+    s_t^{(i)} &= \pdv{\adv{y}_t}{x_i}\qquad s_o^{(i)} = \sum_{k\neq t}\pdv{\adv{y}_k}{x_i}
   \end{split}
 \end{equation}
 #+END_EXPORT
 
-Concretely, \(s_t\) is the Jacobian value of the desired target class \(y_t\)
-w.r.t an individual pixel, \(s_o\) is the sum of Jacobian values of all
-non-target class.  Intuitively, saliency score indicates the sensitivity of each
-output class w.r.t each individual pixel.  And we want to perturb the pixel
-towards the direction where \(p(y_t\given x)\) increases the most.
+Where \(t\) denotes the target class, \(s_t\) is the Jacobian value of the
+desired target class \(y_t\) with regard to each individual pixel, \(s_o\) is
+the sum of Jacobian values of all non-target classes.  The authors hypothesis is
+that the saliency score indicates the sensitivity of each output class with
+regard to each individual pixel, or how much the probability for each class will
+change when we perturb a pixel.  With this information, we want to perturb the
+pixel towards the direction where \(p(\adv{y}_t\given x)\) increases the most.
 
+The pixel value is either increase to maximum (i.e., 1.0) or decreased to
+minimum (i.e., 0.0).
+
+In the paper, the authors calculate scores for pairs of pixels, instead of
+individual pixel.  The saliency score for a pixel pair is defined as
+#+begin_export latex
+\begin{equation}
+  \label{eq:saliency-score-pair}
+  s(i, j) = (s_t^{(i)} + s_t^{(j)})\times\abs{s_o^{(i)} + s_o^{(j)}}
+\end{equation}
+#+end_export
+
+The reason was that pixel pairs give better performance in practice.  However,
+note that the computation for pixel pairs is \(O(n^2)\) since we need to compute
+scores for every pixel pair.  In practice, JSMA may be slow for large images.
+
+There is also a small implementation detail.  In the original paper, the authors
+used logits, i.e., the values before the softmax layer to calculate the
+gradients.  However, in the distillation defense cite:papernot2015-distillation,
+the authors used the output of softmax layer to calculate the gradients.
+Despite this discrepancy, the two versions perform similarly.
+
+*** Carlini-Wagner (CW)
+:PROPERTIES:
+:CUSTOM_ID: h3-carlini-wagner-cw
+:END:
+
+Carlini-Wagner cite:carlini2016-towards method is a more friendly version of the
+constrained optimization method discussed
+in ref:h3-constrained-optimization-approach.  The problem was formulated as
+such.
+#+begin_export latex
+\begin{equation}
+  \label{eq:cw-origin}
+  \begin{aligned}
+    \text{minimize}\quad & D(x, \adv{x})\\
+    \text{subject to}\quad & f(\adv{x}) = \adv{y},\ \adv{x} \in [0, 1]^m
+  \end{aligned}
+\end{equation}
+#+end_export
+
+Where \(D\) is some distance metric, e.g., \(L_0\)-, \(L_2\)-,
+\(L_{\infty}\)-norm.  As discussed before, the problem with this formulation are
+the constraints.  The authors propose to optimize a delegate object function
+such that \(f(\adv{x}) = t\) if and only if \(g(\adv{x}) \leq 0\).  With this
+delegated object function, the original problem is formulated as such.
+#+begin_export latex
+\begin{equation}
+  \label{eq:cw-origin}
+  \begin{aligned}
+    \text{minimize}\quad & D(x, \adv{x})\\
+    \text{subject to}\quad & g(\adv{x}) \leq 0,\ \adv{x} \in [0, 1]^m
+  \end{aligned}
+\end{equation}
+#+end_export
+
+Which can be alternatively formulated as
+#+begin_export latex
+\begin{equation}
+  \label{eq:cw-origin}
+  \begin{aligned}
+    \text{minimize}\quad & D(x, \adv{x}) + cg(\adv{x})\\
+    \text{subject to}\quad & \adv{x} \in [0, 1]^m
+  \end{aligned}
+\end{equation}
+#+end_export
+
+Where \(c > 0\) is a /suitably chosen constant/.
+
+*** DeepFool
+:PROPERTIES:
+:CUSTOM_ID: h3-deepfool
+:END:
+
+DeepFool cite:moosavi-dezfooli2015-deepfool moves the data point along the
+direction to the nearest decision boundary.  The intuition is that if you move
+the data point just cross the decision boundary, you would be in principle
+create an adversarial with the minimum distortion.  Concretely we have
+#+begin_export latex
+\begin{equation}
+  \label{eq:deepfool}
+  \adv{x} = x + \epsilon r
+\end{equation}
+#+end_export
+
+Where \(r\) is the approximated vector to the nearest decision boundary,
+\(\epsilon\) is chosen to take a small value, e.g., 1.04.  In other words, \(x +
+r\) lies on the decision boundary, and \(x + \epsilon r\) is the point just
+across the decision boundary.  The \(r\) is calculated iteratively.
+#+begin_export latex
+\begin{codebox}
+  \Procname{$\proc{DeepFool}(f, x)$}
+  \li$x_0 \gets x$
+  \li$i \gets 0$
+  \li\While $l_{x_i} = l_x$
+  \li  \Do
+         \For $k \neq l_x$
+  \li      \Do
+             $a_k \gets \nabla f_k(x_i) - \nabla f_{l_x}(x_i)$
+  \li        $b_k \gets f_k(x_i) - f_{l_x}(x_i)$
+           \End
+  \li  $t \gets \argmin_{k\neq l_x} \frac{\abs{b_k}}{\|a_k\|_2}$
+  \li  $r_i \gets \frac{\abs{b_t}}{\|a_t\|_2} a_t$
+  \li  $x_{i + 1} \gets x_i + r_i$
+  \li  $i \gets i + 1$
+     \End
+  \li\Return $r \gets \sum r_i$
+\end{codebox}
+#+end_export
+
+In 2D dimension, \(\frac{a_t}{\|a_t\|_2}\) is the unit direction to the nearest
+decision boundary, and \(\abs{b_t}\) is the distance to the nearest decision
+boundary.  This, however, does not apply to higher dimensions.  The authors
+propose to workaround this problem by repeating this procedure until reaching
+the decision hyperplane.  It is rather difficult to reason that we will get to
+the decision hyperplane in the optimal direction.  In practice, however, we do
+get very subtle noise.
+
+*** Adversarial Transformation Network (ATN)
+:PROPERTIES:
+:CUSTOM_ID: h3-adversarial-transformation-network-atn
+:END:
+
+A complete different idea is proposed in cite:baluja2017-adversarial, i.e., the
+adversarial transformation network (ATN).  Instead of a routine-based approach
+where we repeat the procedure for each coming sample, the authors uses build a
+model mapping from the normal image to its corresponding adversarial sample.
 * Defend against Image Adversarial Samples
 :PROPERTIES:
 :CUSTOM_ID: chp:h1-defending-against-adversarial-samples
@@ -499,28 +691,6 @@ ref:sec:conclusion.
 :PROPERTIES:
 :CUSTOM_ID: sec:h2-related-work-50d6a
 :END:
-
-The adversarial image attack on deep neural networks was first investigated in
-cite:szegedy2013-intriguing.  The authors discovered that when added some
-imperceptible carefully chosen noise, an image may be wrongly classified with
-high confidence by a well-trained deep neural network.  They also proposed an
-adversarial crafting algorithm based on optimization.  We will briefly summarize
-it in section ref:sec:crafting-adversarials.  They also proposed the hypothesis
-that the adversarial samples exist as a result of the high nonlinearity of deep
-neural network models.
-
-However, cite:goodfellow2014-explaining proposed a counter-intuitive hypothesis
-explaining the cause of adversarial samples.  They argued that adversarial
-samples are caused by the models being too /linear/, rather than /nonlinear/.
-They proposed two adversarial crafting algorithms based on this hypothesis,
-i.e., fast gradient sign method (FGSM) and least-likely class method (LLCM)
-cite:goodfellow2014-explaining.  The least-likely class method is later
-generalized to target class gradient sign method (TGSM) in
-cite:kurakin2016-adversarial-examples.
-
-cite:papernot2015-limitations proposed another gradient based adversarial
-algorithm, the Jacobian-based saliency map approach (JSMA) which can
-successfully alter the label of an image to any desired category.
 
 The adversarial images have been shown to be transferable among deep neural
 networks cite:szegedy2013-intriguing,kurakin2016-adversarial.  This poses a
