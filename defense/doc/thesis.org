@@ -329,7 +329,59 @@ measurement when generating and comparing different adversarial algorithms.  The
 general guideline is that the perturbed inputs \(\adv{x}\) should not interfere
 the judgment of human beings.
 
-** Generating Adversarial Images
+** Overview of Generating Adversarial Images
+:PROPERTIES:
+:CUSTOM_ID: h2-overview-of-generating-adversarial-images
+:END:
+
+Generally speaking, the proposal methods in literature fall into two strategies,
+where the first one is to move data points around till its label changes, and
+the other one is to create a mapping between clean and adversarial samples (or
+noises).
+
+*** Move Data Points
+:PROPERTIES:
+:CUSTOM_ID: h3-move-data-points
+:END:
+
+Essentially, this class of methods move the data points a small step along a
+carefully chosen direction.  It has been shown that it is very unlikely to
+arrive at adversarial samples simple by a random
+walk cite:szegedy2013-intriguing.
+1. The direction may be where the loss of the clean samples increases, e.g.,
+   FGSM cite:goodfellow2014-explaining and its
+   variants cite:kurakin2016-adversarial-examples,kurakin2016-adversarial-machine,miyato2015-distributional.
+   It may also be the direction where the loss of adversarial samples decreases,
+   e.g., cite:szegedy2013-intriguing.
+2. The direction may also be where the probability of the correct label
+   decreases (or the probabilities of the target label increases), e.g.,
+   JSMA cite:papernot2015-limitations, CW cite:carlini2016-towards.
+3. It could also be the direction towards the decision boundary (e.g.,
+   DeepFool cite:moosavi-dezfooli2015-deepfool, one-pixel
+   attack cite:su2017-one) so that one tiny step across the boundary would
+   create an adversarial sample of a different category.
+
+*** Map Clean Samples to Adversarial
+:PROPERTIES:
+:CUSTOM_ID: h3-map-clean-samples-to-adversarial
+:END:
+
+This class of methods are relatively less explored.  Adversarial transformation
+network (ATN) cite:baluja2017-adversarial employs an autoencoder to generate
+adversarial samples or noises.  cite:xiao2018-generating,zhao2017-generating
+employs a generative model (i.e., GAN cite:goodfellow2014-generative) to map
+from clean samples to adversarial ones.  The advantages of this class of methods
+are
+#+BEGIN_EXPORT latex
+\begin{enumerate*}
+ \item that the generation is usually fast since only one pass of forward
+ computation is needed, and
+ \item that the adversarial sames may be of great diversity if a generative
+ network is used.
+\end{enumerate*}
+#+END_EXPORT
+
+** Case Studies: Generating Adversarial Images
 :PROPERTIES:
 :CUSTOM_ID: h2-generating-adversarial-images
 :END:
@@ -342,7 +394,7 @@ the judgment of human beings.
 cite:szegedy2013-intriguing first explored the adversarial images following a
 constrained optimization formulation.  Concretely, the authors aim to
 
-- Minimize \(\|\delta x\|_2\) subject to
+- Minimize \(\norm{\delta x}_2\) subject to
   1. \(f(\adv{x}) = l\)
   2. \(\adv{x} \in [0, 1]^m\)
 
@@ -351,8 +403,8 @@ l_x\).  The second constraint guarantees that the \(\adv{x}\) is a valid image.
 There might exist many valid minimizers and the exact solution may be
 computationally prohibitive.  The authors proposed an approximation.
 
-- Minimize \(c\|\delta x\| + J(f(\adv{x}), \adv{y})\) subject to \(\adv{x} \in
-  [0, 1]^m\).
+- Minimize \(c\norm{\delta x} + J(f(\adv{x}), \adv{y})\) subject to \(\adv{x}
+  \in [0, 1]^m\).
 
 Where the scale \(c\) is determined by line search.  And the optimization is
 done by L-BFGS algorithm.  The downside of this algorithm is that
@@ -597,8 +649,8 @@ across the decision boundary.  The \(r\) is calculated iteratively.
              $a_k \gets \nabla f_k(x_i) - \nabla f_{l_x}(x_i)$
   \li        $b_k \gets f_k(x_i) - f_{l_x}(x_i)$
            \End
-  \li  $t \gets \argmin_{k\neq l_x} \frac{\abs{b_k}}{\|a_k\|_2}$
-  \li  $r_i \gets \frac{\abs{b_t}}{\|a_t\|_2} a_t$
+  \li  $t \gets \argmin_{k\neq l_x} \frac{\abs{b_k}}{\norm{a_k}_2}$
+  \li  $r_i \gets \frac{\abs{b_t}}{\norm{a_t}_2} a_t$
   \li  $x_{i + 1} \gets x_i + r_i$
   \li  $i \gets i + 1$
      \End
@@ -606,7 +658,7 @@ across the decision boundary.  The \(r\) is calculated iteratively.
 \end{codebox}
 #+end_export
 
-In 2D dimension, \(\frac{a_t}{\|a_t\|_2}\) is the unit direction to the nearest
+In 2D dimension, \(\frac{a_t}{\norm{a_t}_2}\) is the unit direction to the nearest
 decision boundary, and \(\abs{b_t}\) is the distance to the nearest decision
 boundary.  This, however, does not apply to higher dimensions.  The authors
 propose to workaround this problem by repeating this procedure until reaching
@@ -623,6 +675,42 @@ A complete different idea is proposed in cite:baluja2017-adversarial, i.e., the
 adversarial transformation network (ATN).  Instead of a routine-based approach
 where we repeat the procedure for each coming sample, the authors uses build a
 model mapping from the normal image to its corresponding adversarial sample.
+Suppose we have a model \(g: x\to \adv{x}\), the model is trained by solving the
+following optimizations
+#+begin_export latex
+\begin{equation}
+  \label{eq:atn-loss}
+  L_g = \sum_{x_i\in\mathcal{X}}\beta L_{\mathcal{X}}(g(x_i), x_i) + L_{\mathcal{Y}}(f(g(x_i)), f(x_i))
+\end{equation}
+#+end_export
+
+Where the \(L_{\mathcal{X}}\) is a loss term in the input space, it encourages
+the adversarial image to be /close/ to the original one, e.g., \(L_2\) loss,
+perceptual similarity loss cite:johnson2016-perceptual, etc.  And
+\(L_{\mathcal{Y}}\) is a loss term in the output space of \(f\) that encourages
+misclassification of the \(\adv{x}\).  Concretely, \(L_{\mathcal{Y}}\) takes the
+form of
+#+begin_export latex
+\begin{equation}
+  \label{eq:atn-ly}
+  \begin{aligned}
+    L_{\mathcal{Y}} &= L_2(f(\adv{x}), r(f(x), t)) \\
+    r(y, t) &= \text{norm}{\left(
+      \begin{cases}
+        \alpha\max{y} & \text{ if } k = t\\
+        y_k & \text{ otherwise }\\
+      \end{cases}\right)}
+  \end{aligned}
+\end{equation}
+#+end_export
+
+Where \alpha is a hyper-parameter, \(r\) is referred to as the re-ranking
+function, which increases the probability of the target label \(t\) to \(\alpha
+\max{y}\) while keeping the other unchanged.  The /norm/ function normalizes the
+target \(\adv{y}\) to make sure that it is a valid probability distribution.
+Intuitively speaking, \(L_{\mathcal{Y}}\) increases the target label
+probability, while keeping the order and relative scale of all the probabilities
+for other labels.
 * Defend against Image Adversarial Samples
 :PROPERTIES:
 :CUSTOM_ID: chp:h1-defending-against-adversarial-samples
@@ -1054,55 +1142,6 @@ here, \(L_x\) denotes the loss with \(x\) as the input.
 #+CAPTION: Random MNIST adversarial images generated via different attacking algorithms.  The upper image in /Clean/ column is the original clean image.   The upper images in the following columns are adversarial images generated by the corresponding attacking algorithm based on the first clean image, respectively.  The lower image in each column is the difference between the adversarial image and the clean image, illustrated in heatmap.  Below each column is the label predicted by the target model, along with probability in parenthesis.
 #+NAME: fig:mnistdemo
 [[file:imgdemo.pdf]]
-
-*** Generate Adversarial Images
-:PROPERTIES:
-:CUSTOM_ID: h2-generate-adversarial-images-d136a
-:END:
-
-Generally speaking, the proposal methods in literature fall into two strategies,
-the first one is to move data points around till the label changes, and the
-other is to create a mapping between clean and adversarial samples (or noises).
-
-**** Move Data Points
-:PROPERTIES:
-:CUSTOM_ID: h3-move-data-points-9a4e4
-:END:
-
-Essentially, this class of methods move the data points along a carefully chosen
-direction.  It has been shown that it is very unlikely to arrive at adversarial
-samples following a random walk cite:szegedy2013-intriguing.
-1. The direction may be where the loss for clean samples increases, e.g.,
-   FGSM cite:goodfellow2014-explaining and its
-   variants cite:kurakin2016-adversarial,miyato2015-distributional,kurakin2016-adversarial),
-   or where the loss for adversarial samples decreases, e.g.,
-   cite:szegedy2013-intriguing.
-2. The direction may also be where the probability of the correct label
-   decreases (or the probabilities of the target label increases), e.g.,
-   JSMA cite:papernot2015-limitations, CW cite:carlini2016-towards.
-3. It could also be the direction towards the decision boundary (e.g.,
-   DeepFool cite:moosavi-dezfooli2015-deepfool, one-pixel
-   attack cite:su2017-one).
-
-**** Map Clean Samples to Adversarial
-:PROPERTIES:
-:CUSTOM_ID: h3-map-clean-samples-to-adversarial-b4e9b
-:END:
-
-This class of methods are relatively less explored.  Adversarial transformation
-network (ATN) cite:baluja2017-adversarial employs an autoencoder to generate
-adversarial samples or noises.  cite:xiao2018-generating,zhao2017-generating
-employs a generative model (i.e., GAN cite:goodfellow2014-generative) to map
-from clean samples to adversarial ones.  The advantages of this class of methods
-are
-#+BEGIN_EXPORT latex
-\begin{enumerate*}
- \item that the generation is usually fast since only one pass of forward
- computation is needed, and
- \item that the adversarial sames may be of great diversity if a generative
- network is used.
-\end{enumerate*}
-#+END_EXPORT
 
 *** Generate Adversarial Texts
 :PROPERTIES:
