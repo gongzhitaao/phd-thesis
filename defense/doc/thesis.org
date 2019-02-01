@@ -2,7 +2,7 @@
 #+AUTHOR: Zhitao Gong
 #+DATE: April 12, 2018
 
-#+KEYWORDS: Adversarial, Security, Deep Learning, Computer Vision, NLP
+#+KEYWORDS: Adversarial, Security, Deep Learning, Computer Vision, Natural Language Processing
 
 #+STARTUP: content hideblocks
 #+OPTIONS: toc:nil H:4
@@ -62,6 +62,8 @@
 #+LATEX_HEADER: \newcommand\given{\:\vert\:}
 #+LATEX_HEADER: \newcommand{\class}[1]{{\small\texttt{#1}}}
 
+#+MACRO: tex @@latex:$1@@
+
 #+LATEX_HEADER: \copyrightyear{2019}
 #+LATEX_HEADER: \keywords{Adversarial, Security, Deep Learning, Computer Vision, Natural Language Processing}
 #+LATEX_HEADER: \adviser{Dr. Wei-Shinn Ku}
@@ -75,7 +77,7 @@
 
 * Abstract                                                           :ignore:
 :PROPERTIES:
-:CUSTOM_ID: h1-abstract
+:CUSTOM_ID: h1-abstract-fc7de
 :END:
 
 #+BEGIN_abstract
@@ -105,7 +107,7 @@ to this problem when theories behind neural networks get matured.
 
 * Acknowledgments                                                    :ignore:
 :PROPERTIES:
-:CUSTOM_ID: h1-acknowledgments
+:CUSTOM_ID: h1-acknowledgments-874a8
 :END:
 
 #+BEGIN_acknowledgments
@@ -123,26 +125,35 @@ and snapshot queries, while I focus on Kalman filter and continuous queries.
 #+END_acknowledgments
 
 * Table of Contents                                                  :ignore:
+:PROPERTIES:
+:CUSTOM_ID: h1-table-of-d41be
+:END:
 
 #+LaTeX: \tableofcontents
 
 * List of Figures                                                    :ignore:
+:PROPERTIES:
+:CUSTOM_ID: h1-list-of-256b0
+:END:
 
 #+LaTeX: \listoffigures
 
 * List of Tables                                                     :ignore:
+:PROPERTIES:
+:CUSTOM_ID: h1-list-of-66513
+:END:
 
 #+LaTeX: \listoftables
 #+LaTeX: \afterpage{\setcounter{page}{0}\pagenumbering{arabic}}
 
 * Introduction
 :PROPERTIES:
-:CUSTOM_ID: part:h1-introduction
+:CUSTOM_ID: h1-introduction-90ee4
 :END:
 
 ** Problem Overview
 :PROPERTIES:
-:CUSTOM_ID: chp:h2-problem-overview
+:CUSTOM_ID: h2-problem-overview-00026
 :END:
 
 Artificial intelligence (AI) helps us in many challenging tasks, e.g., including
@@ -187,7 +198,7 @@ problem.
 
 ** Road Maps
 :PROPERTIES:
-:CUSTOM_ID: chp:h2-road-maps
+:CUSTOM_ID: h2-road-maps-ed6b1
 :END:
 
 In a series of work, we investigate both sides of the adversarial problem, i.e.,
@@ -195,7 +206,7 @@ generating adversarial samples and defending against adversarial samples.
 
 *** Generating Adversarial Samples
 :PROPERTIES:
-:CUSTOM_ID: sec:h3-generating-adversarial-samples
+:CUSTOM_ID: h3-generating-adversarial-aacb5
 :END:
 
 First, we propose a framework to generate text adversarial samples.  The
@@ -219,7 +230,7 @@ work cite:alcorn2018-strike.
 
 *** Defending against Adversarial Samples
 :PROPERTIES:
-:CUSTOM_ID: sec:h3-defending-against-adversarial-samples
+:CUSTOM_ID: h3-defending-against-abf7e
 :END:
 
 One observation from image adversarial samples is that the neural networks are
@@ -233,13 +244,16 @@ work cite:gong2017-adversarial.
 
 * Background
 :PROPERTIES:
-:CUSTOM_ID: chp:h1-background
+:CUSTOM_ID: h1-background-0e5ba
 :END:
 
 We investigate the adversarial phenomenon in the classification settings.  First
 we clarify the notations we are using in this work.
 
 ** Neural Networks
+:PROPERTIES:
+:CUSTOM_ID: h2-neural-networks-bd8c5
+:END:
 
 Neural network is a system of artificial neurons which are connected in a
 certain pattern.  Each neuron is simply a function, which takes some inputs and
@@ -257,7 +271,7 @@ filters in the convolution network, \(f(X) = sum(M\bigotimes X)\) where
 
 * Adversarial Images
 :PROPERTIES:
-:CUSTOM_ID: h1-adversarial-images
+:CUSTOM_ID: h1-adversarial-images-930fb
 :END:
 
 In this chapter, we briefly survey some of the successful adversarial generating
@@ -269,7 +283,7 @@ where appropriate.
 
 ** Notations
 :PROPERTIES:
-:CUSTOM_ID: h2-notations
+:CUSTOM_ID: h2-notations-8b5c5
 :END:
 
 In this section, we introduction some general notations we use in this
@@ -313,7 +327,7 @@ prediction of \(\adv{x}\) to a user-defined label, which is denoted as
 
 ** Problem Formulation
 :PROPERTIES:
-:CUSTOM_ID: h2-problem-formulation
+:CUSTOM_ID: h2-problem-formulation-26c12
 :END:
 
 Generally speaking, we want to find a /small/ perturbation \(\delta x\) for an
@@ -331,7 +345,7 @@ the judgment of human beings.
 
 ** Overview of Generating Adversarial Images
 :PROPERTIES:
-:CUSTOM_ID: h2-overview-of-generating-adversarial-images
+:CUSTOM_ID: h2-overview-of-f46d2
 :END:
 
 Generally speaking, the proposal methods in literature fall into two strategies,
@@ -341,7 +355,7 @@ noises).
 
 *** Move Data Points
 :PROPERTIES:
-:CUSTOM_ID: h3-move-data-points
+:CUSTOM_ID: h3-move-data-7a8f5
 :END:
 
 Essentially, this class of methods move the data points a small step along a
@@ -363,7 +377,7 @@ walk cite:szegedy2013-intriguing.
 
 *** Map Clean Samples to Adversarial
 :PROPERTIES:
-:CUSTOM_ID: h3-map-clean-samples-to-adversarial
+:CUSTOM_ID: h3-map-clean-03562
 :END:
 
 This class of methods are relatively less explored.  Adversarial transformation
@@ -383,12 +397,12 @@ are
 
 ** Case Studies: Generating Adversarial Images
 :PROPERTIES:
-:CUSTOM_ID: h2-generating-adversarial-images
+:CUSTOM_ID: h2-case-studies-c0472
 :END:
 
 *** Constrained Optimization Approach
 :PROPERTIES:
-:CUSTOM_ID: h3-constrained-optimization-approach
+:CUSTOM_ID: h3-constrained-optimization-98bf6
 :END:
 
 cite:szegedy2013-intriguing first explored the adversarial images following a
@@ -417,14 +431,14 @@ Section ref:h3-carlini-wagner-cw.
 
 *** Fast Gradient Method (FGM)
 :PROPERTIES:
-:CUSTOM_ID: h3-fast-gradient-method-fgm
+:CUSTOM_ID: h3-fast-gradient-678db
 :END:
 
 Fast gradient method is a class of method that relies on the \(\nabla_{x}J\).
 
 **** Fast Gradient Sign Method (FGSM)
 :PROPERTIES:
-:CUSTOM_ID: h4-fast-gradient-sign-method-fgsm
+:CUSTOM_ID: h4-fast-gradient-78b4b
 :END:
 
 cite:goodfellow2014-explaining proposes the original fast gradient sign method
@@ -457,7 +471,7 @@ follows.
 
 **** Fast Gradient Value Method (FGVM)
 :PROPERTIES:
-:CUSTOM_ID: h4-fast-gradient-value-method-fgvm
+:CUSTOM_ID: h4-fast-gradient-5cc42
 :END:
 
 A simple variant of FGSM is fast gradient value method
@@ -472,7 +486,7 @@ when computing the noise, instead of the sign of gradients.
 
 **** Iterative Fast Gradient Method
 :PROPERTIES:
-:CUSTOM_ID: h4-iterative-fast-gradient-method
+:CUSTOM_ID: h4-iterative-fast-46b34
 :END:
 
 An intuitive way to extent FGSM is iterative FGSM.  The authors apply it
@@ -488,7 +502,7 @@ the original image.  Concretely, we have
 
 **** Least-likely Class Method
 :PROPERTIES:
-:CUSTOM_ID: h4-least-likely-class-method
+:CUSTOM_ID: h4-least-likely-class-40545
 :END:
 
 The variants of FGSM so far only increases the cost of correct class, without
@@ -521,7 +535,7 @@ This is a more generalized version of this method.
 
 *** Jacobian-based Saliency Map Approach (JSMA)
 :PROPERTIES:
-:CUSTOM_ID: h3-jacobian-based-saliency-map-approach-jsma
+:CUSTOM_ID: h3-jacobian-based-saliency-0aa1e
 :END:
 
 Similar to the target class method, JSMA cite:papernot2015-limitations allows to
@@ -572,7 +586,7 @@ Despite this discrepancy, the two versions perform similarly.
 
 *** Carlini-Wagner (CW)
 :PROPERTIES:
-:CUSTOM_ID: h3-carlini-wagner-cw
+:CUSTOM_ID: h3-carlini-wagner-cw-ecad3
 :END:
 
 Carlini-Wagner cite:carlini2016-towards method is a more friendly version of the
@@ -619,7 +633,7 @@ Where \(c > 0\) is a /suitably chosen constant/.
 
 *** DeepFool
 :PROPERTIES:
-:CUSTOM_ID: h3-deepfool
+:CUSTOM_ID: h3-deepfool-947bd
 :END:
 
 DeepFool cite:moosavi-dezfooli2015-deepfool moves the data point along the
@@ -668,7 +682,7 @@ get very subtle noise.
 
 *** Adversarial Transformation Network (ATN)
 :PROPERTIES:
-:CUSTOM_ID: h3-adversarial-transformation-network-atn
+:CUSTOM_ID: h3-adversarial-transformation-d3305
 :END:
 
 A complete different idea is proposed in cite:baluja2017-adversarial, i.e., the
@@ -713,12 +727,12 @@ probability, while keeping the order and relative scale of all the probabilities
 for other labels.
 * Defend against Image Adversarial Samples
 :PROPERTIES:
-:CUSTOM_ID: chp:h1-defending-against-adversarial-samples
+:CUSTOM_ID: h1-defend-against-bf337
 :END:
 
 ** Introduction
 :PROPERTIES:
-:CUSTOM_ID: sec:h2-introduction-ab617
+:CUSTOM_ID: h2-introduction-832ea
 :END:
 
 # Adversarial attack has cast a shadow on the massive success of deep neural
@@ -777,7 +791,7 @@ ref:sec:conclusion.
 
 ** Related Work
 :PROPERTIES:
-:CUSTOM_ID: sec:h2-related-work-50d6a
+:CUSTOM_ID: h2-related-work-be7a7
 :END:
 
 The adversarial images have been shown to be transferable among deep neural
@@ -809,7 +823,7 @@ datasets.
 
 ** Experiment
 :PROPERTIES:
-:CUSTOM_ID: sec:h2-experiment-edc69
+:CUSTOM_ID: h2-experiment-12eaa
 :END:
 
 Generally, we follow the steps below to test the effectiveness and limitation of
@@ -839,6 +853,9 @@ The code to reproduce our experiment are available
 https://github.com/gongzhitaao/adversarial-classifier.
 
 *** Efficiency and Robustness of the Classifier
+:PROPERTIES:
+:CUSTOM_ID: h3-efficiency-and-6cc51
+:END:
 
 
 # The following table belongs to the "Efficiency and Robustness of the
@@ -899,7 +916,7 @@ ref:tbl:accuracy-summary are summarized as follows.
 
 *** Generalization Limitation
 :PROPERTIES:
-:CUSTOM_ID: subsec:generalization-limitation
+:CUSTOM_ID: h3-generalization-limitation-96e6b
 :END:
 
 Before we conclude too optimistic about the binary classifier approach
@@ -915,6 +932,9 @@ training cite:kurakin2016-adversarial-1,huang2015-learning and defensive
 distillation cite:papernot2015-distillation.
 
 **** Sensitivity to \epsilon
+:PROPERTIES:
+:CUSTOM_ID: h4-sensitivity-to-7d220
+:END:
 
 Table ref:tbl:eps-sensitivity-cifar10 summarizes our tests on CIFAR10.  For
 brevity, we use \(\eval{f_2}_{\epsilon=\epsilon_0}\) to denote that the
@@ -959,6 +979,9 @@ conclusion also applies to adversarial training.  In our experiment, the results
 of defensive training are similar to the binary classifier approach.
 
 **** Disparity among Adversarial Samples
+:PROPERTIES:
+:CUSTOM_ID: h4-disparity-among-6b08e
+:END:
 
 # #+ATTR_LaTeX: :float multicolumn
 # #+CAPTION: Adversarial training \cite{huang2015-learning,kurakin2016-adversarial-1} does not work.  This is a church window plot \cite{warde-farley2016-adversarial}.  Each pixel \((i, j)\) (row index and column index pair) represents a data point \(\tilde{x}\) in the input space and \(\tilde{x} = x + \vb{h}\epsilon_j + \vb{v}\epsilon_i\), where \(\vb{h}\) is the direction computed by FGSM and \(\vb{v}\) is a random direction orthogonal to \(\vb{h}\).  The \(\epsilon\) ranges from \([-0.5, 0.5]\) and \(\epsilon_{(\cdot)}\) is the interpolated value in between.  The central black dot \tikz[baseline=-0.5ex]{\draw[fill=black] (0,0) circle (0.3ex)} represents the original data point \(x\), the orange dot (on the right of the center dot) \tikz[baseline=-0.5ex]{\draw[fill=orange,draw=none] (0,0) circle (0.3ex)} represents the last adversarial sample created from \(x\) via FGSM that is used in the adversarial training and the blue dot \tikz[baseline=-0.5ex]{\draw[fill=blue,draw=none] (0,0) circle (0.3ex)} represents a random adversarial sample created from \(x\) that cannot be recognized with adversarial training. The three digits below each image, from left to right, are the data samples that correspond to the black dot, orange dot and blue dot, respectively.  \tikz[baseline=0.5ex]{\draw (0,0) rectangle (2.5ex,2.5ex)} ( \tikz[baseline=0.5ex]{\draw[fill=black,opacity=0.1] (0,0) rectangle (2.5ex,2.5ex)} ) represents the data samples that are always correctly (incorrectly) recognized by the model.  \tikz[baseline=0.5ex]{\draw[fill=red,opacity=0.1] (0,0) rectangle (2.5ex,2.5ex)} represents the adversarial samples that can be correctly recognized without adversarial training only.  And \tikz[baseline=0.5ex]{\draw[fill=green,opacity=0.1] (0,0) rectangle (2.5ex,2.5ex)} represents the data points that were correctly recognized with adversarial training only, i.e., the side effect of adversarial training.
@@ -1020,7 +1043,7 @@ easily.
 
 ** Conclusion
 :PROPERTIES:
-:CUSTOM_ID: sec:conclusion
+:CUSTOM_ID: h2-conclusion-54a32
 :END:
 
 We show in this paper that the binary classifier is a simple yet effective and
@@ -1038,12 +1061,12 @@ intuitively the linear hypothesis does not seem right to us.
 
 * Generate Text Adversarial Samples
 :PROPERTIES:
-:CUSTOM_ID: chp:h1-generating-text-adversarial-samples
+:CUSTOM_ID: h1-generate-text-2506d
 :END:
 
 ** Introduction
 :PROPERTIES:
-:CUSTOM_ID: h1-introduction-71377
+:CUSTOM_ID: h2-introduction-fdaa4
 :END:
 
 The phenomenon of adversarial samples was first discussed
@@ -1123,7 +1146,7 @@ paper and provide directions for future work in Section [[ref:h1-conclusion-276
 
 ** Related Work
 :PROPERTIES:
-:CUSTOM_ID: h1-related-work-81bde
+:CUSTOM_ID: h2-related-work-e4608
 :END:
 
 The phenomenon of adversarial samples was first discussed
@@ -1145,12 +1168,12 @@ here, \(L_x\) denotes the loss with \(x\) as the input.
 
 *** Generate Adversarial Texts
 :PROPERTIES:
-:CUSTOM_ID: h2-generate-adversarial-texts-f1b71
+:CUSTOM_ID: h3-generate-adversarial-59c34
 :END:
 
 **** Text-space Methods
 :PROPERTIES:
-:CUSTOM_ID: h3-text-space-method-e741b
+:CUSTOM_ID: h4-text-space-methods-5feba
 :END:
 
 This class of methods perturbs the input texts directly.  One disadvantage is
@@ -1178,7 +1201,7 @@ directly, two decisions need to be made:
 
 **** Transformed-space Methods
 :PROPERTIES:
-:CUSTOM_ID: h3-transformed-space-methods-76e1e
+:CUSTOM_ID: h4-transformed-space-methods-e3235
 :END:
 
 This class of methods first map text inputs to a smooth space and search for
@@ -1216,7 +1239,7 @@ predicted labels instead of the true ones to generate adversarial texts.
 
 ** Adversarial Text Framework
 :PROPERTIES:
-:CUSTOM_ID: h1-adversarial-text-framework-774a3
+:CUSTOM_ID: h2-adversarial-text-5ba48
 :END:
 
 In this section, we propose a general framework that generates adversarial texts
@@ -1224,6 +1247,9 @@ with adapted methods for adversarial images.  Our framework focuses on
 /replacing/ words.
 
 *** System Overview
+:PROPERTIES:
+:CUSTOM_ID: h3-system-overview-58747
+:END:
 
 Our system consists mainly of three parts, the embedding part, the adversarial
 generator, and the reverse embedding part.  The embedding part maps raw input
@@ -1232,7 +1258,7 @@ embedding vectors back to texts.
 
 *** Discrete Input Space
 :PROPERTIES:
-:CUSTOM_ID: h2-discrete-input-space-ed243
+:CUSTOM_ID: h3-discrete-input-658f1
 :END:
 
 The first problem we need to resolve is how we can accumulate small noise to
@@ -1266,7 +1292,7 @@ This framework builds upon the following observations.
 
 *** Word Mover's Distance (WMD)
 :PROPERTIES:
-:CUSTOM_ID: h2-word-movers-distance-wmd-eab60
+:CUSTOM_ID: h3-word-movers-14a32
 :END:
 
 For the second problem, we use two metrics to quantify the adversarial texts'
@@ -1282,7 +1308,7 @@ experiments, WMD is only good as a coarse-level metric.
 
 ** Experiment
 :PROPERTIES:
-:CUSTOM_ID: h1-experiment-2f800
+:CUSTOM_ID: h2-experiment-489c2
 :END:
 
 We evaluate our framework on three text classification problems.
@@ -1306,7 +1332,7 @@ which is well integrated into =gensim= cite:rek2010-software package.
 
 *** Dataset
 :PROPERTIES:
-:CUSTOM_ID: h2-dataset-ead0c
+:CUSTOM_ID: h3-dataset-485b1
 :END:
 
 We use three text datasets in our experiments.  The datasets are summarized in
@@ -1324,7 +1350,7 @@ clean test data.
 
 **** IMDB Movie Reviews
 :PROPERTIES:
-:CUSTOM_ID: h3-imdb-movie-reviews-a4a29
+:CUSTOM_ID: h4-imdb-movie-0daed
 :END:
 
 This is a dataset for binary sentiment classification cite:maas2011-learning.
@@ -1334,7 +1360,7 @@ dataset except that we truncate/pad all the sentences to a fixed maximum length.
 
 **** Reuters
 :PROPERTIES:
-:CUSTOM_ID: h3-reuters-5b0ea
+:CUSTOM_ID: h4-reuters-c9d98
 :END:
 
 This is a dataset of 11,228 newswires from Reuters, labeled over 90 topics.  We
@@ -1352,7 +1378,7 @@ datasets from it.
 
 ***** Reuters-2
 :PROPERTIES:
-:CUSTOM_ID: h4-reuters-2-6baa5
+:CUSTOM_ID: h5-reuters-2-f2769
 :END:
 
 It contains two most populous categories, i.e., =acq= and =earn=.  The =acq=
@@ -1366,7 +1392,7 @@ is set to 100.
 
 ***** Reuters-5
 :PROPERTIES:
-:CUSTOM_ID: h4-reuters-5-2388e
+:CUSTOM_ID: h5-reuters-5-97fbe
 :END:
 
 It contains five categories, i.e., =crude=, =grain=, =interest=, =money-fx= and
@@ -1376,7 +1402,7 @@ and 117 each for testing.  The maximum sentence length is set to 100.
 
 *** Embedding
 :PROPERTIES:
-:CUSTOM_ID: h2-embedding-ed890
+:CUSTOM_ID: h3-embedding-90783
 :END:
 
 Our framework relies heavily on the /size/ and /quality/ of the embedding space.
@@ -1389,7 +1415,7 @@ range of the word vectors are roughly \((-5.161, 5.0408)\).
 
 *** Model
 :PROPERTIES:
-:CUSTOM_ID: h2-model-f41fe
+:CUSTOM_ID: h3-model-d2279
 :END:
 
 In this work, we tested two commonly used architectures for sequence
@@ -1433,7 +1459,7 @@ suffixed with =-tanh=, e.g., =WordCNN-tanh=.
 
 *** Effectiveness and Quality Trade-off
 :PROPERTIES:
-:CUSTOM_ID: h2-effectiveness-and-quality-trade-off-811e9
+:CUSTOM_ID: h3-effectiveness-and-c7639
 :END:
 
 If the model's accuracy on the adversarial texts are lower, then we say the
@@ -1506,7 +1532,7 @@ correspondence between the measurements and the text quality.
 
 *** Transferability
 :PROPERTIES:
-:CUSTOM_ID: h2-transferability-4864c
+:CUSTOM_ID: h3-transferability-cfee9
 :END:
 
 We test the transferability of adversarial texts generated on word-level models
@@ -1553,7 +1579,7 @@ few words with =<unk>= is not enough to fool the word-level model.
 
 *** Defense
 :PROPERTIES:
-:CUSTOM_ID: h2-defense-6a50e
+:CUSTOM_ID: h3-defense-ee5d5
 :END:
 
 #+ATTR_LaTeX: :width .5\textwidth
@@ -1575,7 +1601,7 @@ corrected by auto-spelling applications.
 
 *** COMMENT Results on Word-Level Model
 :PROPERTIES:
-:CUSTOM_ID: h2-results-on-word-level-model-b3fb0
+:CUSTOM_ID: h3-results-on-80512
 :END:
 
 #+BEGIN_EXPORT latex
@@ -1644,7 +1670,7 @@ highlighted respectively to aid reading.
 
 **** Fast Gradient Sign Method (FGSM)
 :PROPERTIES:
-:CUSTOM_ID: h3-fast-gradient-method-56aea
+:CUSTOM_ID: h4-fast-gradient-47b25
 :END:
 
 #+ATTR_LaTeX: :width \textwidth
@@ -1654,7 +1680,7 @@ highlighted respectively to aid reading.
 
 **** Fast Gradient Value Method (FGVM)
 :PROPERTIES:
-:CUSTOM_ID: h3-fast-gradient-value-method-fgvm-d99a9
+:CUSTOM_ID: h4-fast-gradient-fadb4
 :END:
 
 #+ATTR_LaTeX: :width \textwidth
@@ -1669,7 +1695,7 @@ change only a few words to alter the label of the whole text piece.
 
 *** Results on Character-level Model
 :PROPERTIES:
-:CUSTOM_ID: h2-results-on-character-level-model-da172
+:CUSTOM_ID: h3-results-on-3fefd
 :END:
 
 #+ATTR_LaTeX: :width \textwidth
@@ -1695,7 +1721,7 @@ character-level model plays an important role.
 
 *** COMMENT Discussion
 :PROPERTIES:
-:CUSTOM_ID: h2-discussion-45d4e
+:CUSTOM_ID: h3-discussion-c8a09
 :END:
 
 In contrary to the experiment in cite:liang2017-deep, our framework generates
@@ -1716,7 +1742,7 @@ in practice.
 
 ** Conclusion
 :PROPERTIES:
-:CUSTOM_ID: h1-conclusion-2763d
+:CUSTOM_ID: h2-conclusion-da841
 :END:
 
 In this work, we propose a general framework to generate adversarial texts.  In
@@ -1748,53 +1774,54 @@ transfer to the YOLOv3 object detector trained on MS COCO.
 
 * Generate /Natural/ Adversarial Images
 :PROPERTIES:
-:CUSTOM_ID: h1-generate-natural-adversarial-images
+:CUSTOM_ID: h1-generate-natural-32d95
 :END:
+
+#+ATTR_LaTeX: :width .7\textwidth
+#+CAPTION: The Google Inception-v3 classifier cite:szegedy2016-rethinking correctly labels the canonical poses of objects (a), but fails to recognize out-of-distribution images of objects in unusual poses (b-d), including real photographs retrieved from the Internet (d).  The left 3 by 3 images (a-c) are found by our framework and rendered via a 3D renderer.  Below each image are its top-1 predicted label and confidence score.
+#+NAME: fig:teaser
+file:teaser.pdf
 
 ** Introduction
 :PROPERTIES:
-:CUSTOM_ID: h2-introduction
+:CUSTOM_ID: h2-introduction-560f1
 :END:
 
-For real-world technologies, such as self-driving cars
-cite:chen2015-deepdriving, autonomous drones cite:gandhi2017-learning, and
-search-and-rescue robots cite:sampedro2018-fully, the test distribution may be
+For real-world technologies, such as self-driving
+cars cite:chen2015-deepdriving, autonomous drones cite:gandhi2017-learning, and
+search-and-rescue robots cite:sampedro2018-fully, the test distribution may be
 non-stationary, and new observations will often be out-of-distribution (OoD),
-i.e., not from the training distribution cite:sugiyama2017-dataset.
+i.e., not from the training distribution cite:sugiyama2017-dataset.
 
 However, machine learning (ML) models frequently assign wrong labels with high
-confidence to OoD examples, such as adversarial examples
-cite:szegedy2013-intriguing,nguyen2014-deep inputs specially crafted by an
-adversary to cause a target model to misbehave.  But ML models are also
-vulnerable to /natural/ OoD examples
-cite:lambert2016-understanding,grabar2018-uber,tian2018-deeptest,times2016-tesla.
+confidence to OoD examples, such as adversarial
+examples cite:szegedy2013-intriguing,nguyen2014-deep inputs specially crafted by
+an adversary to cause a target model to misbehave.  But ML models are also
+vulnerable to /natural/ OoD
+examples cite:lambert2016-understanding,grabar2018-uber,tian2018-deeptest,times2016-tesla.
 For example, when a Tesla autopilot car failed to recognize a white truck
 against a bright-lit sky, an unusual view that might be OoD, it crashed into the
-truck, killing the driver cite:times2016-tesla.
-
-#+ATTR_LaTeX: :width .6\textwidth
-#+CAPTION: The Google Inception-v3 classifier \cite{szegedy2016rethinking} correctly labels the canonical poses of objects (a), but fails to recognize out-of-distribution images of objects in unusual poses (b-d), including real photographs retrieved from the Internet (d).  The left 3x3 images (a-c) are found by our framework and rendered via a 3D renderer.  Below each image are its top-1 predicted label and confidence score.
-#+NAME: fig:teaser
-file:imgdemo.pdf
+truck, killing the driver cite:times2016-tesla.
 
 To understand such natural Type II classification errors, we searched for 6D
 poses (i.e., 3D translations and 3D rotations) of 3D objects that caused DNNs to
 misclassify.
 
 Our results reveal that state-of-the-art image classifiers and object detectors
-trained on large-scale image datasets
-cite:russakovsky2015-imagenet,lin2014-microsoft misclassify most poses for many
-familiar training-set objects.  For example, DNNs predict the front view of a
-school bus, an object in the ImageNet dataset cite:russakovsky2015-imagenet,
-extremely well (Figure ref:fig:teaser (a)) but fail to recognize the same object
-when it is too close or flipped over, i.e., in poses that are OoD yet exist in
-the real world (Figure ref:fig:teaser (d)).
+trained on large-scale image
+datasets cite:russakovsky2015-imagenet,lin2014-microsoft misclassify most poses
+for many familiar training-set objects.  For example, DNNs predict the front
+view of a school bus, an object in the ImageNet
+dataset cite:russakovsky2015-imagenet, extremely well (Figure ref:fig:teaser
+(a)) but fail to recognize the same object when it is too close or flipped over,
+i.e., in poses that are OoD yet exist in the real world (Figure ref:fig:teaser
+(d)).
 
 Addressing this type of OoD error is a non-trivial challenge.  First, objects on
-roads may appear in an infinite variety of poses
-cite:times2016-tesla,grabar2018-uber.  Second, these OoD poses come from known
-objects and should be assigned known labels rather than being rejected as
-unknown objects cite:hendrycks2017-baseline,scheirer2013-toward.  Moreover, a
+roads may appear in an infinite variety of
+poses cite:times2016-tesla,grabar2018-uber.  Second, these OoD poses come from
+known objects and should be assigned known labels rather than being rejected as
+unknown objects cite:hendrycks2017-baseline,scheirer2013-toward.  Moreover, a
 self-driving car needs to correctly estimate at least some attributes of an
 incoming, unknown object (instead of simply rejecting it) to handle the
 situation gracefully and minimize damage.
@@ -1815,8 +1842,8 @@ an object.  Our main findings are:
 1. ImageNet classifiers only correctly label 3.09% of the entire 6D pose space
    of a 3D object, and misclassify many generated adversarial examples (AXs)
    that are human-recognizable (Figure ref:fig:teaser (b-c)).  A
-   misclassification can be found via a change as small as 10.31\textdegree,
-   8.02\textdegree, and 9.17\textdegree to the yaw, pitch, and roll,
+   misclassification can be found via a change as small as 10.31\textdegree{},
+   8.02\textdegree{}, and 9.17\textdegree{} to the yaw, pitch, and roll,
    respectively.
 2. 99.9% and 99.4% of AXs generated against Inception-v3 transfer to the AlexNet
    and ResNet-50 image classifiers, respectively, and 75.5% transfer to the
@@ -1831,91 +1858,100 @@ to improve DNN robustness through adversarial training with many more 3D
 objects, we hypothesize that future ML models capable of visual reasoning may
 instead benefit from strong 3D geometry priors.
 
+This chapter is organized as follows.  We provide our framework details in
+Section ref:h2-framework-02f71. The experiments and discussion are provided in
+Section ref:h2-experiments-and-791c7.  We also provide details on our methods
+against the adversarial training defense in
+Section ref:h2-adversarial-training-df0cc.  Related work are discussed in
+Section ref:h2-related-work-0f1d4.  We then conclude this chapter in
+Section ref:h2-discussion-and-00cc0.
+
+** Framework
+:PROPERTIES:
+:CUSTOM_ID: h2-framework-02f71
+:END:
+
 #+CAPTION: To test a target DNN, we build a 3D scene (a) that consists of 3D objects (here, a school bus and a pedestrian), lighting, a background scene, and camera parameters. Our 3D renderer renders the scene into a 2D image, which the image classifier labels \class{school bus}.  We can estimate the pose changes of the school bus that cause the classifier to misclassify by (1) approximating gradients via finite differences; or (2) back-propagating (\textcolor{red}{red dashed line} dashed line) through a differentiable renderer.
 #+NAME: fig:concept
 file:concept.pdf
 
-** Framework
-:PROPERTIES:
-:CUSTOM_ID: h2-framework
-:END:
-
 *** Problem formulation
 :PROPERTIES:
-:CUSTOM_ID: h3-problem-formulation
+:CUSTOM_ID: h3-problem-formulation-1ec7f
 :END:
 
 Let \(f\) be an image classifier that maps an image \(\x \in \R^{H\times W\times
-C}\) onto a softmax probability distribution over 1000 output classes
-cite:szegedy2016-rethinking.
+C}\) onto a softmax probability distribution over 1000 output
+classes cite:szegedy2016-rethinking.
 
 Let \(R\) be a 3D renderer that takes as input a set of parameters \(\phi\) and
 outputs a render, i.e., a 2D image \(R(\phi) \in \R^{H\times W\times C}\) (see
 Figure ref:fig:concept).  Typically, \(\phi\) is factored into mesh vertices
 \(V\), texture images \(T\), a background image \(B\), camera parameters \(C\),
-and lighting parameters \(L\), i.e., \(\phi = \{V, T, B, C, L\}\)
-cite:kato2018-neural.  To change the 6D pose of a given 3D object, we apply a
-set of 3D rotations and 3D translations, parameterized by \(\w \in \R^6\), to
-the original vertices \(V\), yielding a new set of vertices \(V^*\).  Here, we
-wish to estimate only the pose transformation parameters \(\w\) (while keeping
-all parameters in \(\phi\) fixed) such that the rendered image \(R(\w;\phi)\)
-causes the classifier \(f\) to assign the highest probability (among all
+and lighting parameters \(L\), i.e., \(\phi = \{V, T, B, C,
+L\}\) cite:kato2018-neural.  To change the 6D pose of a given 3D object, we
+apply a set of 3D rotations and 3D translations, parameterized by \(\w \in
+\R^6\), to the original vertices \(V\), yielding a new set of vertices \(V^*\).
+Here, we wish to estimate only the pose transformation parameters \(\w\) (while
+keeping all parameters in \phi fixed) such that the rendered image \(R(\w;
+\phi)\) causes the classifier \(f\) to assign the highest probability (among all
 outputs) to an incorrect target output at index \(t\).  Formally, we attempt to
 solve the below optimization problem:
 #+begin_export latex
 \begin{equation}
-  \label{eq:min}
+  \label{eq:w2-optim}
   \w^* = \argmax_{\w}(f_t(R(\w; \phi)))
 \end{equation}
 #+END_EXPORT
 
 In practice, we minimize the cross-entropy loss \(\LL\) for the target class.
-E.q. ref:eq:min may be solved efficiently via backpropagation if both \(f\) and
-\(R\) are differentiable, i.e., we are able to compute \(\partial
-\LL/\partial\w\).  However, standard 3D renderers, e.g., OpenGL
-cite:woo1999-opengl, typically include many non-differentiable operations and
-cannot be inverted cite:marschner2015-fundamentals.  Therefore, we attempted two
-approaches:
+Equation ref:eq:w2-optim may be solved efficiently via backpropagation if both
+\(f\) and \(R\) are differentiable, i.e., we are able to compute \(\partial
+\LL/\partial\w\).  However, standard 3D renderers, e.g.,
+OpenGL cite:woo1999-opengl, typically include many non-differentiable operations
+and cannot be inverted cite:marschner2015-fundamentals.  Therefore, we attempted
+two approaches:
 1. harnessing a recently proposed differentiable renderer and performing
    gradient descent using its analytical gradients; and
 2. harnessing a non-differentiable renderer and approximating the gradient via
    finite differences.
 
-We will next describe the target classifier (Sec.~\ref{sec:target_dnn}), the
-renderers (Sec.~\ref{sec:renderers}), and our dataset of 3D objects
-(Sec.~\ref{sec:3d_object_dataset}) before discussing the optimization methods
-(Sec.~\ref{sec:methods}).
+We will next describe the target classifier in
+Section ref:h3-classification-networks-0a76a.  Section ref:h3-3d-renderers-4fcbe
+provides details on the 3D renderers we are using.  Our own dataset of 3D
+objects are introduced in Section ref:h3-3d-object-a1f23.  Then we discuss
+the optimization methods in Section ref:h3-methods-29ddb.
 
 *** Classification Networks
 :PROPERTIES:
-:CUSTOM_ID: h3-classification-networks
+:CUSTOM_ID: h3-classification-networks-0a76a
 :END:
 
 We chose the well-known, pre-trained Google
-Inception-v3 cite:szegedy2016-rethinking DNN from the PyTorch model zoo
-cite:pytorch2018-pytorch as the main image classifier for our study (the default
-DNN if not otherwise stated).  The DNN has a 77.45% top-1 accuracy on the
-ImageNet ILSVRC 2012 dataset cite:russakovsky2015-imagenet of 1.2 million images
-corresponding to 1,000 categories.
+Inception-v3 cite:szegedy2016-rethinking DNN from the PyTorch model
+zoo cite:pytorch2018-pytorch as the main image classifier for our study (the
+default DNN if not otherwise stated).  The DNN has a 77.45% top-1 accuracy on
+the ImageNet ILSVRC 2012 dataset cite:russakovsky2015-imagenet of 1.2 million
+images corresponding to 1,000 categories.
 
 *** 3D Renderers
 :PROPERTIES:
-:CUSTOM_ID: h3-3d-renderers
+:CUSTOM_ID: h3-3d-renderers-4fcbe
 :END:
 
 **** Non-differentiable Renderer (NR)
 :PROPERTIES:
-:CUSTOM_ID: h4-non-differentiable-renderer-nr
+:CUSTOM_ID: h4-non-differentiable-renderer-53f11
 :END:
 
-We chose ModernGL cite:dombi2019-moderngl as our non-differentiable renderer.
+We chose ModernGL cite:dombi2019-moderngl as our non-differentiable renderer.
 ModernGL is a simple Python interface for the widely used OpenGL graphics
 engine.  ModernGL supports fast, GPU-accelerated rendering.  This renderer is
 referred as NR hereafter.
 
 **** Differentiable Renderer (DR)
 :PROPERTIES:
-:CUSTOM_ID: h4-differentiable-renderer-dr
+:CUSTOM_ID: h4-differentiable-renderer-7829e
 :END:
 
 To enable backpropagation through the non-differentiable rasterization process,
@@ -1926,25 +1962,25 @@ renderer parameters \phi, the render quality is lower than that of our
 non-differentiable renderer (see Figure ref:fig:compare_tessellation for a
 comparison).  This renderer is referred as DR hereafter.
 
-** 3D Object Dataset
+*** 3D Object Dataset
 :PROPERTIES:
-:CUSTOM_ID: h2-3d-object-dataset
+:CUSTOM_ID: h3-3d-object-a1f23
 :END:
 
-*** Construction
+**** Construction
 :PROPERTIES:
-:CUSTOM_ID: h3-construction
+:CUSTOM_ID: h4-construction-5ca01
 :END:
 
 Our main dataset consists of 30 unique 3D object models (purchased from many 3D
 model marketplaces) corresponding to 30 ImageNet classes relevant to a traffic
 environment (Figure ref:fig:dataset_A).  The 30 classes include 20 vehicles
-(e.g., \class{school bus} and \class{cab}) and 10 street-related items (e.g.,
-\class{traffic light}).  See Sec.~\ref{sec:SI_3d_object_dataset} for more
+(e.g., {{{tex(\class{school bus})}}} and {{{tex(\class{cab})}}}) and 10 street-related items (e.g.,
+{{{tex(\class{traffic light})}}}).  See Sec.~\ref{sec:SI_3d_object_dataset} for more
 details.
 
 Each 3D object is represented as a mesh, i.e., a list of triangular faces, each
-defined by three vertices \cite{marschner2015-fundamentals}.  The 30 meshes have
+defined by three vertices cite:marschner2015-fundamentals.  The 30 meshes have
 on average 9,908 triangles (Table ref:tab:num_triangles).  To maximize the
 realism of the rendered images, we used only 3D models that have high-quality 2D
 image textures.  We did not choose 3D models from public datasets, e.g.,
@@ -1952,9 +1988,9 @@ ObjectNet3D cite:xiang2016-objectnet3d, because most of them do not have
 high-quality image textures.  That is, the renders of such models may be
 correctly classified by DNNs but still have poor realism.
 
-*** Evaluation
+**** Evaluation
 :PROPERTIES:
-:CUSTOM_ID: h3-evaluation
+:CUSTOM_ID: h4-evaluation-cc25d
 :END:
 
 We recognize that a reality gap will often exist between a render and a real
@@ -1971,7 +2007,7 @@ We sampled 12 views per set by starting the object at a 10\textdegree{} yaw and
 generating a render at every 30\textdegree{} yaw-rotation.  Across all objects
 and all renders, the Inception-v3 top-1 accuracy was 83.23% (compared to 77.45%
 on ImageNet images cite:szegedy2016-rethinking) with a mean top-1 confidence
-score of 0.78 (Table~\ref{tab:avg_accuracy_30obj}).  See
+score of 0.78 (Table ref:tab:avg_accuracy_30obj).  See
 Sec.~\ref{sec:SI_3d_object_dataset} for more details.  Second, we qualitatively
 evaluated the renders by comparing them to real photos.  We produced 56 (real
 photo, render) pairs via three steps:
@@ -1986,9 +2022,9 @@ Figure ref:fig:dataset_B shows example (real photo, render) pairs.  While
 discrepancies can be spotted in our side-by-side comparisons, we found that most
 of the renders passed our human visual Turing test if presented alone.
 
-*** Background Images
+**** Background Images
 :PROPERTIES:
-:CUSTOM_ID: h3-background-images
+:CUSTOM_ID: h4-background-images-e1fb1
 :END:
 
 Previous studies have shown that image classifiers may be able to correctly
@@ -2003,34 +2039,41 @@ Note that the presence of a non-empty background should not alter our main
 qualitative findings in this paper, adversarial poses can be easily found
 against real background photos (Figure ref:fig:teaser).
 
-** Methods
+*** Methods
 :PROPERTIES:
-:CUSTOM_ID: h2-methods
+:CUSTOM_ID: h3-methods-29ddb
 :END:
 
-We will describe the common pose transformations (Sec.~ref:sec:transformations)
-used in the main experiments.  We were able to experiment with non-gradient
-methods because: (1) the pose transformation space \(\R^6\) that we optimize in
-is fairly low-dimensional; and (2) although the NR is non-differentiable, its
-rendering speed is several orders of magnitude faster than that of DR.  In
-addition, our preliminary results showed that the objective function considered
-in Equation ref:eq:min is highly non-convex (see Figure ref:fig:landscape),
-therefore, it is interesting to compare (1) random search vs.  (2) gradient
-descent using finite-difference (FD) approximated gradients vs.  (3) gradient
-descent using the DR gradients.
+We will describe the common pose transformations
+(Section ref:h4-pose-transformations-72971) used in the main experiments.  We
+were able to experiment with non-gradient methods because:
+#+begin_export latex
+\begin{enumerate*}[label=(\roman*)]
+\item the pose transformation space \(\R^6\) that we optimize in is fairly
+  low-dimensional; and
+\item although the NR is non-differentiable, its rendering speed is several
+  orders of magnitude faster than that of DR.
+\end{enumerate*}
+#+end_export
+In addition, our preliminary results showed that the objective function
+considered in Equation ref:eq:w2-optim is highly non-convex (see
+Figure ref:fig:landscape), therefore, it is interesting to compare random search
+vs. gradient descent using finite-difference (FD), approximated gradients
+vs. gradient descent using the DR gradients.
 
-*** Pose transformations
+**** Pose Transformations
 :PROPERTIES:
-:CUSTOM_ID: h3-pose-transformations
+:CUSTOM_ID: h4-pose-transformations-72971
 :END:
 
 We used standard computer graphics transformation matrices to change the pose of
 3D objects \cite{marschner2015-fundamentals}.  Specifically, to rotate an object
 with geometry defined by a set of vertices \(V = \{v_i\}\), we applied the
-linear transformations in Equation ref:eq:rot to each vertex \(v_{i} \in \R^3\):
+linear transformations in Equation ref:eq:w2-rot to each vertex \(v_{i} \in
+\R^3\):
 #+begin_export latex
 \begin{equation}
-  \label{eq:rot}
+  \label{eq:w2-rot}
   v_{i}^{R} = R_{y}R_{p}R_{r}v_{i}
 \end{equation}
 #+END_EXPORT
@@ -2039,9 +2082,9 @@ where \(R_{y}\), \(R_{p}\), and \(R_{r}\) are the \(3\times 3\) rotation
 matrices for yaw, pitch, and roll, respectively (the matrices can be found in
 Sec.~\ref{sec:trans-mat}).
 
-We then translated the rotated object by adding a vector \(T = \begin{bmatrix}
-x_{\delta} & y_{\delta} & z_{\delta} \end{bmatrix}^\top\) to each vertex:
-\[v_{i}^{R,T} = T + v_{i}^{R}\]
+We then translated the rotated object by adding a vector \(T = \lbrack
+x_{\delta}\; y_{\delta}\; z_{\delta}\rbrack^\top\) to each vertex: \[v_{i}^{R,T} =
+T + v_{i}^{R}\]
 
 In all experiments, the center \(c \in \R^3\) of the object was constrained to
 be inside a sub-volume of the camera viewing frustum.  That is, the \(x\)-,
@@ -2050,8 +2093,8 @@ be inside a sub-volume of the camera viewing frustum.  That is, the \(x\)-,
 \(c\) within the camera frame.  Specifically, \(s\) is defined as:
 #+begin_export latex
 \begin{equation}
-  \label{eq:max_trans}
-  s = d \cdot\tan(\theta_{v})
+  \label{eq:w2:max_trans}
+  s = d \cdot\tan\theta_{v}
 \end{equation}
 #+END_EXPORT
 
@@ -2059,23 +2102,23 @@ where \(\theta_{v}\) is one half the camera's angle of view (i.e.,
 \(8.213\degree\) in our experiments) and \(d\) is the absolute value of the
 difference between the camera's \(z\)-coordinate and \(z_{\delta}\).
 
-*** Random Search
+**** Random Search
 :PROPERTIES:
-:CUSTOM_ID: h3-random-search
+:CUSTOM_ID: h4-random-search-7e295
 :END:
 
 In reinforcement learning problems, random search (RS) can be surprisingly
 effective compared to more sophisticated methods cite:such2017-deep.  For our RS
 procedure, instead of iteratively following some approximated gradient to solve
-the optimization problem in Equation ref:eq:min, we simply randomly selected a
-new pose in each iteration.  The rotation angles for the matrices in
-Equation ref:eq:rot were uniformly sampled from \((0, 2\pi)\).  \(x_{\delta}\),
-\(y_{\delta}\), and \(z_{\delta}\) were also uniformly sampled from the ranges
-defined in Sec.~\ref{sec:transformations}.
+the optimization problem in Equation ref:eq:w2-optim, we simply randomly
+selected a new pose in each iteration.  The rotation angles for the matrices in
+Equation ref:eq:w2-rot were uniformly sampled from \((0, 2\pi)\).
+\(x_{\delta}\), \(y_{\delta}\), and \(z_{\delta}\) were also uniformly sampled
+from the ranges defined in Sec.~\ref{sec:transformations}.
 
-*** \(z_{\delta}\)-constrained Random Search
+**** \(z_{\delta}\)-constrained Random Search
 :PROPERTIES:
-:CUSTOM_ID: h3-z_delta-constrained-random-search
+:CUSTOM_ID: h4-z_delta-constrained-random-998e8
 :END:
 
 Our preliminary RS results suggest the value of \(z_{\delta}\) (which is a proxy
@@ -2090,11 +2133,17 @@ When using ZRS for initialization, the parameter set with the maximum target
 probability was selected as the starting point.  When using the procedure as an
 attack method, we first gathered the maximum target probabilities for each
 \(z_{\delta}\), and then selected the best two \(z_{\delta}\) to serve as the
-new range for RS.  \subsection{Gradient descent with finite-difference}
-\label{sec:fd} We calculated the first-order derivatives via finite central
-differences and performed vanilla gradient descent to iteratively minimize the
-cross-entropy loss \(\LL\) for a target class.  That is, for each parameter
-\(\w_{i}\), the partial derivative is approximated by:
+new range for RS.
+
+**** Gradient descent with finite-difference
+:PROPERTIES:
+:CUSTOM_ID: h4-gradient-descent-9b773
+:END:
+
+We calculated the first-order derivatives via finite central differences and
+performed vanilla gradient descent to iteratively minimize the cross-entropy
+loss \(\LL\) for a target class.  That is, for each parameter \(\w_{i}\), the
+partial derivative is approximated by:
 #+begin_export latex
 \begin{equation}
   \label{eq:fd}
@@ -2106,52 +2155,41 @@ Although we used an \(h\) of 0.001 for all parameters, a different step size can
 be used per parameter.  Because radians have a circular topology (i.e., a
 rotation of 0 radians is the same as a rotation of \(2\pi\) radians, \(4\pi\)
 radians, etc.), we parameterized each rotation angle \(\theta_i\) as
-\((\cos(\theta_i), \sin(\theta_i))\), a technique commonly used for pose
+\((\cos\theta_i, \sin\theta_i)\), a technique commonly used for pose
 estimation cite:osadchy2005-synergistic and inverse
 kinematics cite:choi1992-inverse, which maps the Cartesian plane to angles via
 the \(atan2\) function.  Therefore, we optimized in a space of \(3 + 2 \times 3
 = 9\) parameters.  The approximate gradient \(\nabla \LL\) obtained from
-Equation~eqref:eq:fd served as the gradient in our gradient descent.  We used
+Equation eqref:eq:fd served as the gradient in our gradient descent.  We used
 the vanilla gradient descent update rule:
 \[\w \coloneqq \w - \gamma{\nabla \LL}(\w)\]
 
-with a learning rate \(\gamma\) of 0.001 for all parameters and optimized for
-\(100\) steps (no other stopping criteria).
+with a learning rate \gamma of 0.001 for all parameters and optimized for 100
+steps (no other stopping criteria).
 
 ** Experiments and Results
 :PROPERTIES:
-:CUSTOM_ID: h2-experiments-and-results
+:CUSTOM_ID: h2-experiments-and-791c7
 :END:
 
 *** Neural Networks Are Easily Confused by Object Rotations and Translations
 :PROPERTIES:
-:CUSTOM_ID: h3-neural-networks-are-easily-confused-by-object-rotations-and-translations
+:CUSTOM_ID: h3-neural-networks-7ea9f
 :END:
 
-#+begin_export latex
-\begin{figure}[h]
-  \begin{subfigure}{\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{high_conf_params.pdf}
-    \caption{Incorrect classifications}\label{fig:high_conf_params}
-  \end{subfigure}
-  \begin{subfigure}{\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{high_conf_correct_params.pdf}
-    \caption{Correct classifications}\label{fig:high_conf_correct_params}
-  \end{subfigure}
-  \caption{The distributions of individual pose parameters for (a)
-    high-confidence (\(p \geq 0.7\)) incorrect classifications and (b) correct
-    classifications obtained from the random sampling procedure described in
-    Sec.~\ref{sec:random_search}.  \(x_{\delta}\) and \(y_{\delta}\) have been
-    normalized w.r.t.\ their corresponding \(s\) from
-    Equation \eqref{eq:max_trans}.}\label{fig:param_distributions}
-\end{figure}
-#+end_export
+#+ATTR_LATEX: :width .7\textwidth
+#+CAPTION: The distributions of individual pose parameters for high-confidence (\(p \geq 0.7\)) incorrect classifications.  \(x_{\delta}\) and \(y_{\delta}\) have been normalized w.r.t. their corresponding \(s\) from Equation eqref:eq:w2:max_trans.
+#+NAME: fig:param_dist_wrong
+[[file:high_conf_params.pdf]]
+
+#+ATTR_LATEX: :width .7\textwidth
+#+CAPTION: The distributions of individual pose parameters for high-confidence (\(p \geq 0.7\)) correct  classifications obtained from the random sampling procedure described in Section ref:h4-random-search-7e295.  \(x_{\delta}\) and \(y_{\delta}\) are also normalized as well.
+#+NAME: fig:param_dist_correct
+[[file:high_conf_correct_params.pdf]]
 
 **** Experiment
 :PROPERTIES:
-:CUSTOM_ID: h4-experiment
+:CUSTOM_ID: h4-experiment-0ede3
 :END:
 
 To test DNN robustness to object rotations and translations, we used RS to
@@ -2168,24 +2206,27 @@ the \medium lighting setting.
 
 **** Misclassifications Uniformly Cover the Pose Space
 :PROPERTIES:
-:CUSTOM_ID: h4-misclassifications-uniformly-cover-the-pose-space
+:CUSTOM_ID: h4-misclassifications-uniformly-ea346
 :END:
 
 For each object, we calculated the DNN accuracy (i.e., percent of correctly
 classified samples) across all three lighting settings
-(Table~\ref{tab:sampling_stats}).
+(Table ref:tab:sampling_stats).
 
 The DNN was wrong for the vast majority of samples, i.e., the median percent of
 correct classifications for all 30 objects was only 3.09%.  Moreover,
 high-confidence misclassifications (\(p \geq 0.7\)) are largely uniformly
-distributed across every pose parameter (Figure ref:fig:high_conf_params), i.e.,
+distributed across every pose parameter (Figure ref:fig:param_dist_wrong), i.e.,
 AXs can be found throughout the parameter landscape (see Figure ref:fig:30_ax
 for examples).  In contrast, correctly classified examples are highly
 multi-modal w.r.t. the rotation axis angles and heavily biased towards
 \(z_{\delta}\) values that are closer to the camera
-(Figure ref:fig:high_conf_correct_params).
+(Figure ref:fig:param_dist_correct).
 
 **** An Object Can Be Misclassified As Many Different Labels
+:PROPERTIES:
+:CUSTOM_ID: h4-an-object-53cfa
+:END:
 
 Previous research has shown that it is relatively easy to produce AXs
 corresponding to many different classes when optimizing input images
@@ -2194,61 +2235,61 @@ which are very high-dimensional.  When finding adversarial poses, one might
 expect---because all renderer parameters, including the original object geometry
 and textures, are held constant---the success rate to depend largely on the
 similarities between a given 3D object and examples of the target in ImageNet.
-Interestingly, across our 30 objects, RS discovered \(990/1000\) different
-ImageNet classes (132 of which were shared between all objects).  When only
-considering high-confidence (\(p \geq 0.7\)) misclassifications, our 30 objects
-were still misclassified into \(797\) different classes with a median number of
-240 incorrect labels found per object (see
-Figure ref:fig:common_failures_per_label and Figure ref:fig:tsne_img_ax for
-examples).  Across all adversarial poses and objects, DNNs tend to be more
-confident when correct than when wrong (the median of median probabilities were
-0.41 vs.  0.21, respectively).
+Interestingly, across our 30 objects, RS discovered 990/1000 different ImageNet
+classes (132 of which were shared between all objects).  When only considering
+high-confidence (\(p \geq 0.7\)) misclassifications, our 30 objects were still
+misclassified into 797 different classes with a median number of 240 incorrect
+labels found per object (see Figure ref:fig:common_failures_per_label and
+Figure ref:fig:tsne_img_ax for examples).  Across all adversarial poses and
+objects, DNNs tend to be more confident when correct than when wrong (the median
+of median probabilities were 0.41 vs. 0.21, respectively).
 
 #+begin_export latex
-\begin{figure}[h]
-  \begin{subfigure}{\linewidth}
-    \includegraphics[width=0.92\linewidth]{firetruck01_49_roll_pitch.pdf}
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[t]{0.57\textwidth}
+    \includegraphics[width=\linewidth]{firetruck01_49_roll_pitch.pdf}
     \caption{}\label{fig:fire_truck_roll_pitch}
   \end{subfigure}
-  \begin{subfigure}{\linewidth}
+  \begin{subfigure}[t]{0.41\linewidth}
     \centering
-    \includegraphics[width=0.85\linewidth]{firetruck01_49_collage.pdf}
+    \includegraphics[width=\linewidth]{firetruck01_49_collage.pdf}
     \caption{}\label{fig:fire_truck_pitch_roll_collage}
   \end{subfigure}
-  \caption{ Inception-v3's ability to correctly classify images is highly
-    localized in the rotation and translation parameter space.  (a) The
+  \caption{Inception-v3's ability to correctly classify images is highly
+    localized in the rotation and translation parameter space.  (a) shows the
     classification landscape for a fire truck object when altering
     \(\theta_{r}\) and \(\theta_{p}\) and holding
     \((x_{\delta}, y_{\delta}, z_{\delta}, \theta_{y})\) at
-    \((0, 0, -3, \frac{\pi}{4})\).  Light regions correspond to correct
+    \((0, 0, -3, \frac{\pi}{4})\), where light regions correspond to correct
     classifications while dark regions correspond to incorrect classifications.
-    Green and red circles indicate correct and incorrect classifications,
-    respectively, corresponding to the fire truck object poses found in (b).
-  }\label{fig:landscape}
+    \textcolor{green}{Green} and \textcolor{red}{red} dots indicate correct and
+    incorrect classifications, respectively, corresponding to the fire truck
+    object poses in (b).}\label{fig:landscape}
 \end{figure}
 #+end_export
 
 *** Common object classifications are shared across different lighting settings
 :PROPERTIES:
-:CUSTOM_ID: h3-common-object-classifications-are-shared-across-different-lighting-settings
+:CUSTOM_ID: h3-common-object-8d959
 :END:
 
 Here, we analyze how our results generalize across different lighting
-conditions.  From the data produced in Sec.~\ref{sec:easily_confused}, for each
-object, we calculated the DNN accuracy under each lighting setting.  Then, for
-each object, we took the absolute difference of the accuracies for all three
-lighting combinations (i.e., \bright vs.~\medium, \bright vs.~\dark, and \medium
-vs.~\dark) and recorded the maximum of those values.  The median /maximum
+conditions.  From the data produced in Section ref:h3-neural-networks-7ea9f for
+each object, we calculated the DNN accuracy under each lighting setting.  Then,
+for each object, we took the absolute difference of the accuracies for all three
+lighting combinations (i.e., \bright vs. \medium, \bright vs. \dark, and \medium
+vs. \dark) and recorded the maximum of those values.  The median /maximum
 absolute difference/ of accuracies for all objects was 2.29% (compared to the
 median accuracy of 3.09% across all lighting settings).  That is, DNN accuracy
 is consistently low across all lighting conditions.  Lighting changes would not
 alter the fact that DNNs are vulnerable to adversarial poses.  We also recorded
 the 50 most frequent classes for each object under the different lighting
-settings (\(S_{b}\), \(S_{m}\), and \(S_{d}\)).  Then, for each object, we
-computed the intersection over union score \(o_{S}\) for these sets:
-\[o_{S} = 100 \cdot \frac{|S_{b} \cap S_{m} \cap S_{d}|}{|  S_{b} \cup S_{m} \cup S_{d} |}\]
+settings (\(S_b\), \(S_m\), and \(S_d\)).  Then, for each object, we computed
+the intersection over union score \(o_S\) for these sets: \[o_S = 100 \times
+\frac{\abs{S_b \bigcap S_m \bigcap S_d}}{\abs{S_b \bigcup S_m \bigcup S_d}}\]
 
-The median \(o_{S}\) for all objects was 47.10%.  That is, for 15 out of 30
+The median \(o_S\) for all objects was 47.10%.  That is, for 15 out of 30
 objects, 47.10% of the 50 most frequent classes were shared across lighting
 settings.  While lighting does have an impact on DNN misclassifications (as
 expected), the large number of shared labels across lighting settings suggests
@@ -2257,58 +2298,57 @@ regardless of lighting.
 
 *** Correct Classifications Are Highly Localized in the Rotation and Translation Landscape
 :PROPERTIES:
-:CUSTOM_ID: h3-correct-classifications-are-highly-localized-in-the-rotation-and-translation-landscape
+:CUSTOM_ID: h3-correct-classifications-830c8
 :END:
 
 To gain some intuition for how Inception-v3 responds to rotations and
 translations of an object, we plotted the probability and classification
-landscapes for paired parameters (e.g., Figure ref:fig:landscape, pitch vs.
-roll) while holding the other parameters constant.  We qualitatively observed
-that the DNN's ability to recognize an object (e.g., a fire truck) in an image
-varies radically as the object is rotated in the world
+landscapes for paired parameters (e.g., Figure ref:fig:landscape, pitch
+vs. roll) while holding the other parameters constant.  We qualitatively
+observed that the DNN's ability to recognize an object (e.g., a fire truck) in
+an image varies radically as the object is rotated in the world
 (Figure ref:fig:landscape).
 
 **** Experiment
 :PROPERTIES:
-:CUSTOM_ID: h4-experiment
+:CUSTOM_ID: h4-experiment-5c1d9
 :END:
 
 To quantitatively evaluate the DNN's sensitivity to rotations and translations,
 we tested how it responded to single parameter disturbances.  For each object,
 we randomly selected 100 distinct starting poses that the DNN had correctly
 classified in our random sampling runs.  Then, for each parameter (e.g., yaw
-rotation angle), we randomly sampled 100 new
-values\footnote{\label{note:sampling}using the random sampling procedure
-described in Sec.~\ref{sec:random_search}} while holding the others constant.
-For each sample, we recorded whether or not the object remained correctly
-classified, and then computed the failure (i.e., misclassification) rate for a
-given (object,~parameter) pair.  Plots of the failure rates for all
-(object,~parameter) combinations can be found in Figure ref:fig:sensitivity.
-Additionally, for each parameter, we calculated the median of the median failure
-rates.  That is, for each parameter, we first calculated the median failure rate
-for all objects, and then calculated the median of those medians for each
-parameter.  Further, for each (object,~starting pose,~parameter) triple, we
-recorded the magnitude of the smallest parameter change that resulted in a
-misclassification.  Then, for each (object,~parameter) pair, we recorded the
-median of these minimum values.  Finally, we again calculated the median of
-these medians across objects (Table~\ref{tab:fail_rates}).
+rotation angle), we randomly sampled 100 new values[fn:5] while holding the
+others constant.  For each sample, we recorded whether or not the object
+remained correctly classified, and then computed the failure (i.e.,
+misclassification) rate for a given (object, parameter) pair.  Plots of the
+failure rates for all (object, parameter) combinations can be found in
+Figure ref:fig:sensitivity.  Additionally, for each parameter, we calculated the
+median of the median failure rates.  That is, for each parameter, we first
+calculated the median failure rate for all objects, and then calculated the
+median of those medians for each parameter.  Further, for each (object, starting
+pose, parameter) triple, we recorded the magnitude of the smallest parameter
+change that resulted in a misclassification.  Then, for each (object, parameter)
+pair, we recorded the median of these minimum values.  Finally, we again
+calculated the median of these medians across objects
+(Table ref:tab:fail_rates).
 
 **** Results
 :PROPERTIES:
-:CUSTOM_ID: h4-results
+:CUSTOM_ID: h4-results-141e3
 :END:
 
-As can be seen in Table~\ref{tab:fail_rates}, the DNN is highly sensitive to all
+As can be seen in Table ref:tab:fail_rates, the DNN is highly sensitive to all
 single parameter disturbances, but it is especially sensitive to disturbances
-along the depth (\(z_{\delta}\)), pitch (\(\theta_{p}\)), and roll
-(\(\theta_{r}\)).  Note that a change in rotation as small as \(8.02\degree\)
-can cause an object to be misclassified (see Table~\ref{tab:fail_rates}).  We
-also observed that correctly classified poses are highly similar while
-misclassified poses are diverse by comparing two t-SNE plots of these two sets
-of poses (Figure ref:fig:tsne_img_correct vs. Figure ref:fig:tsne_img_ax).
+along the depth (\(z_{\delta}\)), pitch (\(\theta_p\)), and roll (\(\theta_r\)).
+Note that a change in rotation as small as 8.02\textdegree{} can cause an object
+to be misclassified (refer to Table ref:tab:fail_rates).  We also observed that
+correctly classified poses are highly similar while misclassified poses are
+diverse by comparing two t-SNE plots of these two sets of poses
+(Figure ref:fig:tsne_img_correct vs. Figure ref:fig:tsne_img_ax).
 
 #+ATTR_LATEX: :booktabs t
-#+CAPTION: The median of the median failure rates and the median of the median minimum disturbances (Min.  \Delta) for the single parameter sensitivity tests described in Section~\ref{sec:landscape}.  Int. \(\Delta\) translates the values in Min. \Delta to more interpretable units.  For \(x_{\delta}\) and \(y_{\delta}\), the units are pixels.  For \(z_{\delta}\), the unit is the percent change in the area of the bounding box containing the object.  See main text and Figure \ref{fig:sensitivity} for additional information.
+#+CAPTION: The median of the median failure rates and the median of the median minimum disturbances (Min. \Delta) for the single parameter sensitivity tests described in Section ref:h3-correct-classifications-830c8.  Int. \Delta translates the values in Min. \Delta to more interpretable units.  For \(x_{\delta}\) and \(y_{\delta}\), the units are pixels.  For \(z_{\delta}\), the unit is the percent change in the area of the bounding box containing the object.  See main text and Figure ref:fig:sensitivity for additional information.
 #+NAME: tab:fail_rates
 | Parameter      | Fail Rate % | Min. \Delta | Int. \Delta      |
 |----------------+-------------+-------------+------------------|
@@ -2321,7 +2361,7 @@ of poses (Figure ref:fig:tsne_img_correct vs. Figure ref:fig:tsne_img_ax).
 
 *** Optimization methods can effectively generate targeted adversarial poses
 :PROPERTIES:
-:CUSTOM_ID: h3-optimization-methods-can-effectively-generate-targeted-adversarial-poses
+:CUSTOM_ID: h3-optimization-methods-b9960
 :END:
 
 Given a challenging, highly non-convex objective landscape
@@ -2335,33 +2375,32 @@ renderer (DR-G) cite:kato2018-neural.
 
 **** Experiment
 :PROPERTIES:
-:CUSTOM_ID: h4-experiment
+:CUSTOM_ID: h4-experiment-cbcbd
 :END:
 
 Because our adversarial pose attacks are inherently constrained by the fixed
 geometry and appearances of a given 3D object (see
-Sec.~\ref{sec:easily_confused}),
-
-we defined the targets to be the 50 most frequent incorrect classes found by our
-RS procedure for each object.  For each (object, target) pair, we ran 50
-optimization trials using ZRS, FD-G, and DR-G.  All treatments were initialized
-with a pose found by the ZRS procedure and then allowed to optimize for 100
-iterations.
+Section ref:h3-neural-networks-7ea9f), we defined the targets to be the 50 most
+frequent incorrect classes found by our RS procedure for each object.  For each
+(object, target) pair, we ran 50 optimization trials using ZRS, FD-G, and DR-G.
+All treatments were initialized with a pose found by the ZRS procedure and then
+allowed to optimize for 100 iterations.
 
 **** Results
 :PROPERTIES:
-:CUSTOM_ID: h4-results
+:CUSTOM_ID: h4-results-8c567
 :END:
 
 For each of the 50 optimization trials, we recorded both whether or not the
 target was hit and the maximum target probability obtained during the run.  For
-each (object,~target) pair, we calculated the percent of target hits and the
+each (object, target) pair, we calculated the percent of target hits and the
 median maximum confidence score of the target labels (see
 Table ref:tab:optim_stats).  As shown in Table ref:tab:optim_stats, FD-G is
 substantially more effective than ZRS at generating targeted adversarial poses,
 having both higher median hit rates and confidence scores.  In addition, we
 found the approximate gradients from DR to be surprisingly noisy, and DR-G
-largely underperformed even non-gradient methods (ZRS) (see Sec.~\ref{sec:kr}).
+largely underperformed even non-gradient methods (ZRS) (see
+Section ref:h4-differentiable-renderer-7829e).
 
 #+ATTR_LATEX: :booktabs t
 #+CAPTION: The median percent of target hits and the median of the median target probabilities for random search (ZRS), gradient descent with finite difference gradients (FD-G), and DR gradients (DR-G).  All attacks are targeted and initialized with \(z_{\delta}\)-constrained random search. \(^\dagger\)DR-G is not directly comparable to FD-G and ZRS (details in Sec.~\ref{sec:dr-expr}).
@@ -2374,7 +2413,7 @@ largely underperformed even non-gradient methods (ZRS) (see Sec.~\ref{sec:kr}).
 
 *** Adversarial poses transfer to different image classifiers and object detectors
 :PROPERTIES:
-:CUSTOM_ID: h3-adversarial-poses-transfer-to-different-image-classifiers-and-object-detectors
+:CUSTOM_ID: h3-adversarial-poses-9753d
 :END:
 
 The most important property of previously documented AXs is that they transfer
@@ -2383,7 +2422,7 @@ we investigate the transferability of our adversarial poses to (a) two different
 image classifiers, AlexNet cite:krizhevsky2012-imagenet and
 ResNet-50 cite:he2015-deep-residual, trained on the same ImageNet dataset; and
 (b) an object detector YOLOv3 cite:redmon2018-yolov3 trained on the MS COCO
-dataset cite:lin2014-microsoft.
+dataset cite:lin2014-microsoft.
 
 For each object, we randomly selected 1,350 AXs that were misclassified by
 Inception-v3 with high confidence (\(p \geq 0.9\)) from our untargeted RS
@@ -2401,7 +2440,7 @@ slight disturbances of the known, in-distribution poses.
 
 **** Object detectors
 :PROPERTIES:
-:CUSTOM_ID: h4-object-detectors
+:CUSTOM_ID: h4-object-detectors-eb524
 :END:
 
 Previous research has shown that object detectors can be more robust to
@@ -2417,27 +2456,28 @@ Sec.~\ref{sec:yolo} for more details).  These results suggest the adversarial
 pose problem transfers across datasets, models, and tasks.
 
 ** Adversarial training
+:PROPERTIES:
+:CUSTOM_ID: h2-adversarial-training-df0cc
+:END:
 
 One of the most effective methods for defending against OoD examples has been
-adversarial training \cite{Goodfellow2014}, i.e., augmenting the training set
-with AXs---also a common approach in anomaly detection
-cite:chandola2009-anomaly.  Here, we test whether adversarial training can
-improve DNN robustness to new poses generated for (1) our 30 training-set 3D
+adversarial training cite:goodfellow2014-explaining, i.e., augmenting the
+training set with AXs---also a common approach in anomaly
+detection cite:chandola2009-anomaly.  Here, we test whether adversarial training
+can improve DNN robustness to new poses generated for (1) our 30 training-set 3D
 objects; and (2) seven held-out 3D objects.
 
 *** Training
 :PROPERTIES:
-:CUSTOM_ID: h3-training
+:CUSTOM_ID: h3-training-dbee1
 :END:
 
 We augmented the original 1,000-class ImageNet dataset with an additional 30 AX
 classes.  Each AX class included 1,350 randomly selected high-confidence (\(p
 \geq 0.9\)) misclassified images split 1,300/50 into training/validation sets.
 Our AlexNet trained on the augmented dataset (AT) achieved a top-1 accuracy of
-0.565 for the original ImageNet validation set and a top-1 accuracy\footnote{In
-this case, a classification was /correct/ if it matched /either/ the original
-ImageNet positive label /or/ the negative, object label.} of 0.967 for the AX
-validation set.
+0.565 for the original ImageNet validation set and a top-1 accuracy[fn:6] of
+0.967 for the AX validation set.
 
 #+ATTR_LATEX: :booktabs t
 #+CAPTION: The median percent of misclassifications (Error) and high-confidence (i.e., \(p > 0.7\)) misclassification by the pre-trained AlexNet (PT) and our AlexNet trained with adversarial examples (AT) on random poses of training-set objects (T) and held-out objects (H).
@@ -2452,10 +2492,10 @@ validation set.
 
 *** Evaluation
 :PROPERTIES:
-:CUSTOM_ID: h3-evaluation
+:CUSTOM_ID: h3-evaluation-26872
 :END:
 
-To evaluate our AT model v.s. a pre-trained AlexNet (PT), we used RS to generate
+To evaluate our AT model vs. a pre-trained AlexNet (PT), we used RS to generate
 \(10^6\) samples for each of our 3D training objects.  In addition, we collected
 seven held-out 3D objects not included in the training set that belong to the
 same classes as seven training-set objects (example renders in
@@ -2465,69 +2505,69 @@ held-out objects to evaluate whether our AT generalizes to unseen objects.
 For each of these \(30 + 7 = 37\) objects and for both the PT and our AT, we
 recorded two statistics: (1) the percent of misclassifications, i.e., errors;
 and (2) the percent of high-confidence (i.e., \(p \geq 0.7\)) misclassification
-(Table~\ref{tab:ax_stats}).  Following adversarial training, the accuracy of the
-DNN substantially increased for /known/ objects (Table~\ref{tab:ax_stats}; 99.67%
-v.s. 6.7%).  However, our AT still misclassified the adversarial poses of
+(Table ref:tab:ax_stats).  Following adversarial training, the accuracy of the
+DNN substantially increased for /known/ objects (Table ref:tab:ax_stats; 99.67%
+vs. 6.7%).  However, our AT still misclassified the adversarial poses of
 held-out objects at an 89.2% error rate.  We hypothesize that augmenting the
 dataset with many more 3D objects may improve DNN generalization on held-out
 objects.  Here, AT might have used (1) the grey background to separate the 1,000
 original ImageNet classes from the 30 AX classes; and (2) some non-geometric
 features sufficient to discriminate among only 30 objects.  However, as
-suggested by our work (Sec.~\ref{sec:3d_object_dataset}), acquiring a
+suggested by our work in Section ref:h3-3d-object-a1f23, acquiring a
 large-scale, high-quality 3D object dataset is costly and labor-intensive.
 Currently, no such public dataset exists, and thus we could not test this
 hypothesis.
 
 ** Related work
 :PROPERTIES:
-:CUSTOM_ID: h2-related-work
+:CUSTOM_ID: h2-related-work-0f1d4
 :END:
 
 *** Out-of-distribution Detection
 :PROPERTIES:
-:CUSTOM_ID: h3-out-of-distribution-detection
+:CUSTOM_ID: h3-out-of-distribution-detection-8527f
 :END:
 
 OoD classes, i.e., classes not found in the training set, present a significant
-challenge for computer vision technologies in real-world settings
-cite:scheirer2013-toward.  Here, we study an orthogonal problem---correctly
-classifying OoD poses of objects from /known/ classes.  While rejecting to
-classify is a common approach for handling OoD examples
-cite:hendrycks2017-baseline,scheirer2013-toward, the OoD poses in our work come
-from known classes and thus /should be/ assigned correct labels.
+challenge for computer vision technologies in real-world
+settings cite:scheirer2013-toward.  Here, we study an orthogonal
+problem---correctly classifying OoD poses of objects from /known/ classes.  While
+rejecting to classify is a common approach for handling OoD
+examples cite:hendrycks2017-baseline,scheirer2013-toward, the OoD poses in our
+work come from known classes and thus /should be/ assigned correct labels.
 
 *** 2D Adversarial Examples
 :PROPERTIES:
-:CUSTOM_ID: h3-2d-adversarial-examples
+:CUSTOM_ID: h3-2d-adversarial-4c1e7
 :END:
 
 Numerous techniques for crafting AXs that fool image classifiers have been
-discovered cite:yuan2017-adversarial.  However, previous work has typically
-optimized in the 2D input space cite:yuan2017-adversarial, e.g., by synthesizing
-an entire image cite:nguyen2014-deep, a small patch
-cite:karmon2018-lavan,evtimov2017-robust, a few pixels cite:carlini2016-towards,
-or only a single pixel cite:su2017-one.  But pixel-wise changes are
-uncorrelated cite:nguyen2017-plug, so pixel-based attacks may not transfer well
-to the real world cite:lu2017-no,luo2015-foveation because there is an
-infinitesimal chance that such specifically crafted, uncorrelated pixels will be
-encountered in the vast physical space of camera, lighting, traffic, and weather
-configurations.
+discovered cite:yuan2017-adversarial.  However, previous work has typically
+optimized in the 2D input space cite:yuan2017-adversarial, e.g., by synthesizing
+an entire image cite:nguyen2014-deep, a small
+patch cite:karmon2018-lavan,evtimov2017-robust, a few
+pixels cite:carlini2016-towards, or only a single pixel cite:su2017-one.  But
+pixel-wise changes are uncorrelated cite:nguyen2017-plug, so pixel-based attacks
+may not transfer well to the real world cite:lu2017-no,luo2015-foveation because
+there is an infinitesimal chance that such specifically crafted, uncorrelated
+pixels will be encountered in the vast physical space of camera, lighting,
+traffic, and weather configurations.
 
 *** 3D Adversarial Examples
 :PROPERTIES:
-:CUSTOM_ID: h3-3d-adversarial-examples
+:CUSTOM_ID: h3-3d-adversarial-c00cd
 :END:
 
-Athalye et al. cite:athalye2017-synthesizing used a 3D renderer to synthesize
-textures for a 3D object such that, under a wide range of camera views, the
-object was still rendered into an effective AX.  We also used 3D renderers, but
-instead of optimizing textures, we optimized the poses of known objects to cause
-DNNs to misclassify (i.e., we kept the textures, lighting, camera settings, and
+cite:athalye2017-synthesizing used a 3D renderer to synthesize textures for a 3D
+object such that, under a wide range of camera views, the object was still
+rendered into an effective AX.  We also used 3D renderers, but instead of
+optimizing textures, we optimized the poses of known objects to cause DNNs to
+misclassify (i.e., we kept the textures, lighting, camera settings, and
 background image constant).
 
 *** Concurrent work
 :PROPERTIES:
-:CUSTOM_ID: h3-concurrent-work
+:CUSTOM_ID: h3-concurrent-work-8cfdb
 :END:
 
 We describe below two concurrent attempts that are closely related but
@@ -2536,12 +2576,12 @@ differentiable 3D renderer and used it to perturb both an object's geometry and
 the scene's lighting to cause a DNN to misbehave.  However, their geometry
 perturbations were constrained to be infinitesimal so that the visibility of the
 vertices would not change.  Therefore, their result of minutely perturbing the
-geometry is effectively similar to that of perturbing textures
-cite:athalye2017-synthesizing.  In contrast, we performed 3D rotations and 3D
-translations to move an object inside a 3D space (i.e., the viewing frustum of
-the camera).
+geometry is effectively similar to that of perturbing
+textures cite:athalye2017-synthesizing.  In contrast, we performed 3D rotations
+and 3D translations to move an object inside a 3D space (i.e., the viewing
+frustum of the camera).
 
-Second, an anonymous ICLR 2019 submission cite:anonymous2019-rotation showed how
+Second, an anonymous ICLR 2019 submission cite:anonymous2019-rotation showed how
 simple rotations and translations of an image can cause DNNs to misclassify.
 However, these manipulations were still applied to the entire 2D image and thus
 do not reveal the type of adversarial poses discovered by rotating 3D objects
@@ -2553,19 +2593,19 @@ state-of-the-art ImageNet classifiers and MS COCO detectors to misclassify.
 
 ** Discussion and Conclusion
 :PROPERTIES:
-:CUSTOM_ID: h2-discussion-and-conclusion
+:CUSTOM_ID: h2-discussion-and-00cc0
 :END:
 
-In this paper, we revealed how DNNs' understanding of objects like \class{school
-bus} and \class{fire truck} is quite naive---they can correctly label only a
-small subset of the entire pose space for 3D objects.  Note that we can also
-find real-world OoD poses by simply taking photos of real objects
-(Figure ref:fig:real_ax).
+In this paper, we revealed how DNNs' understanding of objects like
+{{{tex(\class{school bus})}}} and {{{tex(\class{fire truck})}}} is quite naive---they can
+correctly label only a small subset of the entire pose space for 3D objects.
+Note that we can also find real-world OoD poses by simply taking photos of real
+objects (Figure ref:fig:real_ax).
 
 We believe classifying an arbitrary pose into one of the object classes is an
 ill-posed task, and that the adversarial pose problem might be alleviated via
-multiple orthogonal approaches.  The first is addressing biased data
-cite:torralba2011-unbiased.  Because ImageNet and MS COCO datasets are
+multiple orthogonal approaches.  The first is addressing biased
+data cite:torralba2011-unbiased.  Because ImageNet and MS COCO datasets are
 constructed from photographs taken by people, the datasets reflect the aesthetic
 tendencies of their captors.  Such biases can be somewhat alleviated through
 data augmentation, specifically, by harnessing images generated from 3D
@@ -2581,137 +2621,139 @@ framework enable us to enumerate test cases for DNNs, but it also serves as an
 interpretability tool for extracting useful insights about these black-box
 models' inner functions.
 
-** COMMENT Appendix
+** Appendix
+:PROPERTIES:
+:CUSTOM_ID: h2-appendix-f4745
+:END:
 
-\clearpage
+*** Extended Description of the 3D Object Dataset and Its Evaluation
+:PROPERTIES:
+:CUSTOM_ID: h3-extended-description-6a997
+:END:
 
-\renewcommand{\thesection}{S\arabic{section}}
-\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+**** Dataset Construction
+:PROPERTIES:
+:CUSTOM_ID: h4-dataset-construction-6871e
+:END:
 
-\newcommand{\beginsupplementary}{% \setcounter{table}{0}
-            \renewcommand{\thetable}{S\arabic{table}}% \setcounter{figure}{0}
-            \renewcommand{\thefigure}{S\arabic{figure}}% \setcounter{section}{0}
-            } \newcommand{\suptitle}{Supplementary materials for:\\\papertitle}
+***** Classes
+:PROPERTIES:
+:CUSTOM_ID: h5-classes-1452a
+:END:
 
-\newcommand{\toptitlebar}{ \hrule height 4pt \vskip 0.25in \vskip -\parskip% }
-    \newcommand{\bottomtitlebar}{ \vskip 0.29in \vskip -\parskip% \hrule height
-    1pt \vskip 0.09in% }
+Our main dataset consists of 30 unique 3D object models corresponding to 30
+ImageNet classes relevant to a traffic environment.  The 30 classes include 20
+vehicles (e.g., {{{tex(\class{school bus})}}} and {{{tex(\class{cab})}}}) and 10
+street-related items (e.g., {{{tex(\class{traffic light})}}}).  See
+Figure ref:fig:dataset_A for example renders of each object.
 
-\beginsupplementary%
+***** Acquisition
+:PROPERTIES:
+:CUSTOM_ID: h5-acquisition-66749
+:END:
 
-\newcommand{\maketitlesupp}{ \newpage \onecolumn%[ \null% \vskip .375in
-        \begin{center}
-            {\Large \bf \suptitle\par}
-            \vspace*{24pt}
-            {
-                \large
-                \lineskip=.5em
+We collected 3D objects and constructed our own datasets for the study.  3D
+models with high-quality image textures were purchased from turbosquid.com,
+free3d.com, and cgtrader.com.  To make sure the renders were as close to real
+ImageNet photos as possible, we used only 3D models that had high-quality 2D
+image textures.  We did not choose 3D models from public datasets, e.g.,
+ObjectNet3D cite:xiang2016-objectnet3d, because most of them do not have
+high-quality image textures.  While the renders of such models may be correctly
+classified by DNNs, we excluded them from our study because of their poor
+realism.  We also examined the ImageNet images to ensure they contained
+real-world examples qualitatively similar to each 3D object in our 3D dataset.
 
+***** 3D Objects
+:PROPERTIES:
+:CUSTOM_ID: h5-3d-objects-95fa7
+:END:
 
-                \par
-            }
-            \vskip .5em
-            \vspace*{12pt}
-        \end{center}
-} \maketitlesupp%
-
-\section{Extended description of the 3D object dataset and its evaluation}
-\label{sec:SI_3d_object_dataset} \subsection{Dataset
-construction}\label{sec:construction}
-
-\subsec{Classes} Our main dataset consists of 30 unique 3D object models
-corresponding to 30 ImageNet classes relevant to a traffic environment.  The 30
-classes include 20 vehicles (e.g., \class{school bus} and \class{cab}) and 10
-street-related items (e.g., \class{traffic light}).  See Figure ref:fig:dataset_A
-for example renders of each object.
-
-\subsec{Acquisition} We collected 3D objects and constructed our own datasets
-for the study.  3D models with high-quality image textures were purchased from
-turbosquid.com, free3d.com, and cgtrader.com.  To make sure the renders were as
-close to real ImageNet photos as possible, we used only 3D models that had
-high-quality 2D image textures.  We did not choose 3D models from public
-datasets, e.g., ObjectNet3D cite:xiang2016-objectnet3d, because most of them
-do not have high-quality image textures.  While the renders of such models may
-be correctly classified by DNNs, we excluded them from our study because of
-their poor realism.  We also examined the ImageNet images to ensure they
-contained real-world examples qualitatively similar to each 3D object in our 3D
-dataset.
-
-\subsec{3D objects} Each 3D object is represented as a mesh, i.e., a list of
-triangular faces, each defined by three vertices
-\cite{marschner2015-fundamentals}.  The 30 meshes have on average \(9,908\)
-triangles (see Table~\ref{tab:num_triangles} for specific numbers).
-
-  \begin{table}[h]
-    \centering
-    \begin{tabular}{lrr}
-        \toprule
-        3D object        & Tessellated \(N_T\) & Original \(N_O\) \\
-        \midrule
-        \class{ambulance}            & 70,228 & 5,348 \\
-        \class{backpack}             & 48,251 & 1,689\\
-        \class{bald eagle}           & 63,212 & 2,950\\
-        \class{beach wagon}          & 220,956 & 2,024\\
-        \class{cab}                  & 53,776 & 4,743\\
-        \class{cellphone}   & 59,910 & 502\\
-        \class{fire engine}          & 93,105 & 8,996\\
-        \class{forklift}             & 130,455 & 5,223\\
-        \class{garbage truck}        & 97,482 & 5,778\\
-        \class{German shepherd}      & 88,496 & 88,496\\
-        \class{golf cart}            & 98,007 & 5,153\\
-        \class{jean}                 & 17,920 & 17,920\\
-        \class{jeep}                 & 191,144 & 2,282\\
-        \class{minibus}              & 193,772 & 1,910\\
-        \class{minivan}              & 271,178 & 1,548\\
-        \bottomrule
-    \end{tabular}
-    \begin{tabular}{lrr}
-        \toprule
-        3D object        & Tessellated \(N_T\) & Original \(N_O\) \\
-        \midrule
-        \class{motor scooter}        & 96,638 & 2,356\\
-        \class{moving van}           & 83,712 & 5,055\\
-        \class{park bench}           & 134,162 & 1,972\\
-        \class{parking meter}        & 37,246 & 1,086\\
-        \class{pickup}               & 191,580 & 2,058\\
-        \class{police van}           & 243,132 & 1,984\\
-        \class{recreational vehicle} & 191,532 & 1,870\\
-        \class{school bus}           & 229,584 & 6,244\\
-        \class{sports car}           & 194,406 & 2,406\\
-        \class{street sign}          & 17,458 & 17,458\\
-        \class{tiger cat}            & 107,431 & 3,954\\
-        \class{tow truck}            & 221,272 & 5,764\\
-        \class{traffic light}        & 392,001 & 13,840\\
-        \class{trailer truck}        & 526,002 & 5,224\\
-        \class{umbrella}             & 71,410 & 71,410\\
-        \bottomrule
-    \end{tabular}
-    \caption{The triangle number for the 30 objects used in our study.
-        \(N_O\) shows the number of
-        triangles for the original 3D objects, and      \(N_T\) shows the same number after tessellation.
-          Across 30 objects, the average triangle count increases \(\sim15\)x from \(\overline{N_O} = 9,908\) to
-          \(\overline{N_T} = 147,849\).}\label{tab:num_triangles}
+Each 3D object is represented as a mesh, i.e., a list of triangular faces, each
+defined by three vertices cite:marschner2015-fundamentals.  The 30 meshes have
+on average 9,908 triangles (see Table ref:tab:num_triangles for specific
+numbers).
+#+begin_export latex
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrr}
+    \toprule
+    3D object        & \(N_T\) & \(N_O\) \\
+    \midrule
+    \class{ambulance}            & 70,228 & 5,348 \\
+    \class{backpack}             & 48,251 & 1,689\\
+    \class{bald eagle}           & 63,212 & 2,950\\
+    \class{beach wagon}          & 220,956 & 2,024\\
+    \class{cab}                  & 53,776 & 4,743\\
+    \class{cellphone}   & 59,910 & 502\\
+    \class{fire engine}          & 93,105 & 8,996\\
+    \class{forklift}             & 130,455 & 5,223\\
+    \class{garbage truck}        & 97,482 & 5,778\\
+    \class{German shepherd}      & 88,496 & 88,496\\
+    \class{golf cart}            & 98,007 & 5,153\\
+    \class{jean}                 & 17,920 & 17,920\\
+    \class{jeep}                 & 191,144 & 2,282\\
+    \class{minibus}              & 193,772 & 1,910\\
+    \class{minivan}              & 271,178 & 1,548\\
+    \bottomrule
+  \end{tabular}\quad%
+  \begin{tabular}{lrr}
+    \toprule
+    3D object        & \(N_T\) & \(N_O\) \\
+    \midrule
+    \class{motor scooter}        & 96,638 & 2,356\\
+    \class{moving van}           & 83,712 & 5,055\\
+    \class{park bench}           & 134,162 & 1,972\\
+    \class{parking meter}        & 37,246 & 1,086\\
+    \class{pickup}               & 191,580 & 2,058\\
+    \class{police van}           & 243,132 & 1,984\\
+    \class{recreational vehicle} & 191,532 & 1,870\\
+    \class{school bus}           & 229,584 & 6,244\\
+    \class{sports car}           & 194,406 & 2,406\\
+    \class{street sign}          & 17,458 & 17,458\\
+    \class{tiger cat}            & 107,431 & 3,954\\
+    \class{tow truck}            & 221,272 & 5,764\\
+    \class{traffic light}        & 392,001 & 13,840\\
+    \class{trailer truck}        & 526,002 & 5,224\\
+    \class{umbrella}             & 71,410 & 71,410\\
+    \bottomrule
+  \end{tabular}
+  \caption{The triangle number for the 30 objects used in our study.  \(N_O\)
+    shows the number of triangles for the original 3D objects, and \(N_T\) shows
+    the same number after tessellation.  Across 30 objects, the average triangle
+    count increases \(\sim 15\)x from \(\overline{N_O} = 9,908\) to
+    \(\overline{N_T} = 147,849\).}\label{tab:num_triangles}
 \end{table}
-\subsection{Manual object tessellation for experiments using the Differentiable
-Renderer} In contrast to ModernGL \cite{modernGL}---the non-differentiable
-renderer (NR) in our paper---the differentiable renderer (DR) by Kato et.  al
-cite:kato2018-neural does not perform tessellation, a standard process to
-increase the resolution of renders.  Therefore, the render quality of the DR is
-lower than that of the NR.  To minimize this gap and make results from the NR
-more comparable with those from the DR, we manually tessellated each 3D object
-as a pre-processing step for rendering with the DR.  Using the manually
-tessellated objects, we then (1) evaluated the render quality of the DR
-(Sec.~\ref{sec:evaluation}); and (2) performed research experiments with the DR
-(i.e., the DR-G method in Sec.~\ref{sec:comparing_methods}).\\
 
-\subsec{Tessellation} We used the /Quadify Mesh Modifier/ feature (quad
-size of 2%) in 3ds~Max 2018 to tessellate objects, increasing the average
-number of faces \(\sim\)15x from \(9,908\) to \(147,849\) (see
-Table~\ref{tab:num_triangles}).  The render quality after tessellation is
-sharper and of a higher resolution (see Figure ref:fig:compare_tessellationa vs.
-b).  Note that the NR pipeline already performs tessellation for every input 3D
-object.  Therefore, we did not perform manual tessellation for 3D objects
-rendered by the NR.
+#+end_export
+
+**** Manual Object Tessellation for Experiments Using the Differentiable Renderer
+:PROPERTIES:
+:CUSTOM_ID: h4-manual-object-a7eac
+:END:
+
+In contrast to ModernGL \cite{modernGL}---the non-differentiable renderer (NR)
+in our paper---the differentiable renderer (DR) cite:kato2018-neural does not
+perform tessellation, a standard process to increase the resolution of renders.
+Therefore, the render quality of the DR is lower than that of the NR.  To
+minimize this gap and make results from the NR more comparable with those from
+the DR, we manually tessellated each 3D object as a pre-processing step for
+rendering with the DR.  Using the manually tessellated objects, we then (1)
+evaluated the render quality of the DR (Sec.~\ref{sec:evaluation}); and (2)
+performed research experiments with the DR (i.e., the DR-G method in
+Sec.~\ref{sec:comparing_methods}).\\
+
+***** Tessellation
+:PROPERTIES:
+:CUSTOM_ID: h5-tessellation-0e801
+:END:
+
+We used the /Quadify Mesh Modifier/ feature (quad size of 2%) in 3ds~Max 2018 to
+tessellate objects, increasing the average number of faces \(\sim\)15x from
+\(9,908\) to \(147,849\) (see Table~\ref{tab:num_triangles}).  The render
+quality after tessellation is sharper and of a higher resolution (see
+Figure ref:fig:compare_tessellation (a) vs. (b)).  Note that the NR pipeline
+already performs tessellation for every input 3D object.  Therefore, we did not
+perform manual tessellation for 3D objects rendered by the NR.
 
 \begin{figure}[h]
     \begin{center}
@@ -2726,7 +2768,7 @@ rendered by the NR.
     \hspace{0.4cm} (c) NR with tessellation
     \hfill
 }
-    \caption{A comparison of 3D object renders (here, \class{ambulance} and \class{school bus}) before and after tessellation.
+    \caption{A comparison of 3D object renders (here, {{{tex(\class{ambulance})}}} and {{{tex(\class{school bus})}}}) before and after tessellation.
         \\(a) Original 3D models rendered by the differentiable renderer (DR) \cite{kato2018-neural} without tessellation.
         \\(b) DR renderings of the same objects after manual tessellation.
         \\(c) The non-differentiable renderer (NR), i.e., ModernGL \cite{modernGL}, renderings of the original objects.
@@ -2735,7 +2777,9 @@ rendered by the NR.
     \label{fig:compare_tessellation}
 \end{figure}
 
-\subsection{Evaluation} \label{sec:evaluation}
+*** COMMENT NonFinished
+
+**** Evaluation
 
 We recognize that a reality gap will often exist between a render and a real
 photo.
@@ -2875,7 +2919,7 @@ labels for real photos match those for renders.
         For each object, we assembled 30 high-confidence (\(p \geq 0.9\)) adversarial examples generated via a random search against Inception-v3 \cite{szegedy2016-rethinking}.
         The t-SNE was generated from the AlexNet \cite{Krizhevsky2012} \layer{fc7} features for \(30\) objects \(\times\) \(30\) images = \(900\) images.
         The original, high-resolution figure is available at https://goo.gl/TGgPgB.
-        Adversarial poses were found to be both common across different objects (e.g., the top-right corner) and unique to specific objects (e.g., the \class{traffic sign} and \class{umbrella} objects in the middle left).
+        Adversarial poses were found to be both common across different objects (e.g., the top-right corner) and unique to specific objects (e.g., the {{{tex(\class{traffic sign})}}} and {{{tex(\class{umbrella})}}} objects in the middle left).
         \\To better understand how similar misclassified poses can be found across many objects, see Figure ref:fig:tsne_color_ax.
         Compare and contrast this plot with the t-SNE of correctly classified poses
         (Figs.~\ref{fig:tsne_img_correct} \&~\ref{fig:tsne_color_correct}).
@@ -3108,8 +3152,8 @@ chance of hitting the target.  In our experiments with the DR using 100 steps
 per optimization run, multi-view optimization performed worse than single-view
 in terms of both the success rate and the number of steps to converge.  We did
 not compare all 30 objects due to the expensive computational cost, and only
-report the results from optimizing two objects \class{bald eagle} and
-\class{tiger cat} in Table~\ref{tab:v1v6}.  Intuitively, multi-view optimization
+report the results from optimizing two objects {{{tex(\class{bald eagle})}}} and
+{{{tex(\class{tiger cat})}}} in Table~\ref{tab:v1v6}.  Intuitively, multi-view optimization
 might outperform single-view optimization given a large enough number of steps.
 
 \begin{table}[ht]
@@ -3117,7 +3161,7 @@ might outperform single-view optimization given a large enough number of steps.
   \begin{tabular}{l*{4}{r}}
     \toprule
     & \multicolumn{2}{c}{
-        \class{bald eagle}} & \multicolumn{2}{c}{\class{tiger cat}} \\
+        {{{tex(\class{bald eagle})}}}} & \multicolumn{2}{c}{{{{tex(\class{tiger cat})}}}} \\
     \cmidrule(lr){2-3}\cmidrule(lr){4-5}
     & Steps & Success rate & Steps & Success rate \\
     \midrule
@@ -3127,7 +3171,7 @@ might outperform single-view optimization given a large enough number of steps.
   \end{tabular}
   \caption{
     Multi-view optimization performed worse than single-view optimization in both (a) the number of steps to converge and (b) success rates.
-    We show here the results of two runs of optimizing with the \class{bald eagle} and \class{tiger cat} objects.
+    We show here the results of two runs of optimizing with the {{{tex(\class{bald eagle})}}} and {{{tex(\class{tiger cat})}}} objects.
     The results are averaged over \(50\) target labels \(\times 50\) trials = \(2,500\) trials.
     Each optimization trial for both single- and multi-view settings is given the budget of \(100\) steps.
     \label{tab:v1v6}}
@@ -3233,7 +3277,7 @@ alter our results.  \newpage
     \subcaptionbox{\bright}{{\includegraphics[width=.32\textwidth]{bright_final.jpg}}}
     \subcaptionbox{\medium}{{\includegraphics[width=.32\textwidth]{medium_final.jpg}}}
     \subcaptionbox{\dark}{{\includegraphics[width=.32\textwidth]{dark_final.jpg}}}
-    \caption{Renders of the \class{school bus} object using the NR \cite{modernGL} at three different lighting settings.
+    \caption{Renders of the {{{tex(\class{school bus})}}} object using the NR \cite{modernGL} at three different lighting settings.
     The directional light intensities and ambient light intensities were \((1.2, 1.6)\), \((0.4, 1.0)\), and \((0.2, 0.5)\) for the \bright, \medium, and \dark settings, respectively.}\label{fig:light_intensity}
 \end{figure}
 \section{Adversarial poses were not found in ImageNet classes via a
@@ -3247,8 +3291,8 @@ adversarial pose (taken from a random selection of adversarial poses) using the
 Euclidean distance was used to measure the distance between two \layer{fc7}
 feature vectors.  We did not find qualitatively similar images despite comparing
 all \(\sim\)1,300 class images corresponding to the 3D object used to generate the
-adversarial poses (e.g., \class{cellphone}, \class{school bus}, and
-\class{garbage truck} in
+adversarial poses (e.g., {{{tex(\class{cellphone})}}}, {{{tex(\class{school bus})}}}, and
+{{{tex(\class{garbage truck})}}} in
 Figs.~\ref{fig:nearest_cellphone},~\ref{fig:nearest_schoolbus},
 and~\ref{fig:nearest_garbagetruck}).  This result supports the hypothesis that
 the generated adversarial poses are out-of-distribution.  ~\\\subsec{Searching
@@ -3266,7 +3310,7 @@ Figure ref:fig:nearest_val_images).
     \centering
     \includegraphics[width=0.9\columnwidth]{cellular_telephone_neighbors.jpg}
     \caption{
-    For each adversarial example (leftmost), we retrieved the five nearest neighbors (five rightmost photos) from all \(\sim\)1,300 images in the \class{cellular phone} class.
+    For each adversarial example (leftmost), we retrieved the five nearest neighbors (five rightmost photos) from all \(\sim\)1,300 images in the {{{tex(\class{cellular phone})}}} class.
     The Euclidean distance between a pair of images was computed in the \layer{fc7} feature space of a pre-trained AlexNet \cite{Krizhevsky2012}.
     The nearest photos from the class are mostly different from the adversarial poses.
     This result supports the hypothesis that the generated adversarial poses are out-of-distribution.
@@ -3277,7 +3321,7 @@ Figure ref:fig:nearest_val_images).
     \centering
     \includegraphics[width=0.9\columnwidth]{school_bus_neighbors.jpg}
     \caption{
-    For each adversarial example (leftmost), we retrieved the five nearest neighbors (five rightmost photos) from all \(\sim\)1,300 images in the \class{school bus} class.
+    For each adversarial example (leftmost), we retrieved the five nearest neighbors (five rightmost photos) from all \(\sim\)1,300 images in the {{{tex(\class{school bus})}}} class.
     The Euclidean distance between a pair of images was computed in the \layer{fc7} feature space of a pre-trained AlexNet \cite{Krizhevsky2012}.
     The nearest photos from the class are mostly different from the adversarial poses.
     This result supports the hypothesis that the generated adversarial poses are out-of-distribution.
@@ -3288,7 +3332,7 @@ Figure ref:fig:nearest_val_images).
     \centering
     \includegraphics[width=0.9\columnwidth]{garbage_truck_neighbors.jpg}
     \caption{
-    For each adversarial example (leftmost), we retrieved the five nearest neighbors (five rightmost photos) from all \(\sim\)1,300 images in the \class{garbage truck} class.
+    For each adversarial example (leftmost), we retrieved the five nearest neighbors (five rightmost photos) from all \(\sim\)1,300 images in the {{{tex(\class{garbage truck})}}} class.
     The Euclidean distance between a pair of images was computed in the \layer{fc7} feature space of a pre-trained AlexNet \cite{Krizhevsky2012}.
     The nearest photos from the class are mostly different from the adversarial poses.
     This result supports the hypothesis that the generated adversarial poses are out-of-distribution.
@@ -3410,7 +3454,7 @@ Figure ref:fig:nearest_val_images).
 
 * Conclusion
 :PROPERTIES:
-:CUSTOM_ID: chp:h1-conclusion
+:CUSTOM_ID: h1-conclusion-9b570
 :END:
 
 In this dissertation, we empirically study an emerging problem in machine
@@ -3470,12 +3514,24 @@ What machine cannot do
 6. And the most important of all, it does not understand this joke.  Mr. Obama
    is tipping his weight on the scale to play a trick on the man on the scale.
 * References
+:PROPERTIES:
+:CUSTOM_ID: h1-references-2d44c
+:END:
 
 #+LaTeX: \printbibliography
 
 * Footnotes
 
 [fn:1] https://github.com/gongzhitaao/adversarial-text
+
 [fn:2] https://github.com/spotify/annoy
+
 [fn:3] https://keras.io/
+
 [fn:4] http://www.daviddlewis.com/resources/testcollections/reuters21578/
+
+[fn:5] using the random sampling procedure described in
+Section ref:h4-random-search-7e295
+
+[fn:6] In this case, a classification was /correct/ if it matched /either/ the
+original ImageNet positive label /or/ the negative, object label.
