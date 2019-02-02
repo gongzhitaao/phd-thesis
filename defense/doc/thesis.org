@@ -5,7 +5,7 @@
 #+KEYWORDS: Adversarial, Security, Deep Learning, Computer Vision, Natural Language Processing
 
 #+STARTUP: content hideblocks
-#+OPTIONS: toc:nil H:4 _:{}_
+#+OPTIONS: toc:nil H:4 _:{}
 
 #+LATEX_CLASS: authesis
 #+LATEX_CLASS_OPTIONS: [12pt, dvipsnames]
@@ -217,15 +217,15 @@ difficulty of generating adversarial texts are two-folds.
    Besides human evaluation, we have yet found better ways to compare the
    quality of two text piece.
 We propose a framework to workaround the first problem.  Please refer to
-ref:chp:TODO for a detailed discussion.  This is based on our
-work cite:gong2018-adversarial.
+Chapter ref:h1-generate-text-2506d for a detailed discussion.  This is based on
+our work cite:gong2018-adversarial.
 
 Second, we propose a framework to generate /natural/ image adversarial samples.
 Instead of fiddling with the pixels in the input image, we render 3D objects in
 unusual poses to generate adversarial images.  The implication of this work is
-that adversarial examples may exist in the natural world.  Please refer to
-ref:chp:TODO for a detailed discussion.  This is based on our
-work cite:alcorn2018-strike.
+that adversarial examples may exist in abundance in the natural world.  Please
+refer to Chapter ref:h1-generate-natural-32d95 for a detailed discussion.  This
+is based on our work cite:alcorn2018-strike.
 
 *** Defending against Adversarial Samples
 :PROPERTIES:
@@ -238,8 +238,8 @@ this property to filter out adversarial samples?"  The answer is /yes and no/.  
 proposal a binary classifier method to separate adversarial samples from clean
 ones.  The results demonstrate that it works well in practice.  However, there
 are also limitations to this binary classifier approach.  Please refer to
-ref:chp:TOD for a detailed discussion.  This is based on our
-work cite:gong2017-adversarial.
+Chapter ref:h1-defend-against-bf337 for a detailed discussion.  This is based on
+our work cite:gong2017-adversarial.
 
 * Background
 :PROPERTIES:
@@ -426,7 +426,7 @@ done by L-BFGS algorithm.  The downside of this algorithm is that
 
 The Carlini-Wagner (CW) cite:carlini2016-towards uses a reparameterization trick
 to turn it into an unconstrained optimization.  See
-Section ref:h3-carlini-wagner-cw.
+Section ref:h3-carlini-wagner-cw-ecad3.
 
 *** Fast Gradient Method (FGM)
 :PROPERTIES:
@@ -590,7 +590,7 @@ Despite this discrepancy, the two versions perform similarly.
 
 Carlini-Wagner cite:carlini2016-towards method is a more friendly version of the
 constrained optimization method discussed
-in ref:h3-constrained-optimization-approach.  The problem was formulated as
+in Section ref:h3-constrained-optimization-98bf6.  The problem was formulated as
 such.
 #+begin_export latex
 \begin{equation}
@@ -802,7 +802,7 @@ to models that produce categorical probabilities, and 2) that it needs model
 training.  Adversarial training
 cite:kurakin2016-adversarial-machine,huang2015-learning was also shown to
 greatly enhance the model robustness to adversarials.  However, as discussed in
-Section ref:subsec:generalization-limitation, defensive distillation and
+Section ref:h3-generalization-limitation-96e6b, defensive distillation and
 adversarial training suffers from, what we call, the generalization limitations.
 Our experiment suggests this seems to be an intrinsic property of adversarial
 datasets.
