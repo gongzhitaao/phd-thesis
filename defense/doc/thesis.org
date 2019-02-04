@@ -1,8 +1,8 @@
 #+TITLE: On the Machine Illusion
 #+AUTHOR: Zhitao Gong
-#+DATE: April 12, 2018
+#+DATE: Feburary, 2019
 
-#+KEYWORDS: Adversarial, Security, Deep Learning, Computer Vision, Natural Language Processing
+#+KEYWORDS: Adversarial Example, Security, Deep Learning, Computer Vision, Natural Language Processing
 
 #+STARTUP: content hideblocks
 #+OPTIONS: toc:nil H:4 _:{}
@@ -66,10 +66,11 @@
 #+LATEX_HEADER: \copyrightyear{2019}
 #+LATEX_HEADER: \keywords{Adversarial, Security, Deep Learning, Computer Vision, Natural Language Processing}
 #+LATEX_HEADER: \adviser{Dr. Wei-Shinn Ku}
-#+LATEX_HEADER: \professor{Wei-Shinn Ku, Associate Professor of Computer Science and Software Engineering}
-#+LATEX_HEADER: \professor{Anh Nguyen, Assistant Professor of Computer Science and Software Engineering}
-#+LATEX_HEADER: \professor{Shiwen Mao, Professor of Electrical and Computer Engineering}
+#+LATEX_HEADER: \professor{Wei-Shinn Ku, Professor of Computer Science and Software Engineering}
 #+LATEX_HEADER: \professor{Xiao Qin, Professor of Computer Science and Software Engineering}
+#+LATEX_HEADER: \professor{Anh Nguyen, Assistant Professor of Computer Science and Software Engineering}
+#+LATEX_HEADER: \professor{Yan Zhou, Assistant Professor of Computer Science and Software Engineering}
+#+LATEX_HEADER: \professor{Shiwen Mao, Professor of Electrical and Computer Engineering}
 
 #+LaTeX: \setcounter{page}{0}\afterpage{\pagenumbering{Roman}}
 #+LaTeX: \TitlePage
@@ -109,19 +110,25 @@ to this problem when theories behind neural networks get matured.
 :CUSTOM_ID: h1-acknowledgments-874a8
 :END:
 
-#+BEGIN_acknowledgments
+#+begin_acknowledgments
 
-I would also like to thank Dr. Ku for his invaluable guidance during my
-research.  Initially, we had a meeting once a week when I had barely any
-experience for research.  I learned how to think like a researcher and how to
-narrow down areas of focus through our weekly discussion.  I also greatly
-appreciate his patience for my really slow research progress.
+I would like to thank Dr. Wei-Shinn Ku for his invaluable guidance during my
+research.  Initially, when I barely had any experience for research, we had a
+meeting once a week where I learned how to think like a researcher and how to
+narrow down my areas of focus.  After that, Dr. Ku gave me so much freedom and
+support in choosing my own areas and topics.  I really appreciate Dr. Ku's
+patience and support during my graduate studies.
 
-I would like to thank Ms. Jiao Yu for her insightful discussion and
-contribution.  We both work on this work.  Ms. Yu worked on the particle filter
-and snapshot queries, while I focus on Kalman filter and continuous queries.
+I would also like to thank Wenlu for her contribution in two of our work, i.e.,
+classification methods against adversarial samples and generating text
+adversarials.  She helped me with many useful experiments and discussions.
 
-#+END_acknowledgments
+In addition, I would like to thank Dr. Anh Nguyen for inviting me to join his
+project, i.e., generating natural 3D adversarial images.  I learned a lot from
+the team members, Michael, Qi and Chengfei.  Especially I re-learned the idea of
+/moving fast and breaking things/ from Michael.
+
+#+end_acknowledgments
 
 * Table of Contents                                                  :ignore:
 :PROPERTIES:
@@ -155,36 +162,37 @@ and snapshot queries, while I focus on Kalman filter and continuous queries.
 :CUSTOM_ID: h2-problem-overview-00026
 :END:
 
-Artificial intelligence (AI) helps us in many challenging tasks, e.g., including
+Artificial intelligence (AI) helps us in many challenging tasks, including
 computer vision (e.g., image segmentation, object identification and
 recognition, image classification), natural language processing (e.g., machine
-translation, question-and-answer system), recommendation systems, search, speech
-recognition, etc.  The workhorse behind AI are the numerous machine learning
-models, including classical models (e.g., generalized linear models, SVM) and
-deep learning models, i.e., neural network-based models.  Recently, deep
-learning models achieve state-of-the-art results in many fields.
+translation (MT), question-and-answer (QA) system), recommendation systems,
+search, speech recognition, etc.  The workhorse behind AI are the numerous
+machine learning models, including classical models (e.g., generalized linear
+models, SVM) and deep learning models, i.e., neural network-based models.
+Recently, deep learning models achieve state-of-the-art results in many fields.
 
 However, cite:szegedy2013-intriguing first shows that the state-of-the-art image
-models may be tricked into wrong predictions when the input images are perturbed
-with carefully crafted noise.  Furthermore, these perturbed images appear
-visually almost the same as the original ones from the perspective of human
-beings.  These images are referred to as adversarial images.  Many followup work
-show that the adversarial samples are more universal than expected.
-Figure ref:fig:mnistdemo show an example of the adversarial images.  As we can
-see, despite of the noise, we have no problem identifying the correct label for
-the digit.  However, a well-trained neural network model (with test accuracy
-over 99% on clean test data) makes wrong predictions about the digit labels with
-a high confidence.
+models may be tricked into wrong predictions with high confidence when the input
+images are perturbed with carefully crafted noise.  Furthermore, these perturbed
+images appear visually almost the same as the original ones from the perspective
+of human beings.  These images are referred to as the /adversarial images/.  Many
+followup work show that the adversarial samples are more universal than
+expected.  Figure ref:fig:mnistdemo demonstrates examples of the adversarial
+images.  As we can see, despite of the noise, we, as human beings, have no
+problem identifying the correct label for the digit.  However, a well-trained
+neural network model (a simple convolution neural network (CNN) with test
+accuracy over 99% on clean test data) makes wrong predictions about the digit
+labels with high confidence.
 
 #+ATTR_LaTeX: :width .8\textwidth
-#+CAPTION: Adversarial images from a clean data sample in MNIST dataset \cite{lecun2010-mnist}.  The leftmost column is the clean image.  The rest columns show the adversarial images (top) and the pixel difference between the adversarial image and the clean one (bottom).  The labels on top of each column are the methods used to generate the adversarial samples.  The labels below are the predictions by a well-trained neural network model (with test accuracy over 99% on clean test data) with probabilities in parenthesis.  Note that the pixel values are normalized to \((0, 1)\) before being fed into the classification model.  As a result, the noise value range is \((-1, 1)\).
+#+CAPTION: Adversarial images from a clean data sample in MNIST dataset cite:lecun2010-mnist.  The leftmost column is the clean image.  The rest columns show 1) on the top, the adversarial images (top) and 2) on the bottom, the pixel difference between the adversarial image and the clean one.  The labels on top of each column are the methods used to generate the adversarial samples.  The labels below are the predictions by a well-trained neural network model (with test accuracy over 99% on clean test data) with probabilities (interpreted as confidence) in parenthesis.  Note that the pixel values are normalized to \((0, 1)\) before being fed into the classification model.  As a result, the noise value range is \((-1, 1)\).
 #+NAME: fig:mnistdemo
 [[file:imgdemo.pdf]]
 
 The investigation into this phenomenon has important implications both in
 practice and in theory.  In the real word, adversarial examples pose a serious
-problem as more and more tasks are automated by neural networks.  Take hateful
-comment filtering as an example.  The replacement of a few seemingly
+problem since more and more tasks are automated by neural networks.  Take
+hateful comment filtering as an example.  The replacement of a few seemingly
 non-important words in a sentence may turn a hateful comment into a "good" one,
 from the machine's point of view.  This could potentially cause severe social
 problems.  For some life-critical scenarios (e.g., autonomous driving, cancer
@@ -201,7 +209,24 @@ problem.
 :END:
 
 In a series of work, we investigate both sides of the adversarial problem, i.e.,
-generating adversarial samples and defending against adversarial samples.
+defending against adversarial samples and generating adversarial samples.
+
+*** Defending against Adversarial Samples
+:PROPERTIES:
+:CUSTOM_ID: h3-defending-against-abf7e
+:END:
+
+One observation from the image adversarial samples is that the neural networks
+are very sensitive to individual pixel values.  Then it is natural to ask "can
+we utilize this property to build a binary classifier to filter out adversarial
+samples?"  The answer is /yes and no/.  We proposal a binary classification method
+to separate the adversarial samples from the clean ones.  The results
+demonstrate that it works well in practice.  However, there are also limitations
+to this binary classification approach.  Please refer to
+Chapter ref:h1-defend-against-bf337 for a detailed discussion.  This is based on
+our work cite:gong2017-adversarial.  Note that another group proposed this
+method cite:metzen2017-detecting independently from us around the same time.  We
+will have a brief discussion about the difference in our work.
 
 *** Generating Adversarial Samples
 :PROPERTIES:
@@ -210,11 +235,10 @@ generating adversarial samples and defending against adversarial samples.
 
 First, we propose a framework to generate text adversarial samples.  The
 difficulty of generating adversarial texts are two-folds.
-1. the input space is discrete, which makes it unclear how to perturb the input
-   by accumulating small noise, as is commonly done in generating adversarial
-   images.
+1. The input space is discrete, which makes it unclear how to perturb the input
+   by accumulating small noise, as is common in generating adversarial images.
 2. The quality evaluation of the generated texts are intrinsically difficult.
-   Besides human evaluation, we have yet found better ways to compare the
+   Besides human evaluation, we have not yet found better ways to compare the
    quality of two text piece.
 We propose a framework to workaround the first problem.  Please refer to
 Chapter ref:h1-generate-text-2506d for a detailed discussion.  This is based on
@@ -223,23 +247,15 @@ our work cite:gong2018-adversarial.
 Second, we propose a framework to generate /natural/ image adversarial samples.
 Instead of fiddling with the pixels in the input image, we render 3D objects in
 unusual poses to generate adversarial images.  The implication of this work is
-that adversarial examples may exist in abundance in the natural world.  Please
-refer to Chapter ref:h1-generate-natural-32d95 for a detailed discussion.  This
-is based on our work cite:alcorn2018-strike.
-
-*** Defending against Adversarial Samples
-:PROPERTIES:
-:CUSTOM_ID: h3-defending-against-abf7e
-:END:
-
-One observation from image adversarial samples is that the neural networks are
-sensitive to individual pixel values.  Then it is natural to ask "can we utilize
-this property to filter out adversarial samples?"  The answer is /yes and no/.  We
-proposal a binary classifier method to separate adversarial samples from clean
-ones.  The results demonstrate that it works well in practice.  However, there
-are also limitations to this binary classifier approach.  Please refer to
-Chapter ref:h1-defend-against-bf337 for a detailed discussion.  This is based on
-our work cite:gong2017-adversarial.
+that adversarial examples may exist in abundance in the natural world.  This is
+based on our work cite:alcorn2018-strike.  Note that despite that I include the
+whole work in this thesis for completeness, I contributed to only part of the
+experiments and discussion.  Concretely Michael contributed to the
+non-differentiable renderer experiments and analysis, Qi prepared the dataset,
+Chengfei contributed to some analysis, and I contributed to the differentiable
+renderer experiments and analysis.  Michael and Qi developed the desktop version
+of the software, while I prepared the web version.  Please refer to
+Chapter ref:h1-generate-natural-32d95 for a detailed discussion.
 
 * Background
 :PROPERTIES:
@@ -254,21 +270,30 @@ we clarify the notations we are using in this work.
 :CUSTOM_ID: h2-neural-networks-bd8c5
 :END:
 
-Neural network is a system of artificial neurons which are connected in a
-certain pattern.  Each neuron is simply a function, which takes some inputs and
-generates the outputs.  The neuron can be as simple as identity function \(f(x)
-= x\), sigmoid function \(f(x) = 1 / (1 + e^{-x})\), rectified linear units
-(ReLU) \(f(x) = \max(0, x)\), etc.  These functions are usually referred to as
-activation functions.  Some neurons may also have internal parameters, e.g.,
-filters in the convolution network, \(f(X) = sum(M\bigotimes X)\) where
-\(\bigotimes\) denotes element-wise multiplication.
+Neural network is a connectionism model comprising of artificial neurons that
+are inter-connected in a certain pattern.  Each neuron is simply a processing
+unit, which takes some inputs and generates the outputs.  A neuron can be as
+simple as math functions, e.g., identity function \(f(x) = x\), sigmoid function
+\(f(x) = 1 / (1 + e^{-x})\), rectified linear units (ReLU) \(f(x) = \max(0,
+x)\), etc.  These functions are usually referred to as activation functions.
+Some neurons may be more complex.  Recurrent cells have feedback loops, i.e.,
+output being fed into the input (the dotted line in Figure ref:fig:neuron).
+Some neurons may have internal parameters, e.g., filters in the convolution
+network (\(f(X) = sum(M\bigotimes X)\) where \(\bigotimes\) denotes element-wise
+multiplication, \(M\) is a weight matrix of the same size as \(X\)).  More
+generally, each neuron may also be a small neural network cite:lin2013-network.
+Depending on the level of granularity, neurons may take different forms.  The
+simple ones may be used as motifs to construct more complex
+ones cite:zoph2016-neural.  On top of the different types of neurons, connection
+patterns (i.e., the neural architectures) may also contribute to the property of
+the whole model, e.g., residue connections cite:he2015-deep-residual.
 
 #+ATTR_LATEX: :width .3\textwidth
 #+CAPTION: A general illustration of a neuron, which is a function.  Some neurons may have internal parameters, e.g., filters in the convolution network.  Others may have feedback loop, i.e., dotted lines in the figure, e.g., LSTM cells.
 #+NAME: fig:neuron
 [[file:img/neuron.pdf]]
 
-* Adversarial Images
+** Adversarial Images
 :PROPERTIES:
 :CUSTOM_ID: h1-adversarial-images-930fb
 :END:
@@ -280,7 +305,7 @@ in other domains (e.g., sentiment analysis, speech recognition) are generally
 variants of these algorithms, and will be surveyed in the following chapters
 where appropriate.
 
-** Notations
+*** Notations
 :PROPERTIES:
 :CUSTOM_ID: h2-notations-8b5c5
 :END:
@@ -324,7 +349,7 @@ algorithms.  The adversarial sample for \(x\) is denoted by \(\adv{x} = x +
 prediction of \(\adv{x}\) to a user-defined label, which is denoted as
 \(\adv{y}\).
 
-** Problem Formulation
+*** Problem Formulation
 :PROPERTIES:
 :CUSTOM_ID: h2-problem-formulation-26c12
 :END:
@@ -342,7 +367,7 @@ measurement when generating and comparing different adversarial algorithms.  The
 general guideline is that the perturbed inputs \(\adv{x}\) should not interfere
 the judgment of human beings.
 
-** Overview of Generating Adversarial Images
+*** Overview of Generating Adversarial Images
 :PROPERTIES:
 :CUSTOM_ID: h2-overview-of-f46d2
 :END:
@@ -352,7 +377,7 @@ where the first one is to move data points around till its label changes, and
 the other one is to create a mapping between clean and adversarial samples (or
 noises).
 
-*** Move Data Points
+**** Move Data Points
 :PROPERTIES:
 :CUSTOM_ID: h3-move-data-7a8f5
 :END:
@@ -374,7 +399,7 @@ walk cite:szegedy2013-intriguing.
    attack cite:su2017-one) so that one tiny step across the boundary would
    create an adversarial sample of a different category.
 
-*** Map Clean Samples to Adversarial
+**** Map Clean Samples to Adversarial
 :PROPERTIES:
 :CUSTOM_ID: h3-map-clean-03562
 :END:
@@ -394,12 +419,12 @@ are
 \end{enumerate*}
 #+END_EXPORT
 
-** Case Studies: Generating Adversarial Images
+*** Case Studies
 :PROPERTIES:
 :CUSTOM_ID: h2-case-studies-c0472
 :END:
 
-*** Constrained Optimization Approach
+**** Constrained Optimization Approach
 :PROPERTIES:
 :CUSTOM_ID: h3-constrained-optimization-98bf6
 :END:
@@ -428,14 +453,14 @@ The Carlini-Wagner (CW) cite:carlini2016-towards uses a reparameterization tric
 to turn it into an unconstrained optimization.  See
 Section ref:h3-carlini-wagner-cw-ecad3.
 
-*** Fast Gradient Method (FGM)
+**** Fast Gradient Method (FGM)
 :PROPERTIES:
 :CUSTOM_ID: h3-fast-gradient-678db
 :END:
 
 Fast gradient method is a class of method that relies on the \(\nabla_{x}J\).
 
-**** Fast Gradient Sign Method (FGSM)
+***** Fast Gradient Sign Method (FGSM)
 :PROPERTIES:
 :CUSTOM_ID: h4-fast-gradient-78b4b
 :END:
@@ -468,7 +493,7 @@ follows.
 \end{equation}
 #+end_export
 
-**** Fast Gradient Value Method (FGVM)
+***** Fast Gradient Value Method (FGVM)
 :PROPERTIES:
 :CUSTOM_ID: h4-fast-gradient-5cc42
 :END:
@@ -483,7 +508,7 @@ when computing the noise, instead of the sign of gradients.
 \end{equation}
 #+end_export
 
-**** Iterative Fast Gradient Method
+***** Iterative Fast Gradient Method
 :PROPERTIES:
 :CUSTOM_ID: h4-iterative-fast-46b34
 :END:
@@ -499,7 +524,7 @@ the original image.  Concretely, we have
 \end{equation}
 #+end_export
 
-**** Least-likely Class Method
+***** Least-likely Class Method
 :PROPERTIES:
 :CUSTOM_ID: h4-least-likely-class-40545
 :END:
@@ -532,7 +557,7 @@ probability instead of decreasing it.  An easy extension to the least-likely
 class method is to use desired target class instead of the least-likely one.
 This is a more generalized version of this method.
 
-*** Jacobian-based Saliency Map Approach (JSMA)
+**** Jacobian-based Saliency Map Approach (JSMA)
 :PROPERTIES:
 :CUSTOM_ID: h3-jacobian-based-saliency-0aa1e
 :END:
@@ -583,7 +608,7 @@ gradients.  However, in the distillation defense cite:papernot2015-distillation
 the authors used the output of softmax layer to calculate the gradients.
 Despite this discrepancy, the two versions perform similarly.
 
-*** Carlini-Wagner (CW)
+**** Carlini-Wagner (CW)
 :PROPERTIES:
 :CUSTOM_ID: h3-carlini-wagner-cw-ecad3
 :END:
@@ -630,7 +655,7 @@ Which can be alternatively formulated as
 
 Where \(c > 0\) is a /suitably chosen constant/.
 
-*** DeepFool
+**** DeepFool
 :PROPERTIES:
 :CUSTOM_ID: h3-deepfool-947bd
 :END:
@@ -679,7 +704,7 @@ the decision hyperplane.  It is rather difficult to reason that we will get to
 the decision hyperplane in the optimal direction.  In practice, however, we do
 get very subtle noise.
 
-*** Adversarial Transformation Network (ATN)
+**** Adversarial Transformation Network (ATN)
 :PROPERTIES:
 :CUSTOM_ID: h3-adversarial-transformation-d3305
 :END:
@@ -845,8 +870,6 @@ https://github.com/gongzhitaao/adversarial-classifier.
 
 #+BEGIN_EXPORT latex
 \begin{table*}[htbp]
-  \caption{\label{tbl:accuracy-summary}
-    Accuracy on adversarial samples generated with FGSM/TGSM.}
   \centering
   \begin{tabular}{lcrrcrrrr}
     \toprule
@@ -859,19 +882,10 @@ https://github.com/gongzhitaao/adversarial-classifier.
     SVHN && 0.9378 & 0.2453 && 1.00 & 1.00 & 0.00 & 1.00\\
     \bottomrule
   \end{tabular}
+  \caption{\label{tbl:accuracy-summary}
+    Accuracy on adversarial samples generated with FGSM/TGSM.}
 \end{table*}
 #+END_EXPORT
-
-#+ATTR_LaTeX: :booktabs t :align l|rr|rrrr
-#+CAPTION: Accuracy on adversarial samples generated with FGSM/TGSM.
-#+NAME: tbl:accuracy-summary
-|         |      \(f_1\) |                         |              |                         |                     \(f_2\) |                                        |
-|---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
-| Dataset | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(X_{test}\) | \(X^{adv(f_1)}_{test}\) | \(\{X_{test}\}^{adv(f_2)}\) | \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) |
-|---------+--------------+-------------------------+--------------+-------------------------+-----------------------------+----------------------------------------|
-| MNIST   |       0.9914 |                  0.0213 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
-| CIFAR10 |       0.8279 |                  0.1500 |         0.99 |                    1.00 |                        0.01 |                                   1.00 |
-| SVHN    |       0.9378 |                  0.2453 |         1.00 |                    1.00 |                        0.00 |                                   1.00 |
 
 We evaluate the binary classifier approach on MNIST, CIFAR10, and SVHN datasets.
 Of all the datasets, the binary classifier achieved accuracy over 99% and was
@@ -928,8 +942,6 @@ Then we re-generate adversarial dataset via FGSM/TGSM with different
 
 #+BEGIN_EXPORT latex
 \begin{table}[htbp]
-  \caption{\label{tbl:eps-sensitivity-cifar10}
-    \(\epsilon\) sensitivity on CIFAR10}
   \centering
   \begin{tabular}{lcll}
     \toprule
@@ -943,6 +955,8 @@ Then we re-generate adversarial dataset via FGSM/TGSM with different
     0.01 && 0.9996 & \textbf{0.0030}\\
     \bottomrule
   \end{tabular}
+    \caption{\label{tbl:eps-sensitivity-cifar10}
+    \(\epsilon\) sensitivity on CIFAR10}
 \end{table}
 #+END_EXPORT
 
@@ -1685,32 +1699,23 @@ in practice.
 :CUSTOM_ID: h2-conclusion-da841
 :END:
 
-In this work, we propose a general framework to generate adversarial texts.  In
-this framework, instead of constructing adversarials directly in the raw text
-space, we first search for potential adversarial embeddings in the embedding
-space, and then reconstruct the adversarial texts via nearest neighbor search.
-We demonstrate the effectiveness of our method on three texts benchmark
-problems.  In all experiments, our framework can successfully generate
-adversarial samples with only a few words/characters changed.  In addition, we
-also empirically demonstrate Word Mover's Distance (WMD) as a viable quality
-measurement for adversarial texts.  Besides, we also demonstrate that the
-character-level is not easily recovered by
-
-Despite excellent performance on stationary test sets, deep neural networks
-(DNNs) can fail to generalize to out-of-distribution (OoD) inputs, including
-natural, non-adversarial ones, which are common in real-world settings. In this
-paper, we present a framework for discovering DNN failures that harnesses 3D
-renderers and 3D models. That is, we estimate the parameters of a 3D renderer
-that cause a target DNN to misbehave in response to the rendered image. Using
-our framework and a self-assembled dataset of 3D objects, we investigate the
-vulnerability of DNNs to OoD poses of well-known objects in ImageNet. For
-objects that are readily recognized by DNNs in their canonical poses, DNNs
-incorrectly classify 97% of their pose space. In addition, DNNs are highly
-sensitive to slight pose perturbations. Importantly, adversarial poses transfer
-across models and datasets. We find that 99.9% and 99.4% of the poses
-misclassified by Inception-v3 also transfer to the AlexNet and ResNet-50 image
-classifiers trained on the same ImageNet dataset, respectively, and 75.5%
-transfer to the YOLOv3 object detector trained on MS COCO.
+In this work, we proposed a framework to adapt image attacking methods to
+generate high-quality adversarial texts in an end-to-end fashion, without
+relying on any manually selected features.  In this framework, instead of
+constructing adversarials directly in the raw text space, we first search for
+adversarial embeddings in the embedding space, and then reconstruct the
+adversarial texts via nearest neighbor search.  We demonstrate the effectiveness
+of our method on three texts benchmark problems.  In all experiments, our
+framework can successfully generate adversarial samples with only a few words
+changed.  In addition, we also empirically demonstrate Word Mover’s Distance
+(WMD) as a valid quality measurement for adversarial texts.  In the future, we
+plan to extend our work in the following directions.
+1. WMD is demonstrated to be a viable quality metric for the generated
+   adversarial texts. We can employ the optimization and model attacking methods
+   by minimizing the WMD.
+2. We use a general embedding space in our experiments. A smaller embedding that
+   is trained on the specific task may help to speed up the computation needed
+   to reconstruct the texts.
 
 * Generate /Natural/ Adversarial Images
 :PROPERTIES:
