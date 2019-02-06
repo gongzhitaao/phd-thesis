@@ -115,10 +115,10 @@ For clarity, we use the following notations in this slide.
 - \(L\) denotes the loss function, e.g., cross-entropy, mean-squared error.  For
   simplicity, we use \(L_x\) to denote the loss value when \(x\) is the input.
 - \(\adv{x}\) denotes the adversarial sample from \(x\).
-- In a targeted method, \(y_t\) denotes the @@latex:\textcolor{red}{t}@@arget
-  class value, \(y_o\) the @@latex:\textcolor{red}{o}@@ther class values.  For
-  example, \(y = [0.2, 0.5, 0.3]\) and \(t = 0\), then \(y_t = 0.2\) and
-  \(y_o\in\{0.5, 0.3\}\).  Same for \(z\).
+- In a targeted method, \(y_t\) denotes the \textcolor{red}{t}arget class value,
+  \(y_o\) the \textcolor{red}{o}ther class values.  For example, \(y = [0.2,
+  0.5, 0.3]\) and \(t = 0\), then \(y_t = 0.2\) and \(y_o\in\{0.5, 0.3\}\).
+  Same for \(z\).
 
 * Problem Overview
 
@@ -222,7 +222,6 @@ ones cite:gong2017-adversarial based on the following observations:
    direction cite:goodfellow2014-explaining.
 2. The neural nets are sensitive to individual pixel
    values cite:szegedy2013-intriguing.
-
 Code: https://github.com/gongzhitaao/adversarial-classifier
 
 ** Adversarial Examples
@@ -241,14 +240,18 @@ Code: https://github.com/gongzhitaao/adversarial-classifier
 ** Classifier Efficiency and Robustness
 
 #+ATTR_LATEX: :booktabs t
-#+CAPTION: The classifier accuracy.
+#+CAPTION: The classifier \(g\)'s accuracy.  \(f\) is the target model.  And \(\adv{X}_f\) denotes adversarial examples targeting model \(f\).
 | Dataset  | \(X\) | \(\adv{X}_f\) | \(\adv{X}_g\) | \(\{\adv{X}_f\}_g\) |
 |----------+-------+---------------+---------------+---------------------|
 | MNIST    |  1.00 |          1.00 |          0.00 |                1.00 |
 | CIFAR-10 |  0.99 |          1.00 |          0.01 |                1.00 |
 | SVHN     |  1.00 |          1.00 |          0.00 |                1.00 |
 
-** Generalization Limitation
+1. \(X\) and \(\adv{X}_f\) columns shows the classifier \(g\) is effective.
+2. \(\adv{X}_g\) and \(\{\adv{X}_f\}_g\) columns shows the classifier \(g\) is
+   robust.
+
+** Problem with Classifier Defense
 
 *Limitation*: different hyperparameters, different adversarial algorithms may
 elude the binary classifier or adversarial training.
@@ -262,36 +265,25 @@ elude the binary classifier or adversarial training.
 |     *0.03* | 0.9996 |      0.9997 |
 |     0.01 | 0.9996 |      *0.0030* |
 
-** Close Look
+** Problem with Adversarial Training
 
 #+ATTR_LATEX: :width \textwidth
 #+CAPTION: Adversarial training cite:huang2015-learning,kurakin2016-adversarial-machine is not sufficient.  In the church window plot cite:warde-farley2016-adversarial, each pixel \((i, j)\) is a data point \(\adv{x}\) such that \(\adv{x} = x + \vb{h}\epsilon_j + \vb{v}\epsilon_i\), where \(\vb{h}\) is the FGSM direction and \(\vb{v}\) is a random orthogonal direction.  The \epsilon ranges from \([-0.5, 0.5]\).
 file:img/adv-training-not-working.pdf
 
-1. {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw (0\,0) rectangle
-   (2ex\,2ex)}})}}} (
-   {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw[fill=black!10] (0\,0)
-   rectangle (2ex\,2ex)}})}}}) data samples always correctly (incorrectly) w/
-   and w/o adversarial training.
-2. {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw[fill=green!10] (0\,0)
-   rectangle (2ex\,2ex)}})}}} data samples correctly recognized with adversarial
-   training only.
-3. {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw[fill=red!10] (0\,0)
-   rectangle (2ex\,2ex)}})}}} correctly recognized w/o training only, i.e., the
-   side effect.
-
-** {{{empty}}}
-
-#+BEGIN_CENTER
-GENERATION IS CHEAP,\\
-DEFENSE IS DIFFICULT.
-#+END_CENTER
+1. {{{tex(\tikz[baseline=0.5ex]{\draw (0\,0) rectangle (2ex\,2ex)})}}} (
+   {{{tex(\tikz[baseline=0.5ex]{\draw[fill=black!10] (0\,0) rectangle (2ex\,2ex)})}}}
+   ) always correct (incorrectly).
+2. {{{tex(\tikz[baseline=0.5ex]{\draw[fill=green!10] (0\,0) rectangle
+   (2ex\,2ex)})}}} correct with adversarial training.
+3. {{{tex(\tikz[baseline=0.5ex]{\draw[fill=red!10] (0\,0) rectangle (2ex\,2ex)})}}}
+   correct without adversarial training.
 
 * Generate Adversarial Texts
 
 ** Text Embedding Layer
 
-#+CAPTION: Architecture for sentence classification with CNN \cite{kim2014-convolutional}
+#+CAPTION: Architecture for sentence classification with CNN cite:kim2014-convolutional
 #+ATTR_LaTeX: :width \textwidth
 [[file:img/textcnn.png]]
 
@@ -324,10 +316,10 @@ General directions:
 ** Methods in Text Space
 
 This class of methods need to solve two problems:
-1. what to change, e.g., random cite:anonymous2018-adversarial, \(\nabla
-   L\) cite:liang2017-deep, manually picking cite:samanta2017-towards.
+1. what to change, e.g., random, \(\nabla L\) cite:liang2017-deep, manually
+   picking cite:samanta2017-towards.
 2. change to what, e.g., random, synonyms cite:samanta2017-towards or nearest
-   neighbors in embedding space cite:anonymous2018-adversarial, or forged
+   neighbors in embedding space, or forged
    facts cite:jia2017-adversarial,liang2017-deep.
 
 ** Methods in Transformed Space
