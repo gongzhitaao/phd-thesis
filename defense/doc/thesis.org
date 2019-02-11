@@ -1178,7 +1178,6 @@ The text quality is controlled empirically by the noise level in our
 experiments.
 
 The contribution of our work lies in two-folds:
-
 1. We propose a general framework to generate adversarial texts.  Any of the
    existing adversarial methods may be adapted to generate adversarial texts
    under our framework.
@@ -1188,10 +1187,10 @@ The contribution of our work lies in two-folds:
 This chapter is organized as follows.  we survey recent work on generating
 adversarial texts in Section ref:h2-related-work-e4608.  Our adversarial text
 framework is detailed in Section ref:h2-adversarial-text-5ba48.  We thoroughly
-evaluate our framework and Hotflip cite:ebrahimi2017-hotflip on various text
-benchmarks and report the results in Section [[ref:h2-experiment-489c2]].  We then
-conclude this chapter and provide directions for future work in
-Section ref:h2-conclusion-da841.
+evaluate our framework and compare with Hotflip cite:ebrahimi2017-hotflip on
+various text benchmarks and report the results in
+Section [[ref:h2-experiment-489c2]].  We then conclude this chapter and provide
+directions for future work in Section ref:h2-conclusion-da841.
 
 ** Related Work
 :PROPERTIES:
@@ -1214,12 +1213,12 @@ directly, two decisions need to be made:
    answer. cite:liang2017-deep alters the input sentence in a brutal-force way,
    where each word is altered in sequence until an adversarial sample is found
    or a threshold on the maximum number of words to change is reached.
-2. /Change to what/.  Typos usually achieve good results, as shown in
-   cite:samanta2017-towards,liang2017-deep.  The disadvantage of typos is that
-   they are relatively easier to be corrected by the auto spelling correction
-   applications, e.g., Grammerly.  Replacing with synonyms and antonyms (e.g.,
-   from Thesaurus) is also a good choice
-   cite:liang2017-deep,samanta2017-towards.  cite:liang2017-deep uses
+2. /Change to what/.  Typos usually achieve good results, as shown
+   in cite:samanta2017-towards,liang2017-deep.  The disadvantage of typos is
+   that they are relatively easier to be corrected by the auto spelling
+   correction applications, e.g., Grammerly.  Replacing with synonyms and
+   antonyms (e.g., from Thesaurus) is also a good
+   choice cite:liang2017-deep,samanta2017-towards.  cite:liang2017-deep uses
    semantically related words as potential replacements.  As text
    embeddings cite:mikolov2013-efficient have been shown to preserve semantic
    relations among words, the semantically related words can be approximated by
@@ -1241,28 +1240,28 @@ and a Gaussian noise space.  The decoder is a generator (i.e.,
 GAN cite:goodfellow2014-generative), while the encoder is an MLP (called
 inverter in the paper).  They search in the noise space with random walk.
 However, the disadvantage is that they do not have an explicit control of the
-quality of the adversarial samples.  As we have see in cite:zhao2017-generating,
+quality of the adversarial samples.  As we have see in cite:zhao2017-generating,
 the generated adversarial images on complex dataset usually have large visual
 changes.  Similarly, another generator-based method is proposed
 in cite:wong2017-dancin where the whole network is trained with
 REINFORCE cite:williams1992-simple algorithms.
 
-In cite:liang2017-deep, the authors attempt FGM directly on character-level
+In cite:liang2017-deep, the authors attempt FGM directly on character-level
 convolution networks cite:zhang2015-character.  Although the labels of the text
 pieces are successfully altered, the texts are changed to basically random
 stream of characters which is beyond understanding.
 
-A highly related work is also report in cite:ebrahimi2017-hotflip where the
+A highly related work is also report in cite:ebrahimi2017-hotflip where the
 authors conduct character-level and word-level attack based on gradients.  The
 difference is that we use nearest neighbor search to reconstruct the adversarial
 sentences, while they search for adversarial candidates directly in the text
 space.  Furthermore, the word-level adversarial texts were not very successfully
-in cite:ebrahimi2017-hotflip.  Moreover, in our experiment, we also find that
+in cite:ebrahimi2017-hotflip.  Moreover, in our experiment, we also find that
 Hotflip has label leaking problem cite:kurakin2016-adversarial-examples as is
 the vanilla FGSM where the true labels are used to generate the adversarial
-texts.  We fix this problem as suggested in
-cite:kurakin2016-adversarial-examples by using the predicted labels instead of
-the true ones to generate adversarial texts.
+texts.  We fix this problem as suggested
+in cite:kurakin2016-adversarial-examples by using the predicted labels instead
+of the true ones to generate adversarial texts.
 
 ** Adversarial Text Framework
 :PROPERTIES:
@@ -1322,7 +1321,7 @@ This framework builds upon the following observations.
 :CUSTOM_ID: h3-word-movers-14a32
 :END:
 
-For the second problem, we use two metrics to quantify the adversarial texts'
+For the second problem, we use two metrics to quantify the adversarial texts
 quality, the Word Mover's Distance (WMD) cite:kusner2015-from and the change
 ratio (i.e., the number of words changed divided by the maximum sequence
 length).  WMD measures the dissimilarity between two text documents as the
@@ -1363,7 +1362,7 @@ is well integrated into =gensim= cite:rek2010-software package.
 :END:
 
 We use three text datasets in our experiments.  The datasets are summarized in
-Table ref:tab:datasets.  The last column shows our target model accuracy on
+Table ref:tab:datasets.  The last column shows our target model accuracy on the
 clean test data.
 
 #+ATTR_LaTeX: :booktabs t
@@ -1401,7 +1400,7 @@ under-populated categories in the experiment since we are mainly interested in
 perturbation of those samples that are already being classified correctly.
 Keras[fn:3] uses 46 categories out of 90.  However, the 46 categories are still
 highly unbalanced.  In our experiment, we preprocess Reuters and extract two
-datasets from it.
+datasets from it, i.e., Reuters-2 and Reuters-5.
 
 ***** Reuters-2
 :PROPERTIES:
@@ -1450,9 +1449,9 @@ network cite:kim2014-convolutional (as shown in Figure [[ref:fig:wordcnn]]).  
 architecture differs from the image models in two aspects:
 #+BEGIN_EXPORT latex
 \begin{enumerate*}[label=(\roman*)]
- \item an embedding layer is added right after the input to map the word indices
- to their corresponding vector representations, and
- \item the pooling layers are global max-pooling.
+\item an embedding layer is added right after the input to map the word indices
+  to their corresponding vector representations, and
+\item the pooling layers are global max-pooling.
 \end{enumerate*}
 #+END_EXPORT
 
@@ -1462,24 +1461,25 @@ architecture differs from the image models in two aspects:
 [[file:wordcnn.pdf]]
 
 The other one is a character-aware model cite:kim2015-character.  The first
-layer is the embedding layer, followed by convolution layers of /different/ filter
-sizes, which all go through a global max-pooling layer.  The outputs are
-concatenated before going through highway layers cite:srivastava2015-training
-and LSTMs.  Please refer to cite:kim2015-character for a detailed description.
+layer is an embedding layer, followed by parallel convolution layers of
+/different/ filter sizes, which all go through a global max-pooling layer.  The
+outputs of different pooling layers are then concatenated before going through a
+highway layers cite:srivastava2015-training and LSTMs.  Please refer
+to cite:kim2015-character for a detailed discussion about the architecture.
 
 The detailed parameter settings are available in our released code.  Note that
 for models trained on binary classification tasks, DeepFool assumes the output
 in the range \([-1, 1]\), instead of \([0, 1]\).  Thus we have two slightly
 different models for each of the binary classification task (IMDB and
 Reuters-2), the one with =sigmoid= output, and the other with =tanh=.  The models
-with =tahn= output are trained with Adam cite:kingma2014-adam by minimizing the
-root mean squared error (RMSE), while all the other models are trained with Adam
-by minimizing the cross-entropy loss.  Despite the small difference in
-architecture, =sigmoid=- and =tanh=-models on the same task have almost identical
-accuracy.  As a result, in Table ref:tab:datasets, we report only one result for
-IMDB and Reuters-2.  In the following sessions, we refer to the word-level model
-as =WordCNN=, the character-level model as =CharLSTM=.  Wherever necessary, the
-binary classification model with =sigmoid= output is suffixed with =-sigm=, e.g,
+with =tahn= output are trained with Adam cite:kingma2014-adam by minimizing a root
+mean squared error (RMSE), while all the other models are trained with Adam by
+minimizing a cross-entropy loss.  Despite the small difference in architecture,
+=sigmoid=- and =tanh=-models on the same task have almost identical accuracy.  As a
+result, in Table ref:tab:datasets, we report only one result for IMDB and
+Reuters-2.  In the following sessions, we refer to the word-level model as
+=WordCNN=, the character-level model as =CharLSTM=.  Wherever necessary, the binary
+classification model with =sigmoid= output is suffixed with =-sigm=, e.g,
 =WordCNN-sigm=, the one with =tanh= output is suffixed with =-tanh=, e.g.,
 =WordCNN-tanh=.
 
@@ -1488,16 +1488,21 @@ binary classification model with =sigmoid= output is suffixed with =-sigm=, e.g,
 :CUSTOM_ID: h3-effectiveness-and-c7639
 :END:
 
+#+ATTR_LaTeX: :width \textwidth
+#+CAPTION: Adversarial texts generated with Deepfool with different noise scale on word-level model.
+#+NAME: fig:wordcnn-deepfool-noise-scale
+[[file:wordcnn-deepfool-noise-level.pdf]]
+
 If the model's accuracy on the adversarial texts are lower, then we say the
 adversarial texts are more /effective/.  The quality of the adversarial texts
 refers to grammar and syntactic correctness of the text piece.  We employ
 several intuitive criteria to measure the quality of the adversarial texts,
 i.e., the number of words changed (\(N\)) and the Word Mover's Distance (WMD).
 The number-of-words measurement makes sense in our settings since our framework
-will only replace words.  The trade-off between the effectiveness and quality of
-the adversarial texts is controlled by the noise level.  As expected, large
-noise level would generate more effective adversarial samples.  However, the
-text quality will also degrade with larger noise.
+will only replace words, no addition and deletion.  The trade-off between the
+effectiveness and quality of the adversarial texts is controlled by the noise
+level.  As expected, large noise level would generate more effective adversarial
+samples.  However, the text quality will also degrade with larger noise.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[ht]
@@ -1551,11 +1556,6 @@ level are shown in Figure [[ref:fig:wordcnn-deepfool-noise-scale]].  The WMD an
 number of words changed are also included to give an intuition about the
 correspondence between the measurements and the text quality.
 
-#+ATTR_LaTeX: :width \textwidth
-#+CAPTION: Adversarial texts generated with Deepfool with different noise scale on word-level model.
-#+NAME: fig:wordcnn-deepfool-noise-scale
-[[file:wordcnn-deepfool-noise-level.pdf]]
-
 *** Transferability
 :PROPERTIES:
 :CUSTOM_ID: h3-transferability-cfee9
@@ -1608,17 +1608,17 @@ with =<unk>= is not enough to fool the word-level model.
 :CUSTOM_ID: h3-defense-ee5d5
 :END:
 
-#+ATTR_LaTeX: :width .5\textwidth
-#+CAPTION: Defense against character-level adversarials
-#+NAME: fig:defense-char
-[[file:defense-char.pdf]]
-
 The defense for character-level adversarial texts are relatively easy, most of
 the errors can be easily corrected by auto-spelling applications, e.g.,
 Grammerly[fn:4], Bing Spell Check API.  The incorrect spellings are easy to
 detect and recover, e.g., /sontware/ is successfully corrected to /software/.
 However, if the character is replaced by punctuation characters, the word will
 be not corrected, e.g., /qu{kly/ is not recognized and correct.
+
+#+ATTR_LaTeX: :width .5\textwidth
+#+CAPTION: Defense against character-level adversarials
+#+NAME: fig:defense-char
+[[file:defense-char.pdf]]
 
 When generating the character-level adversarial texts, we want to change as few
 characters as possible so that the resulting adversarial texts do not degrade
@@ -1629,6 +1629,11 @@ corrected by auto-spelling applications.
 :PROPERTIES:
 :CUSTOM_ID: h3-results-on-80512
 :END:
+
+The noise scale (\epsilon in Table [[ref:tab:acc]]) influences the effectiveness of
+adversarial methods, as well as the the quality of generated adversarial
+sentences.  The model accuracy under different noise scales are summarized in
+Table ref:tab:acc.
 
 #+BEGIN_EXPORT latex
 \begin{table}[ht]
@@ -1673,11 +1678,6 @@ corrected by auto-spelling applications.
 \end{table}
 #+END_EXPORT
 
-The noise scale (\epsilon in Table [[ref:tab:acc]]) influences the effectiveness of
-adversarial methods, as well as the the quality of generated adversarial
-sentences.  The model accuracy under different noise scales are summarized in
-Table ref:tab:acc.
-
 Figure [[ref:fig:wordcnn-deepfool-noise-scale]] shows one example of adversarial
 texts generated via DeepFool cite:moosavi-dezfooli2015-deepfool in our framework
 with different noise levels.  The \epsilon in the first column is the noise
@@ -1693,30 +1693,21 @@ In the adversarial text examples, the {{{tex(\colorbox{red!10}{\sout{original}})
 words their corresponding {{{tex(\colorbox{green!10}{adversarial})}}} words they are
 changed into are highlighted respectively to aid reading.
 
-**** Fast Gradient Sign Method (FGSM)
-:PROPERTIES:
-:CUSTOM_ID: h4-fast-gradient-47b25
-:END:
+We evaluate two versions of FGM, i.e., fast gradient sign method (FGSM) and fast
+gradient value method (FGVM).  Their example results are shown in
+Figure [[ref:fig:wordcnn-fgsm]] and Figure [[ref:fig:wordcnn-fgvm]], respectively.  With
+appropriate noise level, we can change only a few words to alter the label of
+the whole text piece.
 
 #+ATTR_LaTeX: :width \textwidth
 #+CAPTION: IMDB adversarial texts generated via FGSM on word-level model, \(\epsilon=0.08\).
 #+NAME: fig:wordcnn-fgsm
 [[file:wordcnn-fgsm-eps08.pdf]]
 
-**** Fast Gradient Value Method (FGVM)
-:PROPERTIES:
-:CUSTOM_ID: h4-fast-gradient-fadb4
-:END:
-
 #+ATTR_LaTeX: :width \textwidth
 #+CAPTION: IMDB adversarial texts generated via FGVM on word-level model with varying \(\epsilon\).
 #+NAME: fig:wordcnn-fgvm
 [[file:wordcnn-fgvm.pdf]]
-
-We first evaluate two versions of FGM, i.e., FGSM and FGVM.  Their example
-results are shown in Figure [[ref:fig:wordcnn-fgsm]] and
-Figure [[ref:fig:wordcnn-fgvm]], respectively.  With appropriate noise level, we can
-change only a few words to alter the label of the whole text piece.
 
 *** Results on Character-level Model
 :PROPERTIES:
@@ -1735,21 +1726,20 @@ the whole sentence is still legit albeit its label is already different from the
 clean sample.  On the other hand, if we tune up the noise level, the whole
 sentence is changed to another somewhat legit sentence, which is rather
 surprising.  With a large noise, we would expect that the whole sentence turn
-into garbage, e.g., cite:liang2017-deep, albeit the resulting sentence does
-change to a different category.  Our hypothesis is that the architecture of the
-character-level model plays an important role.
-
+into garbage, as observed in cite:liang2017-deep, albeit the resulting sentence
+does change to a different category.  Our hypothesis is that the architecture of
+the character-level model plays an important role.
 1. The different width of feature maps encode different levels of contextual
    information around each character.
-2. The highway and LSTM layer creates mingles the contextual information
-   together so that the noise follows a certain direction.
+2. The highway and LSTM layer mingles the contextual information together so
+   that the noise follows a certain direction.
 
 *** COMMENT Discussion
 :PROPERTIES:
 :CUSTOM_ID: h3-discussion-c8a09
 :END:
 
-In contrary to the experiment in cite:liang2017-deep, our framework generates
+In contrary to the experiment in cite:liang2017-deep, our framework generates
 much better adversarial texts with gradient methods.  One main reason is that
 the embedding space preserves semantic relations among tokens.
 
@@ -1784,9 +1774,13 @@ plan to extend our work in the following directions.
 1. WMD is demonstrated to be a viable quality metric for the generated
    adversarial texts. We can employ the optimization and model attacking methods
    by minimizing the WMD.
-2. We use a general embedding space in our experiments. A smaller embedding that
-   is trained on the specific task may help to speed up the computation needed
-   to reconstruct the texts.
+2. We use a general embedding space in our experiments.  A smaller embedding
+   that is trained on the specific task may help to speed up the computation
+   needed to reconstruct the texts.
+3. If we plug-in an autoencoder (e.g., the sequence to sequence architecture) as
+   the input to the classification model, we then can eliminate the
+   reconstruction process which is the computation bottleneck in our current
+   framework.
 
 * Generate /Natural/ Adversarial Images
 :PROPERTIES:
@@ -1842,10 +1836,10 @@ self-driving car needs to correctly estimate at least some attributes of an
 incoming, unknown object (instead of simply rejecting it) to handle the
 situation gracefully and minimize damage.
 
-In this paper, we propose a framework for finding OoD errors in computer vision
-models in which iterative optimization in the parameter space of a 3D renderer
-is used to estimate changes (e.g., in object geometry and appearance, lighting,
-background, or camera settings) that cause a target DNN to misbehave
+In this chapter, we propose a framework for finding OoD errors in computer
+vision models in which iterative optimization in the parameter space of a 3D
+renderer is used to estimate changes (e.g., in object geometry and appearance,
+lighting, background, or camera settings) that cause a target DNN to misbehave
 (Figure ref:fig:concept).  With our framework, we generated unrestricted 6D
 poses of 3D objects and studied how DNNs respond to 3D translations and 3D
 rotations of objects.  For our study, we built a dataset of 3D objects
@@ -1935,8 +1929,8 @@ two approaches:
 We will next describe the target classifier in
 Section ref:h3-classification-networks-0a76a.  Section ref:h3-3d-renderers-4fcbe
 provides details on the 3D renderers we are using.  Our own dataset of 3D
-objects are introduced in Section ref:h3-3d-object-a1f23.  Then we discuss
-the optimization methods in Section ref:h3-methods-29ddb.
+objects are introduced in Section ref:h3-3d-object-a1f23.  Then we discuss the
+optimization methods in Section ref:h3-methods-29ddb.
 
 *** Classification Networks
 :PROPERTIES:
