@@ -62,6 +62,7 @@
 #+LATEX_HEADER: \newcommand{\layer}[1]{\ensuremath{\mathsf{#1}\xspace}}
 
 #+MACRO: tex @@latex:$1@@
+#+MACRO: cs231n [[http://cs231n.stanford.edu][cs231n]]
 
 #+LATEX_HEADER: \copyrightyear{2019}
 #+LATEX_HEADER: \keywords{Adversarial, Security, Deep Learning, Computer Vision, Natural Language Processing}
@@ -72,13 +73,15 @@
 #+LATEX_HEADER: \professor{Yang Zhou, Assistant Professor of Computer Science and Software Engineering}
 #+LATEX_HEADER: \professor{Shiwen Mao, Professor of Electrical and Computer Engineering}
 
-#+LaTeX: \setcounter{page}{0}\afterpage{\pagenumbering{Roman}}
+#+LaTeX: \afterpage{\pagenumbering{roman}}
 #+LaTeX: \TitlePage
 
 * Abstract                                                           :ignore:
 :PROPERTIES:
 :CUSTOM_ID: h1-abstract-fc7de
 :END:
+
+#+LaTeX: \setcounter{page}{2}
 
 #+BEGIN_abstract
 
@@ -285,39 +288,50 @@ algorithms demonstrates different properties of adversarial examples.
 :END:
 
 Neural network is a connectionism model comprising of artificial neurons that
-are inter-connected in a certain pattern.  Each neuron is simply a processing
-unit, which takes some inputs and generates the outputs.  A neuron can be as
-simple as math functions, e.g., identity function \(f(x) = x\), sigmoid function
-\(f(x) = 1 / (1 + e^{-x})\), rectified linear units (ReLU) \(f(x) = \max(0,
-x)\), etc.  These functions are usually referred to as activation functions.
-Some neurons may be more complex.  Recurrent cells have feedback loops, i.e.,
-output being fed into the input (the dotted line in Figure ref:fig:neuron).
-Some neurons may have internal parameters, e.g., filters in the convolution
-network (\(f(X) = sum(M\bigotimes X)\) where \(\bigotimes\) denotes element-wise
-multiplication, \(M\) is a weight matrix of the same size as \(X\)).  More
-generally, each neuron may also be a small neural network cite:lin2013-network.
-Depending on the level of granularity, neurons may take different forms.  The
-simple ones may be used as motifs to construct more complex
-ones cite:zoph2016-neural.  On top of the different types of neurons, connection
-patterns (i.e., the neural architectures) may also contribute to the property of
-the whole model, e.g., residue connections cite:he2015-deep-residual.
+are inter-connected in a certain pattern.  The neuron was originally inspired by
+the biological neurons, as shown in Figure ref:fig:neuron-bio.  Despite of the
+widely used analogy between biological and artificial neurons, they are, in
+effect, very different from each other in the way they work.  In the following
+context, we use neurons to refer to artificial neurons.
+
+#+CAPTION: The artificial neuron (right) is inspired by the biological neurons (left) (image from {{{cs231n}}}).  For the artificial neuron on the right, The \(x\)'s are signals from other neurons, weights \(w\)'s controls the signal strength.  The cell is essentially a function \(f\) that aggregates and transforms the inputs to produce the signal.
+#+NAME: fig:neuron-bio
+file:img/neuron-bio.png
+
+Simply put, A neuron is just a function.  It can be simple math functions, e.g.,
+identity function \(f(x) = x\), sigmoid function \(f(x) = 1 / (1 + e^{-x})\),
+rectified linear units (ReLU) \(f(x) = \max(0, x)\), etc.  Some neurons may be
+more complex.  Recurrent cells have feedback loops, i.e., output being fed into
+the input (the dotted line in Figure ref:fig:neuron).  Some neurons may have
+internal parameters, e.g., filters in the convolution network (\(f(X) =
+sum(M\bigotimes X)\) where \(\bigotimes\) denotes element-wise multiplication,
+\(M\) is a weight matrix of the same size as \(X\)).  More generally, each
+neuron may also be a small neural network cite:lin2013-network.  Depending on
+the level of granularity, neurons may take different forms.  The simple ones may
+be used as motifs to construct more complex ones cite:zoph2016-neural.
 
 #+ATTR_LATEX: :width .3\textwidth
 #+CAPTION: A general illustration of a neuron, which is a function.  Some neurons may have internal parameters, e.g., filters in the convolution network.  Others may have feedback loop, i.e., dotted lines in the figure, e.g., LSTM cells.
 #+NAME: fig:neuron
-[[file:img/neuron.pdf]]
+file:img/neuron.pdf
 
 Connecting these neurons in a certain pattern, it forms a neural network system.
-Each link may also be associated with a weight value (e.g., \(w_1\), \(w_2\) and
-\(w_3\) in Figure ref:fig:neuron) which is interpreted as the strength or the
-importance of the input features.  In a practical neural network, there are
-usually millions of weights.  The training of neural network is the process of
-obtaining a /suitable/ value for each of the weight.  The training procedure is
-usually formulated as a non-convex optimization process.  In most cases, the
-whole neural network is differentiable, so we rely on first-order (e.g.,
-stochastic gradient descent (SGD), Adam cite:kingma2014-adam) or second-order
-(e.g., Levenberg–Marquardt (LM) cite:more1978-levenberg)
-optimization methods to tune the weights.
+In a practical neural network, there are usually millions of weights.  The
+training of neural network is the process of obtaining a /suitable/ value for each
+of the weight.  Despite that the training procedure is usually formulated as a
+non-convex optimization process where the target is to minimize some loss term
+\(L\), the gradient descent (GD) algorithms work pretty good in practice, e.g.,
+first-order GD (e.g., stochastic gradient descent (SGD),
+Adam cite:kingma2014-adam), second-order GD (e.g., Levenberg–Marquardt
+(LM) cite:more1978-levenberg).  The training algorithm is usually referred to as
+the error back-propagation cite:rumelhart1986-learning.  It is, in effect, an
+application of the chain rule.  The error backpropagation for a single neuron is
+illustrated in Figure ref:fig:ebp.
+
+#+ATTR_LATEX: :width .6\textwidth
+#+CAPTION: The error backpropagation in a single neuron (image from {{{cs231n}}}).  The green lines are forward pass, while the red lines are backward pass, i.e., the back-propagation.  The error \(L\) is passed back through the system following the chain rule to calculate each weight's contribution to the error term, e.g., \(\frac{\partial L}{\partial x}\), \(\frac{\partial L}{\partial y}\).
+#+NAME: fig:ebp
+file:img/backprop.png
 
 ** Adversarial Images
 :PROPERTIES:
@@ -327,7 +341,7 @@ optimization methods to tune the weights.
 In this chapter, we briefly discuss some of the adversarial generating
 algorithms in the image domain.  Each algorithm represents a different view of
 the adversarial samples.  Besides, these algorithms demonstrate the basic ideas
-on how to find adversarial samples (noises) for a specific model.  Adversarial
+on how to find adversarial samples (or noises) for a target model.  Adversarial
 algorithms in other domains (e.g., sentiment analysis, speech recognition) are
 generally variants of these algorithms, and will be surveyed in the following
 chapters where necessary.
@@ -399,9 +413,10 @@ the judgment of human beings.
 :CUSTOM_ID: h2-overview-of-f46d2
 :END:
 
-Generally speaking, the proposal methods in literature fall into two strategies,
-where the first one is to move data points around till its label changes, and
-the other one is to create a mapping between clean and adversarial samples (or
+Generally speaking, the proposed adversarial generating methods in literature
+fall into two strategies based on its intuition, where the core idea of the
+first category is to move data points around till its label changes, and the
+other one is to create a mapping between clean and adversarial samples (or
 noises).
 
 **** Move Data Points
@@ -414,16 +429,18 @@ carefully chosen direction.  It has been shown that it is very unlikely to
 arrive at adversarial samples simple by a random
 walk cite:szegedy2013-intriguing.
 1. The direction may be where the loss of the clean samples increases, e.g.,
-   FGSM cite:goodfellow2014-explaining and its
-   variants cite:kurakin2016-adversarial-examples,kurakin2016-adversarial-machine,miyato2015-distributional.
-   It may also be the direction where the loss of adversarial samples decreases,
-   e.g., cite:szegedy2013-intriguing.
+   FGSM cite:goodfellow2014-explaining and its variants, FGSM (without label
+   leaking) cite:kurakin2016-adversarial-examples, iterative
+   FGSM cite:kurakin2016-adversarial-machine,
+   FGVM cite:miyato2015-distributional.  It may also be the direction where the
+   loss of adversarial samples decreases, e.g., constrained optimization
+   based cite:szegedy2013-intriguing.
 2. The direction may also be where the probability of the correct label
    decreases (or the probabilities of the target label increases), e.g.,
    JSMA cite:papernot2015-limitations, CW cite:carlini2016-towards.
-3. It could also be the direction towards the decision boundary (e.g.,
+3. It could also be the direction towards the decision boundary e.g.,
    DeepFool cite:moosavi-dezfooli2015-deepfool, one-pixel
-   attack cite:su2017-one) so that one tiny step across the boundary would
+   attack cite:su2017-one, so that one tiny nudge across the boundary would
    create an adversarial sample of a different category.
 
 **** Map Clean Samples to Adversarial
@@ -438,7 +455,7 @@ employs a generative model (i.e., GAN cite:goodfellow2014-generative) to map
 from clean samples to adversarial ones.  The advantages of this class of methods
 are
 #+BEGIN_EXPORT latex
-\begin{enumerate*}
+\begin{enumerate*}[label=(\roman*)]
  \item that the generation is usually fast since only one pass of forward
  computation is needed, and
  \item that the adversarial sames may be of great diversity if a generative
@@ -471,9 +488,10 @@ computationally prohibitive.  The authors proposed an approximation.
 - Minimize \(c\norm{\delta x} + J(f(\adv{x}), \adv{y})\) subject to \(\adv{x}
   \in [0, 1]^m\).
 
-Where the scale \(c\) is determined by line search.  And the optimization is
-done by L-BFGS algorithm.  The downside of this algorithm is that
-1. most optimization routines work only in unconstrained case, and
+Where the scale \(c\) is determined by line search.  The author use L-BFGS to
+solve This constrained optimization.  The downside of this formulation is that
+1. there are not many choices for the optimization methods since most only work
+   in unconstrained case, and
 2. the constrained optimization take longer.
 
 The Carlini-Wagner (CW) cite:carlini2016-towards uses a reparameterization trick
@@ -494,7 +512,7 @@ Fast gradient method is a class of method that relies on the \(\nabla_{x}J\).
 
 cite:goodfellow2014-explaining proposes the original fast gradient sign method
 (FGSM) based on the hypothesis that /neural networks are too linear to resist
-linear adversarial perturbation/.  In FGSM, we have
+linear adversarial perturbation/.  Concretely, we have
 #+begin_export latex
 \begin{equation}
   \label{eq:fgsm-leaking}
@@ -502,15 +520,15 @@ linear adversarial perturbation/.  In FGSM, we have
 \end{equation}
 #+end_export
 
-Simply put, FGSM tries to modify the input towards the direction where the
-classification loss for this sample increases.  It is referred to as the /fast
-method/ in cite:kurakin2016-adversarial-examples.
+The intuition is that FGSM tries to modify the input towards the direction where
+the classification loss for this data sample increases.  It is referred to as
+the /fast method/ in cite:kurakin2016-adversarial-examples.
 
-However, in Equation ref:eq:fgsm-leaking, the adversarial samples are generated
-with its true label \(y\), which is assumed not known during test.  This is
-known as the label leaking problem, pointed out in
-cite:kurakin2016-adversarial-machine.  They propose a revised version of FGSM,
-where the true label \(y\) is replaced by the /predicted/ label (i.e.,
+However, in Equation ref:eq:fgsm-leaking, the adversarial sample is generated
+with its true label \(y\), which is assumed not known in practice.  This is
+referred to as the label leaking problem cite:kurakin2016-adversarial-machine.
+This work cite:kurakin2016-adversarial-machine introduces a revised version of
+FGSM, where the true label \(y\) is replaced by the /predicted/ label (i.e.,
 \(\pred{y}\)) when generating adversarial examples.  The revised FGSM is as
 follows.
 #+begin_export latex
@@ -525,9 +543,9 @@ follows.
 :CUSTOM_ID: h4-fast-gradient-5cc42
 :END:
 
-A simple variant of FGSM is fast gradient value method
-(FGVM) cite:miyato2015-distributional, where gradient values are directly used
-when computing the noise, instead of the sign of gradients.
+A simple variant of FGSM is fast gradient /value/ method
+(FGVM) cite:miyato2015-distributional, where the gradient values are directly
+used when computing the noise, instead of the sign of gradients.
 #+begin_export latex
 \begin{equation}
   \label{eq:fgvm}
@@ -535,15 +553,19 @@ when computing the noise, instead of the sign of gradients.
 \end{equation}
 #+end_export
 
+In practice, the FGSM works better, i.e., generating more subtle noise, than
+FGVM.
+
 ***** Iterative Fast Gradient Method
 :PROPERTIES:
 :CUSTOM_ID: h4-iterative-fast-46b34
 :END:
 
-An intuitive way to extent FGSM is iterative FGSM.  The authors apply it
-multiple times with small step size, and clip pixel values of intermediate
-results after each step to ensure that they are in an \epsilon-neighborhood of
-the original image.  Concretely, we have
+An intuitive way to extent FGSM is the /iterative/
+FGSM cite:kurakin2016-adversarial-examples, where the authors apply it multiple
+times with small step size, and clip pixel values of intermediate results after
+each step to ensure that they are in an \epsilon-neighborhood of the original
+image.  Concretely, we have
 #+begin_export latex
 \begin{equation}
   \label{eq:fgsm-iter}
@@ -556,9 +578,9 @@ the original image.  Concretely, we have
 :CUSTOM_ID: h4-least-likely-class-40545
 :END:
 
-The variants of FGSM so far only increases the cost of correct class, without
-specifying a desired target class.  For classification task with finer labels
-(e.g., different breeds of dogs in ImageNet), the above method may create
+The above variants of FGSM so far only increases the cost of correct class,
+without specifying a desired target class.  For classification task with finer
+labels (e.g., different breeds of dogs in ImageNet), the above method may create
 uninteresting adversarial samples.  In order to create more interesting
 misclassification, cite:kurakin2016-adversarial-examples proposes to modify the
 image towards the direction where the probability for the least-likely class is
@@ -788,44 +810,47 @@ for other labels.
 
 As ref:fig:mnistdemo shows, although adversarial and clean images appear
 visually indiscernible, their subtle differences can successfully fool the deep
-neural networks.  The observation is that deep neural networks are sensitive to
-these subtle differences.  As a result, an intuitive question is: whether it is
-possible to leverage the network's sensitivity to subtle differences to
-distinguish between adversarial and clean images?  In this work, we explore this
-intuition and demonstrate that a simple binary classifier can separate the
-adversarial from the original clean images with very high accuracy (over 99%).
-So the answer to the above question is /yes/.  However, we also notice that the
-binary classifier approach suffers from the /generalization issue./
+neural networks.  The observations are
+Observations from the image adversarial samples are that
+1. The adversarial noise follows a specific
+   direction cite:goodfellow2014-explaining.
+2. The neural nets are sensitive to individual pixel
+   values cite:szegedy2013-intriguing.
+s a result, an intuitive question is: whether it is possible to leverage the
+network's sensitivity to subtle differences to distinguish between adversarial
+and clean images?  In this work, we explore this intuition and demonstrate that
+a simple binary classifier can separate the adversarial from the original clean
+images with very high accuracy (over 99%).  So the answer to the above question
+is /yes/.  However, we also notice that the binary classifier approach suffers
+from the /generalization issue./
 1. it is sensitive to hyper-parameters used in crafting adversarial images,
    e.g., \epsilon in fast gradient method, and
 2. it is sensitive to different adversarial crafting algorithms.
 In other words, different algorithms will generate adversarial images that
 follow different distributions.  It is insufficient to train the classifier only
-on one type of adversarial samples.  In addition to that, we also discovered
-that this limitation is shared among other proposed defense methods against
-adversarial images, e.g., defensive
+on one type of adversarial samples.  In addition to that, we also showed that
+this limitation is shared among other proposed defense methods against
+adversarial images, e.g., adversarial
 training cite:huang2015-learning,kurakin2016-adversarial-examples, defensive
-knowledge distillation cite:papernot2015-distillation, etc.  We empirically
-investigate the limitation and propose the hypothesis that the adversarial and
-original dataset follow different distributions.
+knowledge distillation (KD) cite:papernot2015-distillation, etc.
 
 Our key contributions are:
 1. We show that binary classifier can successfully separate adversarial from
-   clean samples.
+   clean samples that follow similar distributions.
 2. In addition, the binary classifier are robust to second-round adversarial
    attack, in other words, it is difficult to bypass the classifier with
    adversarial samples that fools the protected model.
 3. However, we also show that currently proposed defense methods, including our
-   binary classifier approach, does not generalize to adversarial samples from
-   different methods.
+   binary classifier approach, does not generalize to adversarial samples that
+   follow different distributions, e.g., created from different methods.
 
 This chapter is organized as follows.  In Section ref:h2-related-work-be7a7, we
-give an overview of the current literature in generating and defending against
-adversarial images.  Then, it is followed by a brief summary of the
-state-of-the-art adversarial defense algorithms in
-Section ref:h2-related-work-be7a7.  Section ref:h2-experiment-12eaa presents our
-experiment results and detailed discussions.  And we conclude this chapter in
-Section ref:h2-conclusion-54a32.
+give an overview of the current literature in defending against adversarial
+images (the generating algorithms are surveyed in
+Section ref:h1-adversarial-images-930fb).  The procedure for our investigation
+is outlined in Section ref:h2-method-b349c.  Section ref:h2-experiment-12eaa
+presents our experiment results and detailed discussions.  And we conclude this
+chapter in Section ref:h2-conclusion-54a32.
 
 ** Related Work
 :PROPERTIES:
@@ -847,47 +872,64 @@ cite:kurakin2016-adversarial-machine shows that some image transformations,
 e.g., Gaussian noise, Gaussian filter, JPEG compression, etc., can effectively
 recover over 80% of the adversarial images.  However, in our experiment, the
 image transformation defense does not perform well on images with low
-resolution, e.g., MNIST.  Knowledge distillation is also shown to be an
-effective method against most adversarial images cite:papernot2015-distillation.
-The restrictions of defensive knowledge distillation are 1) that it only applies
-to models that produce categorical probabilities, and 2) that it needs model
-training.  Adversarial training
-cite:kurakin2016-adversarial-machine,huang2015-learning was also shown to
-greatly enhance the model robustness to adversarials.  However, as discussed in
-Section ref:h3-generalization-limitation-96e6b, defensive distillation and
-adversarial training suffers from, what we call, the generalization limitations.
-Our experiment suggests this seems to be an intrinsic property of adversarial
-datasets.
+resolution, e.g., MNIST.  Knowledge distillation (KD) cite:hinton2015-distilling
+is also shown to be an effective method against most adversarial images
+cite:papernot2015-distillation.  The restrictions of defensive knowledge
+distillation are
+#+begin_export latex
+\begin{enumerate*}[label=(\roman*)]
+\item that it only applies to models that produce categorical probabilities,
+\item that it needs model re-training.
+\end{enumerate*}
+#+end_export
+Adversarial training cite:kurakin2016-adversarial-machine,huang2015-learning was
+also shown to greatly enhance the model robustness to adversarials.  However, as
+discussed in Section ref:h3-generalization-limitation-96e6b, defensive
+distillation and adversarial training suffers from, what we call, the
+generalization limitations.  Our experiment suggests this seems to be an
+intrinsic property of adversarial datasets.
+
+** Method
+:PROPERTIES:
+:CUSTOM_ID: h2-method-b349c
+:END:
+
+Generally, we follow the steps below to evaluate the effectiveness and
+limitations of the binary classifier approach.
+
+1. Train a deep neural network \(f_1\) on the original clean training data
+   \(X_{train}\), and craft adversarial dataset from the original clean data,
+   \(X_{train} \to X^{adv(f_1)}_{train}\), \(X_{test} \to X^{adv(f_1)}_{test}\),
+   where \(X^{adv(f_1)}\) denotes adversarial examples created from \(X\)
+   targeting model \(f_1\).  Here, \(f_1\) is the target model that we want to
+   protect.
+2. Train a binary classifier \(f_2\) on the combined (and shuffled) training data
+   \(\{X_{train}, X^{adv(f_1)}_{train}\}\), where \(X_{train}\) is labeled 0 and
+   \(X^{adv(f_1)}_{train}\) labeled 1.
+3. Test the accuracy of \(f_2\) on \(X_{test}\) and \(X^{adv(f_1)}_{test}\),
+   respectively.  This will show the effectiveness of the binary classifier
+   approach.
+4. Construct second-round adversarial test data, \(\{X_{test},
+   X^{adv(f_1)}_{test}\}\to \{X_{test}, X^{adv(f_1)}_{test}\}^{adv(f_2)}\) and
+   test \(f_2\) accuracy on this new adversarial dataset.  Intuitively, we want
+   to investigate whether we could find adversarial samples
+   #+begin_export latex
+   \begin{enumerate*}[label=(\roman*)]
+   \item that can successfully bypass the binary classifier, and
+   \item that can still fool the target model if they bypass the binary classifier.
+   \end{enumerate*}
+   #+end_export
+   Since adversarial datasets are shown to be transferable among different
+   machine learning techniques cite:papernot2016-transferability, the binary
+   classifier approach will be seriously flawed if \(f_2\) failed the above
+   second-round attacking test.
 
 ** Experiment
 :PROPERTIES:
 :CUSTOM_ID: h2-experiment-12eaa
 :END:
 
-Generally, we follow the steps below to test the effectiveness and limitation of
-the binary classifier approach.
-
-1. Train a deep neural network \(f_1\) on the original clean training data
-   \(X_{train}\), and craft adversarial dataset from the original clean data,
-   \(X_{train}\to X^{adv(f_1)}_{train}\), \(X_{test}\to X^{adv(f_1)}_{test}\).
-   \(f_1\) is used to generate the attacking adversarial dataset which we want
-   to filter out.
-2. Train a binary classifier \(f_2\) on the combined (shuffled) training data
-   \(\{X_{train}, X^{adv(f_1)}_{train}\}\), where \(X_{train}\) is labeled 0 and
-   \(X^{adv(f_1)}_{train}\) labeled 1.
-3. Test the accuracy of \(f_2\) on \(X_{test}\) and \(X^{adv(f_1)}_{test}\),
-   respectively.
-4. Construct second-round adversarial test data, \(\{X_{test},
-   X^{adv(f_1)}_{test}\}\to \{X_{test}, X^{adv(f_1)}_{test}\}^{adv(f_2)}\) and
-   test \(f_2\) accuracy on this new adversarial dataset.  Concretely, we want
-   to test whether we could find adversarial samples 1) that can successfully
-   bypass the binary classifier \(f_2\), and 2) that can still fool the target
-   model \(f_1\) if they bypass the binary classifier.  Since adversarial
-   datasets are shown to be transferable among different machine learning
-   techniques cite:papernot2016-transferability, the binary classifier approach
-   will be seriously flawed if \(f_2\) failed this second-round attacking test.
-
-The code to reproduce our experiment are available
+The code to reproduce our experiment are available at
 https://github.com/gongzhitaao/adversarial-classifier.
 
 *** Efficiency and Robustness of the Classifier
@@ -927,11 +969,11 @@ ref:tbl:accuracy-summary are summarized as follows.
    (successful) or near 0 (unsuccessful).  Which means that the classifier
    either successfully detects the subtle difference completely or fails
    completely.  We did not observe any values in between.
-3. Accuracy on \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) suggests that we were not
+2. Accuracy on \(\{X^{adv(f_1)}_{test}\}^{adv(f_2)}\) suggests that we were not
    successful in disguising adversarial samples to bypass the the classifier.
    In other words, the binary classifier approach is robust to a second-round
    adversarial attack.
-4. Accuracy on \(\{X_{test}\}^{adv(f_2)}\) suggests that in case of the
+3. Accuracy on \(\{X_{test}\}^{adv(f_2)}\) suggests that in case of the
    second-round attack, the binary classifier has very high false negative.  In
    other words, it tends to recognize them all as adversarials.  This, does not
    pose a problem in our opinion.  Since our main focus is to block adversarial
@@ -1006,54 +1048,55 @@ the results of defensive training are similar to the binary classifier approach.
 :CUSTOM_ID: h4-disparity-among-6b08e
 :END:
 
-#+CAPTION: Adversarial training cite:huang2015-learning,kurakin2016-adversarial-machine does not work.  This is a church window plot cite:warde-farley2016-adversarial.  Each pixel \((i, j)\) (row index and column index pair) represents a data point \(\tilde{x}\) in the input space and \(\tilde{x} = x + \vb{h}\epsilon_j + \vb{v}\epsilon_i\), where \(\vb{h}\) is the direction computed by FGSM and \(\vb{v}\) is a random direction orthogonal to \(\vb{h}\).  The \epsilon ranges from \([-0.5, 0.5]\) and \(\epsilon_{(\cdot)}\) is the interpolated value in between.  The central black dot {{{tex({\protect\tikz[baseline=-0.5ex]{\protect\draw[fill=black] (0\,0) circle (0.3ex)}})}}} represents the original data point \(x\), the orange dot (on the right of the center dot) {{{tex({\protect\tikz[baseline=-0.5ex]{\protect\draw[fill=orange\,draw=none] (0\,0) circle (0.3ex)}})}}} represents the last adversarial sample created from \(x\) via FGSM that is used in the adversarial training and the blue dot {{{tex({\protect\tikz[baseline=-0.5ex]{\protect\draw[fill=blue\,draw=none] (0\,0) circle (0.3ex)}})}}} represents a random adversarial sample created from \(x\) that cannot be recognized with adversarial training. The three digits below each image, from left to right, are the data samples that correspond to the black dot, orange dot and blue dot, respectively.  {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw (0\,0) rectangle (2.5ex\,2.5ex)}})}}} ( {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw[fill=black\,opacity=0.1] (0\,0) rectangle (2.5ex\,2.5ex)}})}}}) represents the data samples that are always correctly (incorrectly) recognized by the model.  {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw[fill=red\,opacity=0.1] (0\,0) rectangle (2.5ex\,2.5ex)}})}}} represents the adversarial samples that can be correctly recognized without adversarial training only.  And {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw[fill=green\,opacity=0.1] (0\,0) rectangle (2.5ex\,2.5ex)}})}}} represents the data points that were correctly recognized with adversarial training only, i.e., the side effect of adversarial training.
+#+CAPTION: Adversarial training cite:huang2015-learning,kurakin2016-adversarial-machine does not work.  This is a church window plot cite:warde-farley2016-adversarial.  Each pixel \((i, j)\) (row index and column index pair) represents a data point \(\tilde{x}\) in the input space and \(\tilde{x} = x + \vb{h}\epsilon_j + \vb{v}\epsilon_i\), where \(\vb{h}\) is the direction computed by FGSM and \(\vb{v}\) is a random direction orthogonal to \(\vb{h}\).  The \epsilon ranges from \([-0.5, 0.5]\) and \(\epsilon_{(\cdot)}\) is the interpolated value in between.  The central black dot {{{tex({\protect\tikz[baseline=-0.5ex]{\protect\draw[fill=black] (0\,0) circle (0.3ex)}})}}} represents the original data point \(x\), the orange dot (on the right of the center dot) {{{tex({\protect\tikz[baseline=-0.5ex]{\protect\draw[fill=orange\,draw=none] (0\,0) circle (0.3ex)}})}}} represents the last adversarial sample created from \(x\) via FGSM that is used in the adversarial training and the blue dot {{{tex({\protect\tikz[baseline=-0.5ex]{\protect\draw[fill=blue\,draw=none] (0\,0) circle (0.3ex)}})}}} represents a random adversarial sample created from \(x\) that cannot be recognized with adversarial training. The three digits below each image, from left to right, are the data samples that correspond to the black dot, orange dot and blue dot, respectively.  {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw (0\,0) rectangle (2.5ex\,2.5ex)}})}}} ( {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw[fill=black\,opacity=0.1] (0\,0) rectangle (2.5ex\,2.5ex)}})}}} ) represents the data samples that are always correctly (incorrectly) recognized by the model.  {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw[fill=red\,opacity=0.1] (0\,0) rectangle (2.5ex\,2.5ex)}})}}} represents the adversarial samples that can be correctly recognized without adversarial training only.  And {{{tex({\protect\tikz[baseline=0.5ex]{\protect\draw[fill=green\,opacity=0.1] (0\,0) rectangle (2.5ex\,2.5ex)}})}}} represents the data points that were correctly recognized with adversarial training only, i.e., the side effect of adversarial training.
 #+NAME: fig:adv-training-not-working
 [[file:adv-training-not-working.pdf]]
 
-In our experiment, we also discovered that the binary classifier is also
-sensitive to the algorithms used to generate the adversarial datasets.
+In our experiment, we also discovered that the binary classifier is sensitive to
+the algorithms used to generate the adversarial datasets.
 
-Specifically, the binary classifier trained on FGSM adversarial dataset achieves
-good accuracy (over 99%) on FGSM adversarial dataset, but not on adversarial
-generated via JSMA, and vise versa.  However, when binary classifier is trained
-on a mixed adversarial dataset from FGSM and JSMA, it performs well (with
-accuracy over 99%) on both datasets.  This suggests that FGSM and JSMA generate
-adversarial datasets that are /far away/ from each other.  It is too vague
-without defining precisely what is /being far away/.  In our opinion, they are
-/far away/ in the same way that CIFAR10 is /far away/ from SVHN.  A well-trained
-model on CIFAR10 will perform poorly on SVHN, and vise versa.  However, a
-well-trained model on the the mixed dataset of CIFAR10 and SVHN will perform
-just as well, if not better, on both datasets, as if it is trained solely on one
-dataset.
+Specifically, the binary classifier, that is trained on FGSM adversarial dataset
+achieves good accuracy (over 99%) on FGSM adversarial dataset, but not on
+adversarial generated via JSMA, and vise versa.  However, when binary classifier
+is trained on a mixed adversarial samples dataset from FGSM and JSMA, it
+performs well (with accuracy over 99%) on both datasets.  This suggests that
+FGSM and JSMA generate adversarial datasets whose distributions are /far away/
+from each other.  It is too vague without defining precisely what is /being far
+away/.  In our opinion, they are /far away/ in the same way that CIFAR10 is /far
+away/ from SVHN.  A well-trained model on CIFAR10 will perform poorly on SVHN,
+and vise versa.  However, a well-trained model on the the mixed dataset of
+CIFAR10 and SVHN will perform just as well, if not better, on both datasets, as
+if it is trained solely on one dataset.
 
 The adversarial datasets generated via FGSM and TGSM are, however, /compatible/
 with each other.  In other words, the classifier trained on one adversarial
 datasets performs well on adversarials from the other algorithm.  They are
 compatible in the same way that training set and test set are compatible.
 Usually we expect a model, when properly trained, should generalize well to the
-unseen data from the same distribution, e.g., the test dataset.
+unseen data that follow the same distribution, e.g., the test dataset.
 
 In effect, it is not just FGSM and JSMA are incompatible.  We can generate
 adversarial data samples by a linear combination of the direction computed by
-FGSM and another random orthogonal direction, as illustrated in a church plot
-cite:warde-farley2016-adversarial Figure ref:fig:adv-training-not-working.
+FGSM and another random orthogonal direction, as illustrated in a church
+plot cite:warde-farley2016-adversarial (see
+Figure ref:fig:adv-training-not-working).
 Figure ref:fig:adv-training-not-working visually shows the effect of adversarial
-training cite:kurakin2016-adversarial-machine.  Each image represents
-adversarial samples generated from /one/ data sample, which is represented as a
-black dot in the center of each image, the last adversarial sample used in
-adversarial training is represented as an orange dot (on the right of black dot,
-i.e., in the direction computed by FGSM).  The green area represents the
-adversarial samples that cannot be correctly recognized without adversarial
-training but can be correctly recognized with adversarial training.  The red
-area represents data samples that can be correctly recognized without
+training cite:kurakin2016-adversarial-machine.  The pixels in each image
+represents adversarial samples generated from /one/ data sample, which is
+represented as a black dot in the center of each image.  The last adversarial
+sample used in adversarial training is represented as an orange dot (on the
+right of black dot, i.e., in the direction computed by FGSM).  The green area
+represents the adversarial samples that cannot be correctly recognized without
+adversarial training but can be correctly recognized with adversarial training.
+The red area represents data samples that can be correctly recognized without
 adversarial training but cannot be correctly recognized with adversarial
-training.  In other words, it represents the side effect of adversarial
+training.  In other words, it represents the side effect of the adversarial
 training, i.e., slightly reducing the model accuracy.  The white (gray) area
 represents the data samples that are always correctly (incorrectly) recognized
 with or without adversarial training.
 
 As we can see from Figure ref:fig:adv-training-not-working, adversarial training
-does make the model more robust against the adversarial sample (and adversarial
+does make the model more robust against the adversarial samples (and adversarial
 samples around it to some extent) used for training (green area).  However, it
 does not rule out all adversarials.  There are still adversarial samples (gray
 area) that are not affected by the adversarial training.  Further more, we could
@@ -1069,18 +1112,19 @@ easily.
 :CUSTOM_ID: h2-conclusion-54a32
 :END:
 
-We show in this work that the binary classifier is a simple yet effective and
+We show in this chapter that the binary classifier is a simple yet effective and
 robust way to separating adversarial from the original clean images.  Its
-advantage over defensive training and distillation is that it serves as a
-preprocessing step without assumptions about the model it protects.  Besides, it
-can be readily deployed without any modification of the underlying systems.
-However, as we empirically showed in the experiment, the binary classifier
-approach, defensive training and distillation all suffer from the generalization
-limitation.  For future work, we plan to extend our current work in two
-directions.  First, we want to investigate the disparity between different
-adversarial crafting methods and its effect on the generated adversarial space.
-Second, we will also carefully examine the cause of adversarial samples since
-intuitively the linear hypothesis does not seem right to us.
+advantage over adversarial training and knowledge distillation is that it serves
+as a preprocessing step without assumptions about the model it protects.
+Besides, it can be readily deployed without any modification of the underlying
+systems.  However, as we empirically showed in the experiment, the binary
+classifier approach, defensive training and distillation all suffer from the
+generalization limitation.  For future work, we plan to extend our current work
+in two directions.  First, we want to investigate the disparity between
+different adversarial crafting methods and its effect on the generated
+adversarial space.  Second, we will also carefully examine the cause of
+adversarial samples since intuitively the linear hypothesis does not seem right
+to us.
 
 * Generate Text Adversarial Samples
 :PROPERTIES:
@@ -3457,7 +3501,7 @@ What machine cannot do
 5. It does not understand the relationships among objects, figures, etc.
 6. And the most important of all, it does not understand this joke.  Mr. Obama
    is tipping his weight on the scale to play a trick on the man on the scale.
-* References
+* References                                                         :ignore:
 :PROPERTIES:
 :CUSTOM_ID: h1-references-2d44c
 :END:
@@ -3487,3 +3531,7 @@ COCO classes overlap with the 1,000 ImageNet classes.
 [fn:8] In preliminary experiments with only the DR (not the NR), we also
 empirically found FD-G to be more stable and effective than DR-G (data not
 shown).
+
+# Local Variables:
+# org-latex-hyperref-template: "\\hypersetup{pdfauthor={%a},pdftitle={%t},pdfkeywords={%k},pdfsubject={%d},pdfcreator={%c},pdflang={%L},bookmarks=true,unicode=true,pdftoolbar=true,pdfmenubar=true,pdffitwindow=false,pdfstartview={FitH},pdfnewwindow=true,colorlinks=true,anchorcolor=black,linkcolor=black,urlcolor=black,citecolor=black,filecolor=black}\n"
+# End:
