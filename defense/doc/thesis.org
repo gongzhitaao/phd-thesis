@@ -1985,9 +1985,9 @@ comparison).  This renderer is referred as DR hereafter.
 Our main dataset consists of 30 unique 3D object models (purchased from many 3D
 model marketplaces) corresponding to 30 ImageNet classes relevant to a traffic
 environment (Figure ref:fig:dataset_A).  The 30 classes include 20 vehicles
-(e.g., {{{tex(\class{school bus})}}} and {{{tex(\class{cab})}}}) and 10 street-related items
-(e.g., {{{tex(\class{traffic light})}}}).  See
-Section ref:h3-extended-description-26bed for more details.
+(e.g., \class{school bus} and \class{cab}) and 10 street-related items (e.g.,
+\class{traffic light}).  See Section ref:h3-extended-description-26bed for more
+details.
 
 Each 3D object is represented as a mesh, i.e., a list of triangular faces, each
 defined by three vertices cite:marschner2015-fundamentals.  The 30 meshes have
@@ -2004,13 +2004,11 @@ correctly classified by DNNs but still have poor realism.
 :END:
 
 We recognize that a reality gap will often exist between a render and a real
-photo.
-
-Therefore, we rigorously evaluated our renders to make sure the reality gap was
-acceptable for our study.  From \(\sim\)100 initially-purchased 3D models, we
-selected the 30 highest-quality models using the evaluation method below.
-First, we quantitatively evaluated DNN predictions on the renders.  For each
-object, we sampled 36 unique views (common in ImageNet) evenly divided into
+photo.  Therefore, we rigorously evaluated our renders to make sure the reality
+gap was acceptable for our study.  From \(\sim\)100 initially-purchased 3D
+models, we selected the 30 highest-quality models using the evaluation method
+below.  First, we quantitatively evaluated DNN predictions on the renders.  For
+each object, we sampled 36 unique views (common in ImageNet) evenly divided into
 three sets.  For each set, we set the object at the origin, the up direction to
 \((0,1,0)\), and the camera position to \((0,0,-z)\) where \(z = \{4,6,8\}\).
 We sampled 12 views per set by starting the object at a 10\textdegree{} yaw and
@@ -2088,8 +2086,8 @@ linear transformations in Equation ref:eq:w2-rot to each vertex \(v_{i} \in
 \end{equation}
 #+END_EXPORT
 
-where \(R_{y}\), \(R_{p}\), and \(R_{r}\) are the \(3\times 3\) rotation
-matrices for yaw, pitch, and roll, respectively (the matrices can be found in
+where \(R_y\), \(R_p\), and \(R_r\) are the \(3\times 3\) rotation matrices for
+yaw, pitch, and roll, respectively (the matrices can be found in
 Section ref:h3-3d-transformation-d2b22).
 
 We then translated the rotated object by adding a vector \(T = \lbrack
@@ -2108,8 +2106,8 @@ be inside a sub-volume of the camera viewing frustum.  That is, the \(x\)-,
 \end{equation}
 #+END_EXPORT
 
-where \(\theta_{v}\) is one half the camera's angle of view (i.e.,
-\(8.213\degree\) in our experiments) and \(d\) is the absolute value of the
+where \(\theta_v\) is one half the camera's angle of view (i.e.,
+8.213\textdegree{} in our experiments) and \(d\) is the absolute value of the
 difference between the camera's \(z\)-coordinate and \(z_{\delta}\).
 
 **** Random Search
@@ -2118,7 +2116,7 @@ difference between the camera's \(z\)-coordinate and \(z_{\delta}\).
 :END:
 
 In reinforcement learning problems, random search (RS) can be surprisingly
-effective compared to more sophisticated methods cite:such2017-deep.  For our RS
+effective compared to more sophisticated methods cite:such2017-deep.  For our RS
 procedure, instead of iteratively following some approximated gradient to solve
 the optimization problem in Equation ref:eq:w2-optim, we simply randomly
 selected a new pose in each iteration.  The rotation angles for the matrices in
@@ -2171,8 +2169,8 @@ kinematics cite:choi1992-inverse, which maps the Cartesian plane to angles via
 the \(atan2\) function.  Therefore, we optimized in a space of \(3 + 2 \times 3
 = 9\) parameters.  The approximate gradient \(\nabla \LL\) obtained from
 Equation eqref:eq:fd served as the gradient in our gradient descent.  We used
-the vanilla gradient descent update rule:
-\[\w \coloneqq \w - \gamma{\nabla \LL}(\w)\]
+the vanilla gradient descent update rule: \[\w \coloneqq \w - \gamma{\nabla
+\LL}(\w)\]
 
 with a learning rate \gamma of 0.001 for all parameters and optimized for 100
 steps (no other stopping criteria).
@@ -2239,20 +2237,21 @@ multi-modal w.r.t. the rotation axis angles and heavily biased towards
 :END:
 
 Previous research has shown that it is relatively easy to produce AXs
-corresponding to many different classes when optimizing input images
-cite:szegedy2013-intriguing or 3D object textures cite:athalye2017-synthesizing,
-which are very high-dimensional.  When finding adversarial poses, one might
-expect---because all renderer parameters, including the original object geometry
-and textures, are held constant---the success rate to depend largely on the
-similarities between a given 3D object and examples of the target in ImageNet.
-Interestingly, across our 30 objects, RS discovered 990/1000 different ImageNet
-classes (132 of which were shared between all objects).  When only considering
-high-confidence (\(p \geq 0.7\)) misclassifications, our 30 objects were still
-misclassified into 797 different classes with a median number of 240 incorrect
-labels found per object (see Figure ref:fig:common_failures_per_label and
-Figure ref:fig:tsne_img_ax for examples).  Across all adversarial poses and
-objects, DNNs tend to be more confident when correct than when wrong (the median
-of median probabilities were 0.41 vs. 0.21, respectively).
+corresponding to many different classes when optimizing input
+images cite:szegedy2013-intriguing or 3D object
+textures cite:athalye2017-synthesizing, which are very high-dimensional.  When
+finding adversarial poses, one might expect---because all renderer parameters,
+including the original object geometry and textures, are held constant---the
+success rate to depend largely on the similarities between a given 3D object and
+examples of the target in ImageNet.  Interestingly, across our 30 objects, RS
+discovered 990/1000 different ImageNet classes (132 of which were shared between
+all objects).  When only considering high-confidence (\(p \geq 0.7\))
+misclassifications, our 30 objects were still misclassified into 797 different
+classes with a median number of 240 incorrect labels found per object (see
+Figure ref:fig:common_failures_per_label and Figure ref:fig:tsne_img_ax for
+examples).  Across all adversarial poses and objects, DNNs tend to be more
+confident when correct than when wrong (the median of median probabilities were
+0.41 vs. 0.21, respectively).
 
 #+begin_export latex
 \begin{figure}[ht]
@@ -2827,9 +2826,9 @@ In addition to the qualitative evaluation, we also quantitatively evaluated the
 Google Inception-v3 cite:szegedy2016-rethinking top-1 accuracy on renders that
 use either an empty background or real background images.
 
-****** Evaluation of the Renders of 30 Objects on An Empty Background
+***** Evaluation of the Renders of 30 Objects on An Empty Background
 :PROPERTIES:
-:CUSTOM_ID: h6-evaluation-of-91ca2
+:CUSTOM_ID: h5-evaluation-of-91ca2
 :END:
 
 Because the experiments in the main text used our self-assembled 30-object
@@ -2858,7 +2857,7 @@ Table ref:tab:avg_accuracy_30obj.
 | top-5 mean accuracy         | 95.3% | 98.6% | 96.7% |   96.9% |
 | top-1 mean confidence score |  0.77 |  0.80 |  0.76 |    0.78 |
 
-****** Evaluation of the Renders of Test Objects on Real Backgrounds
+***** Evaluation of the Renders of Test Objects on Real Backgrounds
 :PROPERTIES:
 :CUSTOM_ID: h5-evaluation-of-825cb
 :END:
@@ -2931,9 +2930,9 @@ For the transferability test (Section ref:h4-transferability-test-e05ac),
 we identified the 13 objects (out of 30) that are well detected by the YOLO-v3
 detector via the two tests described below.
 
-***** YOLO-v3 Correctly Classifies 93.80% of Poses Generated via Yaw-rotation
+**** YOLO-v3 Correctly Classifies 93.80% of Poses Generated via Yaw-rotation
 :PROPERTIES:
-:CUSTOM_ID: h5-yolo-v3-correctly-585c5
+:CUSTOM_ID: h4-yolo-v3-correctly-585c5
 :END:
 
 We rendered 36 unique views for each object by generating a render at every
@@ -2951,9 +2950,9 @@ class-specific statistics in Table ref:tab:yolo_transfer_stats.  This result
 shows that YOLO-v3 is substantially more accurate than Inception-v3 on the
 standard object poses generated by yaw-rotation (93.80% vs. 83.2%).
 
-***** YOLO-v3 Correctly Classifies 81.03% of Poses Correctly Classified by Inception-v3
+**** YOLO-v3 Correctly Classifies 81.03% of Poses Correctly Classified by Inception-v3
 :PROPERTIES:
-:CUSTOM_ID: h5-yolo-v3-correctly-b859f
+:CUSTOM_ID: h4-yolo-v3-correctly-b859f
 :END:
 
 Additionally, as a sanity check, we tested whether poses /correctly classified/ by
@@ -3445,56 +3444,80 @@ propose to build a binary classifier to separate the adversarial samples from
 the clean one.  This follows from the observation that the neural networks are
 sensitive to individual pixel values (which is exactly why we have adversarial
 samples in the first place).  We demonstrate that the binary classifier approach
-could only successfully recognize the adversarial samples the are generated with
-the same adversarial method.  In other words, the classifier may not generalize
-well to adversarial samples generated with a different method or the same method
-with different set of hyper-parameters.  In our second work, we investigate the
-problem of generating text adversarial samples.  We propose a simple yet
-effective framework to generate adversarial texts.  In our framework, we first
-find potential adversarial texts in the embedding space, then use nearest
-neighbor to map back to the word space.  The limitation of our framework is that
-we do not have a explicit way of controlling the quality of generated texts.  In
-our third work, we show that adversarial samples for deep models exist in
-abundance in the natural world.  Instead of doing pixel-hacking in 2D images, we
-are fooling the network by rendering 3D objects in /non-canonical/ poses.  The
-reveals a more severe problem since many of the poses really do exists in real
-world.
+could only successfully recognize the adversarial samples that follow similar
+distributions.  Different the same adversarial methods with different
+hyper-parameters and different adversarial algorithms will usually generate
+adversarial samples that follow different distributions.  In other words, the
+classifier may not generalize well to adversarial samples generated with a
+different method or the same method with different set of hyper-parameters.  In
+our second work, we investigate the problem of generating text adversarial
+samples.  We propose a simple yet effective framework to generate adversarial
+texts.  In our framework, we first find potential adversarial texts in the
+embedding space, then use nearest neighbor to map back to the word space.  The
+limitation of our framework is that we do not have a explicit way of controlling
+the quality of generated texts.  Besides, the nearest neighbors search is a
+major computation bottleneck in our framework.  In our third work, we show that
+adversarial samples for deep models exist in abundance in the natural world.
+Instead of pixel-hacking in 2D images, we are fooling the network by rendering
+3D objects in /non-canonical/ poses, e.g., slightly weird yaw-angle.  This reveals
+a more severe problem since many of the poses really do exists in real world.
+We also show that the natural adversarial images transfer among different
+models.
 
-We mainly focus on a /descriptive/-style of exploration, i.e., we empirically show
-that the problem exists widely without giving an explicit solution.  Many work
-are along the lines of the /prescriptive/-style, seeking a rigorous explanation.
-We have seen some primitive progress towards this direction, albeit slow due to
-the lack of understanding of deep models.  This problem is only one piece in the
-jigsaw puzzle of theories behind deep models.  As a result, progress in other
-aspects may also help towards solving this problem in the end.
+Up to now, we mainly focus on a /descriptive/-style of exploration, i.e., we
+empirically show that the problem exists widely without giving an explicit
+explanation, nor a solution.  Many work are along the lines of the
+/prescriptive/-style, seeking a rigorous explanation.  We have seen some promising
+progress towards this direction, albeit slow due to the lack of understanding of
+deep models.
 
-At last, I would like to conclude my thesis borrowing one image
-from cite:karparthy2016-connecting.  This image shows what machines can and
-cannot do.
+We think that this adversarial problem is only one piece in the jigsaw puzzle of
+a bigger picture, thus it is not solvable by itself, nor is it complete by
+itself.  As a result, progress in other aspects may also help towards solving
+this adversarial problem.
+
+In the end, I would like to conclude my dissertation borrowing an image
+from cite:karparthy2016-connecting.  The relates deeply with the bigger picture.
 
 #+ATTR_LATEX: :width .7\textwidth
-#+CAPTION: A joke that is not easily understood by machines \cite{karparthy2016-connecting}.
+#+CAPTION: A joke that is not easily understood by machines cite:karparthy2016-connecting.
 #+NAME: fig:joke
 [[file:img/scale.png]]
+
+From this image, we can see where we are right now, and what is lacking in the
+current machine learning models.
 
 What machine can do:
 1. It can create a bounding box for each object it recognizes in the image.
 2. It can precisely outline the (sub)component of each objects.
 3. It can detect faces, and possibly smiley or not.
-4. It can generate a description of the images.
+4. It can generate some description of the images.
 5. It can generate images of similar styles.
 6. etc.
 
 What machine cannot do
-1. It does not understand the concept of /mirror/, and all the figures in the
-   mirrors are fake.
-2. it probably cannot detect the scale the man is standing on since the white
-   color blends in with the wall.
-3. It does not understand the concept of /shadows/.
-4. it does not understand what the man on the scale is doing.
-5. It does not understand the relationships among objects, figures, etc.
-6. And the most important of all, it does not understand this joke.  Mr. Obama
+1. It does not understand the concept of /mirror/, and that all the figures in the
+   mirrors are /fake/.
+2. It does not understand the concept of /shadows/.
+3. it does not understand what the man on the scale is doing.
+4. It does not understand the relationships among objects, figures, etc.
+5. And the most important of all, it does not understand this joke.  Mr. Obama
    is tipping his weight on the scale to play a trick on the man on the scale.
+6. It does not understand \(\dots\)
+
+The observation is that despite the machine may finish many tasks (e.g., games
+playing, image recognition) at super-human level, it does not work the same way
+as we do.  Adversarial examples demonstrate one facet of such disparity,
+e.g. most of the adversarial examples, that successfully trick machine learning
+model, do not interfere with human judgment.  To understand and address this
+disparity, there may be a couple of interesting directions that I would like to
+follow.
+1. Interpretability.  We try to interpret the machine's reasoning in terms of
+   human reasoning.  The intuition is that we can improve the model in a desired
+   way if we fully understand how our models work.
+2. Knowledge representation.
+
+
 * References                                                         :ignore:
 :PROPERTIES:
 :CUSTOM_ID: h1-references-2d44c
