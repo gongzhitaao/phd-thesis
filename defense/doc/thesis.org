@@ -3511,12 +3511,11 @@ as we do.  Adversarial examples demonstrate one facet of such disparity,
 e.g. most of the adversarial examples, that successfully trick machine learning
 model, do not interfere with human judgment.  To understand and address this
 disparity, there may be a couple of interesting directions that I would like to
-follow.
-1. Interpretability.  We try to interpret the machine's reasoning in terms of
-   human reasoning.  The intuition is that we can improve the model in a desired
-   way if we fully understand how our models work.
-2. Knowledge representation.
-
+follow as an extension to the work in this dissertation.
+1. Interpretability.  This line of research attempts to interpret the machine's
+   reasoning in terms of human reasoning.
+2. Learning representation.  This line of research focus on how to represent the
+   knowledge, and how to learn an efficient representation of the knowledge.
 
 * References                                                         :ignore:
 :PROPERTIES:
