@@ -211,7 +211,7 @@ predictions about the digit labels with high confidence.
 :CUSTOM_ID: h2-motivation-78a5f
 :END:
 
-The investigation into this phenomenon has important implications both in
+The investigation into this phenomenon has important applications both in
 practice and in theory.  In the real word, adversarial examples pose a serious
 problem since more and more tasks are automated by neural networks models.  Take
 the hateful comment filtering as an example.  The replacement of a few seemingly
@@ -219,11 +219,15 @@ non-important words in a sentence may turn a hateful comment into a "good" one,
 from the machine's point of view.  This could potentially cause severe social
 problems.  For some life-critical scenarios (e.g., autonomous driving, cancer
 diagnose), the lack of understanding in adversarial samples may put life at
-risk cite:press2018-tesla.  On the other hand, to explain this phenomenon
-rigorously, We may advance our understanding about neural networks, e.g., the
-generalization hypothesis, training dynamics, SGD performance, loss surface
-properties, etc.  In this work, we mainly focus on empirical exploration on this
-problem.
+risk cite:press2018-tesla.  As discussed in
+Section ref:h1-generate-natural-32d95, neural network models may fail to
+recognize objects in weird poses.  On the other hand, a deeper understanding of
+this adversarial phenomenon may advance our knowledge about neural networks.
+The theory of neural network is like a big jigsaw puzzle where the adversarial
+phenomenon is one important piece among many others, e.g., the generalization
+hypothesis, learning dynamics, non-convex optimization, properties of the loss
+surface, etc.  In this dissertation, we mainly focus on the empirical
+exploration of this problem.
 
 ** Road Maps
 :PROPERTIES:
