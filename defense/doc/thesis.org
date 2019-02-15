@@ -68,8 +68,6 @@
 \newcommand{\advclf}{(Image credit: \cite{gong2017-adversarial})}
 \newcommand{\advtxt}{(Image credit: \cite{gong2018-adversarial})}
 \newcommand{\advnat}{(Image credit: \cite{alcorn2018-strike})}
-
-
 #+end_src
 
 #+LATEX_HEADER: \copyrightyear{2019}
@@ -1326,9 +1324,9 @@ This framework builds upon the following observations.
    few pixels receive very large noise.
 2. The embedded word vectors preserve the subtle semantic relationships among
    words cite:mikolov2013-efficient,mikolov2013-distributed.  For example,
-   =vec"clothing"= is closer to =vec("shirt")= as =vec("dish")= to
-   =vec("bowl")=, while =vec("clothing")= is farther way from =vec("dish")= or
-   =vec("bowl")=, in the sense of \(p\)-norm, since they are not semantically
+   =vec("clothing")= is closer to =vec("shirt")= as =vec("dish")= to =vec("bowl")=,
+   while =vec("clothing")= is farther way from =vec("dish")= or =vec("bowl")=, in the
+   sense of \(p\)-norm, since they are not semantically
    close cite:mikolov2013-linguistic.  This property assures that it is more
    likely to replace the victim words with a semantically related one rather
    than a random one.
