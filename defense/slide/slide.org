@@ -3,7 +3,7 @@
 #+DATE: 2019 Feburary
 #+AUTHOR: Zhitao Gong
 #+EMAIL: gong@auburn.edu
-#+OPTIONS: H:2 ^:{} _:{} toc:nil
+#+OPTIONS: H:2 ^:{} toc:nil
 #+STARTUP: hideblocks showcontent
 
 #+LATEX_CLASS: beamer
@@ -13,19 +13,21 @@
 #+LATEX_HEADER: \usepackage{mathtools}
 #+LATEX_HEADER: \usepackage{clrscode3e}
 #+LATEX_HEADER: \usepackage{lmodern}
-# #+LATEX_HEADER: \usepackage{xcolor}
 #+LATEX_HEADER: \usepackage{booktabs}
 #+LATEX_HEADER: \usepackage{physics}
 #+LATEX_HEADER: \usepackage{tikz}
 #+LATEX_HEADER: \usepackage[backend=biber,style=alphabetic]{biblatex}
 #+LATEX_HEADER: \usepackage[scaled=0.85]{newtxtt}
 
+#+LATEX_HEADER: \addbibresource{../../../../refdb.bib}
+#+LATEX_HEADER: \addbibresource{../../../../local.bib}
+#+LATEX_HEADER: \graphicspath{{../../../../img/}}
+
 #+LATEX_HEADER: \institute{Auburn University}
-#+LATEX_HEADER: \addbibresource{refdb.bib}
 #+LATEX_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Outline}\tableofcontents[currentsection]\end{frame}}
 #+LATEX_HEADER: \beamertemplatenavigationsymbolsempty
 #+LATEX_HEADER: \setbeamertemplate{footline}[frame number]
-#+LATEX_HEADER: \setbeamertemplate{background}{\tikz[overlay,remember picture]\node at (current page.north east)[anchor=north east]{\includegraphics[width=1cm]{img/au-15.png}};}
+#+LATEX_HEADER: \setbeamertemplate{background}{\tikz[overlay,remember picture]\node at (current page.north east)[anchor=north east]{\includegraphics[width=1cm]{au-15.png}};}
 #+LATEX_HEADER: \setbeamersize{description width=0.5cm}
 
 #+LATEX_HEADER: \defbeamertemplate*{bibliography item}{triangletext}{\insertbiblabel}
@@ -41,6 +43,12 @@
 #+LATEX_HEADER: \newcommand\pred[1]{\overline{#1}}
 #+LATEX_HEADER: \newcommand\adv[1]{\widetilde{#1}}
 #+LATEX_HEADER: \newcommand\given{\:\vert\:}
+
+#+begin_src latex-macro
+\newcommand{\advclf}{(Image credit: \cite{gong2017-adversarial})}
+\newcommand{\advtxt}{(Image credit: \cite{gong2018-adversarial})}
+\newcommand{\advnat}{(Image credit: \cite{alcorn2018-strike})}
+#+end_src
 
 #+MACRO: empty {{{tex}}}
 #+MACRO: tag {{{tex({\small\uppercase{$1}})}}}
@@ -59,7 +67,7 @@ It is a connectionist model.
 
 #+ATTR_LaTeX: :width \textwidth
 #+CAPTION: Biological neuron versus neuron model (credit: {{{cs231n}}})
-[[file:img/neuron.png]]
+file:neuron-bio.png
 
 ** Architectures: Multi-Layer Perceptron (MLP)
 
@@ -69,7 +77,7 @@ MLP is one of the most simple feedfoward architectures.
 
 #+ATTR_LaTeX: :width .6\textwidth
 #+CAPTION: Multi-layer perceptron (credit: {{{cs231n}}})
-[[file:img/mlp.jpg]]
+file:mlp.jpg
 
 ** Architectures: Convolutional Neural Network (CNN)
 
@@ -78,8 +86,8 @@ CNN is inspired by eye structure, widely used in computer vision.
    like the convolution operation.
 2. Neurons in the same layer have no connections
 
-#+CAPTION: LetNet-5 \cite{lecun1998-gradient}
-[[file:img/cnn.png]]
+#+CAPTION: LetNet-5 cite:lecun1998-gradient
+file:cnn.png
 
 ** Architectures: Recurrent Neural Network (RNN)
 
@@ -92,7 +100,7 @@ Some neurons get part of input from its output.
 :END:
 
 #+CAPTION: Dynamic unrolling of recurrent cells. (credit: {{{colah-blog}}})
-[[file:img/rnn-unrolled.png]]
+file:rnn-unrolled.png
 
 *** {{{empty}}} :B_only:
 :PROPERTIES:
@@ -101,7 +109,7 @@ Some neurons get part of input from its output.
 :END:
 
 #+CAPTION: The double-edged sword: long term dependencies between outputs and inputs. (credit: {{{colah-blog}}})
-[[file:img/RNN-longtermdependencies.png]]
+file:RNN-longtermdependencies.png
 
 ** Notations
 
@@ -127,31 +135,31 @@ For clarity, we use the following notations in this slide.
 :BEAMER_opt: allowframebreaks
 :END:
 
-[[file:img/mnist-compare-all.png]]
+file:mnist-compare-all.png
 
 1. Visually very close, noises are very subtle.
 2. Trick machines into wrong predictions with high confidence.
 
 #+LaTeX: \framebreak
 
-#+CAPTION: Adversarial texts by our framework.
+#+CAPTION: Adversarial texts by our framework.  \advtxt{}
 #+ATTR_LaTeX: :width \textwidth
-[[file:img/demo-adv-text.pdf]]
+file:demo-adv-text.pdf
 
 The \colorbox{red!10}{highlighted} words are changed.  The \(n/L\) is the number
 of words changed divided by the total number of words.
 
 ** Adversarial Patterns for Machines
 
-#+CAPTION: Adversarial patterns for different neural nets \cite{moosavi-dezfooli2016-universal}.
+#+CAPTION: Adversarial patterns for different neural nets cite:moosavi-dezfooli2016-universal.
 #+NAME: fig:adv-machine
-[[file:img/adv-machine.png]]
+file:adv-machine.png
 
 ** Adversarial Patterns For Humans
 
-#+CAPTION: The blue lines are parallel.  This illusion is possibly caused by the fringed edges \cite{kitaoka2004-contrast}.
+#+CAPTION: The blue lines are parallel.  This illusion is possibly caused by the fringed edges cite:kitaoka2004-contrast.
 #+NAME: fig:adv-human
-[[file:img/adv-human.jpg]]
+file:adv-human.jpg
 
 More examples: http://www.psy.ritsumei.ac.jp/~akitaoka.
 
@@ -187,7 +195,7 @@ Intuitions behind the adversarial methods
 
 #+ATTR_LaTeX: :width .9\textwidth
 #+CAPTION: Data space hypothesis cite:nguyen2014-deep
-[[file:img/image-space.png]]
+file:image-space.png
 
 * Defend against Adversarial Samples
 
@@ -268,8 +276,8 @@ elude the binary classifier or adversarial training.
 ** Problem with Adversarial Training
 
 #+ATTR_LATEX: :width \textwidth
-#+CAPTION: Adversarial training cite:huang2015-learning,kurakin2016-adversarial-machine is not sufficient.  In the church window plot cite:warde-farley2016-adversarial, each pixel \((i, j)\) is a data point \(\adv{x}\) such that \(\adv{x} = x + \vb{h}\epsilon_j + \vb{v}\epsilon_i\), where \(\vb{h}\) is the FGSM direction and \(\vb{v}\) is a random orthogonal direction.  The \epsilon ranges from \([-0.5, 0.5]\).
-file:img/adv-training-not-working.pdf
+#+CAPTION: Adversarial training cite:huang2015-learning,kurakin2016-adversarial-machine is not sufficient.  In the church window plot cite:warde-farley2016-adversarial, each pixel \((i, j)\) is a data point \(\adv{x}\) such that \(\adv{x} = x + \vb{h}\epsilon_j + \vb{v}\epsilon_i\), where \(\vb{h}\) is the FGSM direction and \(\vb{v}\) is a random orthogonal direction.  The \epsilon ranges from \([-0.5, 0.5]\).  \advclf{}
+file:adv-training-not-working.pdf
 
 1. {{{tex(\tikz[baseline=0.5ex]{\draw (0\,0) rectangle (2ex\,2ex)})}}} (
    {{{tex(\tikz[baseline=0.5ex]{\draw[fill=black!10] (0\,0) rectangle (2ex\,2ex)})}}}
@@ -285,7 +293,7 @@ file:img/adv-training-not-working.pdf
 
 #+CAPTION: Architecture for sentence classification with CNN cite:kim2014-convolutional
 #+ATTR_LaTeX: :width \textwidth
-[[file:img/textcnn.png]]
+file:textcnn.png
 
 ** Text Embedding Example
 
@@ -327,14 +335,14 @@ This class of methods need to solve two problems:
 Autoencoder cite:hinton2006-reducing is used to map between texts and a
 continuous space cite:zhao2017-generating.  The embedded space is smooth.
 
-#+ATTR_LaTeX: :width .7\textwidth
-[[file:img/Autoencoder_structure.png]]
+#+attr_laTeX: :width .7\textwidth
+file:Autoencoder_structure.png
 
 ** Adversarial Text Framework
 
 We propose another method in the embedding space.
 
-#+BEGIN_EXPORT latex
+#+begin_export latex
 {\small
   \begin{codebox}
    \Procname{$\proc{Generate-Adversarial-Texts}(f, x)$}
@@ -355,12 +363,59 @@ Assumptions:
 
 Result: https://github.com/gongzhitaao/adversarial-text
 
-** COMMENT Next Step
+** Case Study: DeepFool
+:PROPERTIES:
+:BEAMER_opt: allowframebreaks
+:END:
 
-1. Find appropriate quality measurement for texts, e.g., language model scores,
-   Word Mover's Distance (WMD).
-2. Find a way to control the quality of generated adversarial texts.
-3. Test the transferability of adversarial texts.
+#+begin_export latex
+\begin{figure}[ht]
+  \centering
+  \begin{minipage}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{deepfool-acc-wmd.pdf}
+  \end{minipage}\hfill
+  \begin{minipage}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{deepfool-acc-n.pdf}
+  \end{minipage}
+  \caption{\label{fig:wordcnn-deepfool-acc}Word-level model's accuracy with
+    varying DeepFool overshoot value.  The WMD and \(N\) (number of words
+    changed) empirically show the quality of the adversarial texts.  \advtxt{}}
+\end{figure}
+#+end_export
+
+\framebreak
+
+#+ATTR_LATEX: :width \textwidth
+#+CAPTION: Adversarial texts sample from Reuters-5 dataset.  \colorbox[HTML]{FFCCCC}{Original} is the original token, \colorbox[HTML]{CCFFCC}{replaced} is the adversarial token.  *[...]* denotes omitted tokens due to space constraint.  \(\epsilon=50\) in DeepFool.
+file:deepfool-showcase.pdf
+
+More results: https://gongzhitaao.org/adversarial-text
+
+** Transferability
+
+#+begin_export latex
+\begin{figure}[ht]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{word-deepfool-transfer.pdf}
+    \caption{\footnotesize\label{fig:word-deepfool-transfer}Transferability of
+      adversarial texts generated via our framework on word-level.}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{char-hotflip-transfer.pdf}
+    \caption{\footnotesize\label{fig:char-hotflip-transfer}Transferability of
+      adversarial texts generated via Hotflip on character-level.}
+  \end{minipage}
+\end{figure}
+#+end_export
+
+\(^*\) denotes the target model used to generate the adversarial texts.
+\advtxt{}
 
 * Generate /Natural/ Adversarials
 
@@ -374,9 +429,9 @@ Result: https://github.com/gongzhitaao/adversarial-text
 4. Transfer to different models or techniques.
 5. \(\cdots\)
 
-#+BEGIN_CENTER
+#+begin_center
 ALL EMPIRICAL AND HYPOTHESIS SO FAR
-#+END_CENTER
+#+end_center
 
 * Bibliography
 
