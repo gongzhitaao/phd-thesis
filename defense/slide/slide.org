@@ -18,6 +18,7 @@
 #+LATEX_HEADER: \usepackage{tikz}
 #+LATEX_HEADER: \usepackage[backend=biber,style=alphabetic]{biblatex}
 #+LATEX_HEADER: \usepackage[scaled=0.85]{newtxtt}
+#+LATEX_HEADER: \usepackage{multirow}
 
 #+LATEX_HEADER: \addbibresource{../../../../refdb.bib}
 #+LATEX_HEADER: \addbibresource{../../../../local.bib}
@@ -335,7 +336,7 @@ This class of methods need to solve two problems:
 Autoencoder cite:hinton2006-reducing is used to map between texts and a
 continuous space cite:zhao2017-generating.  The embedded space is smooth.
 
-#+attr_laTeX: :width .7\textwidth
+#+ATTR_LATEX: :width .7\textwidth
 file:Autoencoder_structure.png
 
 ** Adversarial Text Framework
@@ -355,13 +356,60 @@ We propose another method in the embedding space.
    \li \Return $s$
   \end{codebox}
 }
-#+END_EXPORT
+#+end_export
 
 Assumptions:
 1. The text embedding space preserve the semantic relations.
 2. Important features get more noise.
 
 Result: https://github.com/gongzhitaao/adversarial-text
+
+** Results On Word-Level
+
+#+begin_export latex
+\begin{table}[ht]
+  \footnotesize
+  \centering
+  \begin{tabular}{rl*{5}{c}}
+    \toprule
+    Method
+    & Dataset
+    &
+    & \multicolumn{4}{c}{Accuracy} \\
+    \midrule
+
+    \multirow{5}{*}{FGSM}
+    &
+    & \(\epsilon\) & 0.40 & 0.35 & 0.30 & 0.25 \\
+    \cmidrule(r){3-7}
+    & IMDB      & & 0.1334 & 0.1990 & 0.4074 & 0.6770 \\
+    & Reuters-2 & & 0.6495 & 0.7928 & 0.9110 & 0.9680 \\
+    & Reuters-5 & & 0.5880 & 0.7162 & 0.7949 & 0.8462 \\
+    \cmidrule(lr){1-7}
+
+    \multirow{5}{*}{FGVM}
+    &
+    & \(\epsilon\) & 15 & 30 & 50 & 100 \\
+    \cmidrule(r){3-7}
+    & IMDB      & & 0.8538 & 0.8354 & 0.8207 & 0.7964 \\
+    & Reuters-2 & & 0.7990 & 0.7538 & 0.7156 & 0.6523 \\
+    & Reuters-5 & & 0.7983 & 0.6872 & 0.6085 & 0.5111\\
+    \cmidrule(lr){1-7}
+
+    \multirow{5}{*}{DeepFool}
+    &
+    & \(\epsilon\) & 20 & 30 & 40 & 50 \\
+    \cmidrule(r){3-7}
+    & IMDB      & & 0.8298 & 0.7225 & 0.6678 & 0.6416 \\
+    & Reuters-2 & & 0.6766 & 0.5236 & 0.4910 & 0.4715 \\
+    & Reuters-5 & & 0.4034 & 0.2222 & 0.1641 & 0.1402 \\
+    \bottomrule
+  \end{tabular}
+  \caption{\label{tab:acc}Word-level CNN accuracy under different parameter
+    settings.  \(\epsilon\) is the noise scaling factor.}
+\end{table}
+
+#+end_export
 
 ** Case Study: DeepFool
 :PROPERTIES:
@@ -414,10 +462,24 @@ More results: https://gongzhitaao.org/adversarial-text
 \end{figure}
 #+end_export
 
-\(^*\) denotes the target model used to generate the adversarial texts.
-\advtxt{}
+\(^*\) denotes the target model.  \advtxt{}
+
+** Future Work
+
+- Evaluation metrics.
+- Nearest neighbor search is non-differentiable. \\
+  #+ATTR_LATEX: :width .7\textwidth
+  file:ae-clf.pdf
 
 * Generate /Natural/ Adversarials
+
+** Overview
+
+#+ATTR_LATEX: :width .7\textwidth
+#+CAPTION: Objects in weird poses.  \advnat{}
+file:teaser.pdf
+
+** Result
 
 * Summary
 
