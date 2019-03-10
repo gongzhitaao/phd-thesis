@@ -1,6 +1,6 @@
 #+TITLE: On the Machine Illusion
 #+SUBTITLE: Empirical Study on Adversarial Samples
-#+DATE: 2019 Feburary
+#+DATE: March 26, 2019
 #+AUTHOR: Zhitao Gong
 #+EMAIL: gong@auburn.edu
 #+OPTIONS: H:2 ^:{} toc:nil
@@ -19,6 +19,8 @@
 #+LATEX_HEADER: \usepackage[backend=biber,style=alphabetic]{biblatex}
 #+LATEX_HEADER: \usepackage[scaled=0.85]{newtxtt}
 #+LATEX_HEADER: \usepackage{multirow}
+
+#+LATEX_HEADER: \usetikzlibrary{calc}
 
 #+LATEX_HEADER: \addbibresource{../../../../refdb.bib}
 #+LATEX_HEADER: \addbibresource{../../../../local.bib}
@@ -44,6 +46,7 @@
 #+LATEX_HEADER: \newcommand\pred[1]{\overline{#1}}
 #+LATEX_HEADER: \newcommand\adv[1]{\widetilde{#1}}
 #+LATEX_HEADER: \newcommand\given{\:\vert\:}
+#+LATEX_HEADER: \titlegraphic{\includegraphics[width=3cm]{tachikoma}}
 
 #+begin_src latex-macro
 \newcommand{\advclf}{(Image credit: \cite{gong2017-adversarial})}
@@ -153,13 +156,11 @@ of words changed divided by the total number of words.
 ** Adversarial Patterns for Machines
 
 #+CAPTION: Adversarial patterns for different neural nets cite:moosavi-dezfooli2016-universal.
-#+NAME: fig:adv-machine
 file:adv-machine.png
 
 ** Adversarial Patterns For Humans
 
 #+CAPTION: The blue lines are parallel.  This illusion is possibly caused by the fringed edges cite:kitaoka2004-contrast.
-#+NAME: fig:adv-human
 file:adv-human.jpg
 
 More examples: http://www.psy.ritsumei.ac.jp/~akitaoka.
@@ -185,10 +186,10 @@ Intuitions behind the adversarial methods
      boundary cite:moosavi-dezfooli2015-deepfool,moosavi-dezfooli2016-universal,
    - in the direction where loss increases for the clean
      samples cite:goodfellow2014-explaining,kurakin2016-adversarial-examples, or
-     decreases for the for the adversarial
-     decreases cite:szegedy2013-intriguing, or
-   - increase the probability for the correct label and/or decrease the
-     others cite:papernot2015-limitations,carlini2016-towards.
+     decreases for the adversarial samples cite:szegedy2013-intriguing, or
+   - where the probability of the correct label increases or the probability of
+     the target label
+     increases cite:papernot2015-limitations,carlini2016-towards.
 2. Map between clean and adversarial data
    points cite:zhao2017-generating,baluja2017-adversarial,xiao2018-generating.
 
@@ -479,21 +480,158 @@ More results: https://gongzhitaao.org/adversarial-text
 #+CAPTION: Objects in weird poses.  \advnat{}
 file:teaser.pdf
 
-** Result
+** Gist
+
+A /descriptive/ study on the adversarial pose properties:
+1. Effectiveness.  Only 3% are correctly recognized.
+2. Imperceptible.  Small rotation (10.30\textdegree{} in yaw) results in
+   an adversarial sample.
+3. Good transferability.  99% against Inception-v3 transfer to AlexNet and
+   ResNet-50, 75% transfer to YOLO-v3.
+4. Adversarial training is not helpful.
+
+Intuition: https://gongzhitaao.org/strike-with-a-pose
+
+** Framework
+
+#+ATTR_LATEX: :width \textwidth
+file:concept.pdf
+
+#+begin_center
+\(\Downarrow\)
+#+end_center
+
+#+ATTR_LATEX: :width .6\textwidth
+file:advnat-framework.pdf
+
+\(X\) pose parameters, 6D, \((x, y, z, \theta_x, \theta_y, \theta_z)\)\\
+\(y\) prediction, a probability distribution over all labels.
+
+** Methods
+
+- Random search :: \\
+     Randomly sample the 6D space.
+- Gradient descent ::
+     \[X_{k+1} = X_k + \nabla_{X_k}L(y_k, \adv{y})\]
+  - Differentiable renderer, neural renderer cite:kato2018-neural
+  - Non-differentiable renderer, ModernGL cite:dombi2019-moderngl
+
+** Random Search
+
+The distributions of each pose parameters for high-confidence (\(p \geq 0.7\))
+correct/wrong classifications.  \advnat{}
+
+*** {{{empty}}}                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+**** {{{empty}}}                                                        :B_onlyenv:
+:PROPERTIES:
+:BEAMER_env: onlyenv
+:BEAMER_act: 1-2
+:END:
+
+#+ATTR_LATEX: :width .98\linewidth
+#+CAPTION: Correct
+file:high_conf_correct_params.pdf
+
+*** {{{empty}}}                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+**** {{{empty}}}                                                        :B_onlyenv:
+:PROPERTIES:
+:BEAMER_env: onlyenv
+:BEAMER_act: 1
+:END:
+
+#+ATTR_LATEX: :width .98\linewidth
+#+CAPTION: Wrong
+file:high_conf_params.pdf
+
+**** {{{empty}}}                                                        :B_onlyenv:
+:PROPERTIES:
+:BEAMER_act: 2
+:BEAMER_env: onlyenv
+:END:
+
+\footnotesize
+\vspace*{-1cm}
+#+ATTR_LATEX: :booktabs t
+| Parameter      | Fail % | \Delta_{min}     |
+|----------------+--------+------------------|
+| \(x_{\delta}\) |     42 | 2.0              |
+| \(y_{\delta}\) |     49 | 4.5              |
+| \(z_{\delta}\) |     81 | 5.4%             |
+| \(\theta_{y}\) |     69 | 10.31\textdegree |
+| \(\theta_{p}\) |     83 | 8.02\textdegree  |
+| \(\theta_{r}\) |     81 | 9.17\textdegree  |
+
+\normalsize
+
+** Methods Comparison
+
+ZRS: z-focused random search\\
+FD-G: finite difference approximated gradient\\
+DR-G: differentiable renderer
+
+\footnotesize
+
+#+ATTR_LATEX: :booktabs t
+|                  | Hit Rate % | Target Probability |
+|------------------+------------+--------------------|
+| ZRS              |         78 |               0.29 |
+| *FD-G*             |         *92* |               *0.41* |
+| DR-G\(^\dagger\) |         32 |               0.22 |
+
+\normalsize
+
+** Problem with Adversarial Training (again)
+
+PT: AlexNet trained with vanilla ImageNet\\
+AT: training data augmented with adversarial samples
+
+*** {{{empty}}}                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+#+ATTR_LATEX: :booktabs t
+|                | Error |    PT |   AT |
+|----------------+-------+-------+------|
+| All            | Train | 99.67 |  6.7 |
+|                | Test  | 99.81 | 89.2 |
+|----------------+-------+-------+------|
+| \(p \geq 0.7\) | Train |  87.8 |  1.9 |
+|                | Test  |  48.2 | 33.3 |
+
+*** {{{empty}}}                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+Conclusion: adversarial training does not help models generalize to unseen
+adversarial samples.
 
 * Summary
 
-** Adversarial Samples
+** Summary
 
-1. All classification models are affected.
-2. Seems to exist in dense regions.
-3. Distribute along only certain directions.
-4. Transfer to different models or techniques.
-5. \(\cdots\)
+1. Binary classifier as a defense is effective and limited.
+2. Text adversarials are also not difficult to generate.
+3. Objects in weird poses are also difficult for neural nets.
 
-#+begin_center
-ALL EMPIRICAL AND HYPOTHESIS SO FAR
-#+end_center
+** Future Work
+
+#+ATTR_LATEX: :width .8\textwidth
+#+CAPTION: (Image credit cite:karparthy2016-connecting)
+file:scale.png
+
+#+begin_export latex
+\tikz[remember picture, overlay] \node[anchor=center] at ($(current page.center) - (4,4)$) {\includegraphics[width=3cm]{tachikoma}};
+#+end_export
 
 * Bibliography
 
