@@ -46,7 +46,7 @@
 #+LATEX_HEADER: \newcommand\pred[1]{\overline{#1}}
 #+LATEX_HEADER: \newcommand\adv[1]{\widetilde{#1}}
 #+LATEX_HEADER: \newcommand\given{\:\vert\:}
-#+LATEX_HEADER: \titlegraphic{\includegraphics[width=3cm]{tachikoma}}
+#+LATEX_HEADER: \titlegraphic{\includegraphics[width=2.5cm]{tachikoma}}
 
 #+begin_src latex-macro
 \newcommand{\advclf}{(Image credit: \cite{gong2017-adversarial})}
@@ -641,3 +641,6 @@ file:scale.png
 :END:
 
 #+LaTeX: \printbibliography
+
+\tiny\(\begin{array}{l}\includegraphics[height=.8cm]{tachikoma}\end{array}\) by
+arrghman.deviantart.com @DeviantArt\normalsize
