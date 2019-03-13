@@ -22,9 +22,9 @@
 
 #+LATEX_HEADER: \usetikzlibrary{calc}
 
-#+LATEX_HEADER: \addbibresource{../../../../refdb.bib}
-#+LATEX_HEADER: \addbibresource{../../../../local.bib}
-#+LATEX_HEADER: \graphicspath{{../../../../img/}}
+#+LATEX_HEADER: \addbibresource{refdb.bib}
+#+LATEX_HEADER: \addbibresource{local.bib}
+#+LATEX_HEADER: \graphicspath{{img/}}
 
 #+LATEX_HEADER: \institute{Auburn University}
 #+LATEX_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Outline}\tableofcontents[currentsection]\end{frame}}
@@ -49,9 +49,9 @@
 #+LATEX_HEADER: \titlegraphic{\includegraphics[width=2.5cm]{tachikoma}}
 
 #+begin_src latex-macro
-\newcommand{\advclf}{(Image credit: \cite{gong2017-adversarial})}
-\newcommand{\advtxt}{(Image credit: \cite{gong2018-adversarial})}
-\newcommand{\advnat}{(Image credit: \cite{alcorn2018-strike})}
+\newcommand{\advclf}{(credit: \cite{gong2017-adversarial})}
+\newcommand{\advtxt}{(credit: \cite{gong2018-adversarial})}
+\newcommand{\advnat}{(credit: \cite{alcorn2018-strike})}
 #+end_src
 
 #+MACRO: empty {{{tex}}}
@@ -59,7 +59,72 @@
 #+MACRO: cs231n [[http://cs231n.stanford.edu][cs231n]]
 #+MACRO: colah-blog [[http://colah.github.io/posts/2015-08-Understanding-LSTMs][colah's blog]]
 
-* Introduction
+* Problem Overview
+
+** Adversarial Samples
+:PROPERTIES:
+:BEAMER_opt: allowframebreaks
+:END:
+
+file:mnist-compare-all.png
+
+1. Noises are very subtle, visually indistinguishable.
+2. Trick machines into wrong predictions with high confidence.
+
+\framebreak
+
+#+ATTR_LaTeX: :width \textwidth
+file:demo-adv-text.pdf
+
+The \colorbox{red!10}{highlighted} words are changed.  \(n/L\) is the number of
+words changed divided by the total number of words.  \advtxt{}
+
+\framebreak
+
+Objects in weird poses are also tricky!  \advnat{}
+
+#+ATTR_LATEX: :width .7\textwidth
+file:demo-natadv.png
+
+** Adversarial Patterns for Machines
+
+#+ATTR_LATEX: :width .8\textwidth
+#+CAPTION: Adversarial patterns for different neural nets cite:moosavi-dezfooli2016-universal.
+file:adv-machine.png
+
+** Adversarial Patterns for Humans
+
+Illusion possibly caused by the fringed edges cite:kitaoka2004-contrast.  More
+examples http://www.psy.ritsumei.ac.jp/~akitaoka
+
+*** {{{empty}}}                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.65
+:END:
+
+#+ATTR_LATEX: :height 3.5cm
+file:adv-human-0.jpg
+
+*** {{{empty}}}                                                       :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.35
+:END:
+
+#+ATTR_LATEX: :height 3.6cm
+file:adv-human-1.jpg
+
+** Motivation
+
+This phenomenon is interesting both in practice and in theory.
+1. It undermines the models' reliability.
+2. Hard to ignore due to it being transferable and universal.
+3. It provides new insights into neural networks:
+   - Local generalization does not seem to hold.
+   - Data distribution: they appear in dense regions.
+   - Trade-off between robustness and generalization.
+   - \(\cdots\)
+
+* Background
 
 ** Neural Networks
 
@@ -73,7 +138,7 @@ It is a connectionist model.
 #+CAPTION: Biological neuron versus neuron model (credit: {{{cs231n}}})
 file:neuron-bio.png
 
-** Architectures: Multi-Layer Perceptron (MLP)
+** Case Study: Multi-Layer Perceptron (MLP)
 
 MLP is one of the most simple feedfoward architectures.
 1. Each neuron outputs to the neurons in the next layer.
@@ -83,7 +148,7 @@ MLP is one of the most simple feedfoward architectures.
 #+CAPTION: Multi-layer perceptron (credit: {{{cs231n}}})
 file:mlp.jpg
 
-** Architectures: Convolutional Neural Network (CNN)
+** Case Study: Convolutional Neural Network (CNN)
 
 CNN is inspired by eye structure, widely used in computer vision.
 1. Each neuron receives inputs from a pool of neurons in previous layer, just
@@ -93,11 +158,11 @@ CNN is inspired by eye structure, widely used in computer vision.
 #+CAPTION: LetNet-5 cite:lecun1998-gradient
 file:cnn.png
 
-** Architectures: Recurrent Neural Network (RNN)
+** Case Study: Recurrent Neural Network (RNN)
 
 Some neurons get part of input from its output.
 
-*** {{{empty}}} :B_only:
+*** {{{empty}}}                                                      :B_only:
 :PROPERTIES:
 :BEAMER_act: 1
 :BEAMER_env: only
@@ -115,70 +180,7 @@ file:rnn-unrolled.png
 #+CAPTION: The double-edged sword: long term dependencies between outputs and inputs. (credit: {{{colah-blog}}})
 file:RNN-longtermdependencies.png
 
-** Notations
-
-For clarity, we use the following notations in this slide.
-- \(f\) denotes the neural nets model, \(\theta\) the model's parameters,
-  and sometimes \(f_\theta\) for brevity.
-- \(x\) is the input, \(\pred{y}\) the model's output (i.e., \(\pred{y} =
-  f(x)\)).
-- \(z\) is the un-normalized logits, i.e., \(y = \sigmoid(z)\) or \(y =
-  \softmax(z)\).
-- \(L\) denotes the loss function, e.g., cross-entropy, mean-squared error.  For
-  simplicity, we use \(L_x\) to denote the loss value when \(x\) is the input.
-- \(\adv{x}\) denotes the adversarial sample from \(x\).
-- In a targeted method, \(y_t\) denotes the \textcolor{red}{t}arget class value,
-  \(y_o\) the \textcolor{red}{o}ther class values.  For example, \(y = [0.2,
-  0.5, 0.3]\) and \(t = 0\), then \(y_t = 0.2\) and \(y_o\in\{0.5, 0.3\}\).
-  Same for \(z\).
-
-* Problem Overview
-
-** Adversarial Samples
-:PROPERTIES:
-:BEAMER_opt: allowframebreaks
-:END:
-
-file:mnist-compare-all.png
-
-1. Visually very close, noises are very subtle.
-2. Trick machines into wrong predictions with high confidence.
-
-#+LaTeX: \framebreak
-
-#+CAPTION: Adversarial texts by our framework.  \advtxt{}
-#+ATTR_LaTeX: :width \textwidth
-file:demo-adv-text.pdf
-
-The \colorbox{red!10}{highlighted} words are changed.  The \(n/L\) is the number
-of words changed divided by the total number of words.
-
-** Adversarial Patterns for Machines
-
-#+CAPTION: Adversarial patterns for different neural nets cite:moosavi-dezfooli2016-universal.
-file:adv-machine.png
-
-** Adversarial Patterns For Humans
-
-#+CAPTION: The blue lines are parallel.  This illusion is possibly caused by the fringed edges cite:kitaoka2004-contrast.
-file:adv-human.jpg
-
-More examples: http://www.psy.ritsumei.ac.jp/~akitaoka.
-
-** Why Study Adversarial Samples
-
-This phenomenon is interesting both in practice and in theory.
-1. It undermines the models' reliability.
-2. Hard to ignore due to it being transferable and universal.
-3. It provides new insights into neural networks:
-   - Local generalization does not seem to hold.
-   - Data distribution: they appear in dense regions.
-   - Trade-off between robustness and generalization.
-   - \(\cdots\)
-
-* Generate Adversarial Images
-
-** Overview
+** Generate Adversarial Images
 
 Intuitions behind the adversarial methods
 1. Move the data points
@@ -201,28 +203,24 @@ file:image-space.png
 
 * Defend against Adversarial Samples
 
-** {{{tag(Related)}}} Adversarial Training
+** Gist
 
-Basic ideas: incorporate adversarial samples during training.
+We investigate binary classifier as a defense method
+- Recognizes adversarial samples of the same distribution.
+- Does not generalize to arbitrary adversarial samples.
 
-Given a training set \(\mathcal{X}\), instead of solving the following problem
+** Related Work
 
-\[\theta^* = \argmin_\theta\mathbb{E}_{x\in\mathcal{X}}L(x; f_\theta)\]
-
-we expand each data point to include its vicinity.
-
-\[\theta^* =
-\argmin_\theta\mathbb{E}_{x\in\mathcal{X}}\left[\mathcolor{red}{\max_{\delta \in
-[-\epsilon,\epsilon]^N}} L(x \mathcolor{red}{+ \delta}; f_\theta)\right]\]
-
-cite:goodfellow2014-explaining,madry2017-towards solve the inner maximization
-problem by mixing dynamically generated adversarial samples into training data.
-
-** {{{tag(Related)}}} Pre-process Inputs
-
-Without re-training the models, this direction focuses on the inputs.
-1. Transform inputs to (hopefully) recover the bad samples.
-2. Filter out bad samples by image statistics.
+- Adversarial training :: Augment training data with adversarial
+     samples cite:goodfellow2014-explaining,madry2017-towards.  \[\theta^* =
+     \argmin_\theta\mathbb{E}_{x\in\mathcal{X}}\left[\mathcolor{red}{\max_{\delta
+     \in [-\epsilon,\epsilon]^N}} L(x \mathcolor{red}{+ \delta};
+     f_\theta)\right]\]
+- Preprocess :: Transform input images, e.g.,
+     denoising cite:xie2018-feature,liang2017-detecting,
+     compression cite:prakash2018-protecting, quilting cite:guo2017-countering.
+- Detecting :: classifier cite:metzen2017-detecting, density
+     ratio estimation cite:gondara2017-detecting.
 
 ** Binary Classifier as A Defense
 
