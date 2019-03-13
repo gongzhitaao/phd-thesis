@@ -28,6 +28,7 @@
 #+LATEX_HEADER: \usepackage{gensymb}
 #+LATEX_HEADER: \usepackage{mathtools}
 #+LATEX_HEADER: \usepackage{xspace}
+#+LATEX_HEADER: \usepackage[percent]{overpic}
 
 #+LATEX_HEADER: \captionsetup{singlelinecheck=off}
 
@@ -823,15 +824,15 @@ for other labels.
 :CUSTOM_ID: h2-introduction-832ea
 :END:
 
-As ref:fig:mnistdemo shows, although adversarial and clean images appear
+As Figure ref:fig:mnistdemo shows, although adversarial and clean images appear
 visually indiscernible, their subtle differences can successfully fool the deep
-neural networks.  The observations are
-Observations from the image adversarial samples are that
+neural networks.  The observations are Observations from the image adversarial
+samples are that
 1. The adversarial noise follows a specific
    direction cite:goodfellow2014-explaining.
 2. The neural nets are sensitive to individual pixel
    values cite:szegedy2013-intriguing.
-s a result, an intuitive question is: whether it is possible to leverage the
+As a result, an intuitive question is: whether it is possible to leverage the
 network's sensitivity to subtle differences to distinguish between adversarial
 and clean images?  In this work, we explore this intuition and demonstrate that
 a simple binary classifier can separate the adversarial from the original clean
@@ -843,9 +844,9 @@ from the /generalization issue./
 2. it is sensitive to different adversarial crafting algorithms.
 In other words, different algorithms will generate adversarial images that
 follow different distributions.  It is insufficient to train the classifier only
-on one type of adversarial samples.  In addition to that, we also showed that
-this limitation is shared among other proposed defense methods against
-adversarial images, e.g., adversarial
+on one type of adversarial samples.  In addition, we also showed that this
+limitation is shared among other proposed defense methods against adversarial
+images, e.g., adversarial
 training cite:huang2015-learning,kurakin2016-adversarial-examples, defensive
 knowledge distillation (KD) cite:papernot2015-distillation, etc.
 
@@ -3370,9 +3371,22 @@ file:school_bus_neighbors.jpg
 #+NAME: fig:nearest_garbagetruck
 file:garbage_truck_neighbors.jpg
 
-#+CAPTION: In Section ref:h2-adversarial-training-df0cc, we trained an AlexNet classifier on the 1000-class ImageNet dataset augmented with 30 additional classes that contain adversarial poses corresponding to the 30 /known/ objects used in the main experiments.  We also tested this model on 7 /held-out/ objects.  Here, we show the renders of 7 pairs of (training-set object, held-out object).  The 3D objects are rendered by the NR cite:dombi2019-moderngl at a distance of \((0,0,4)\).  Below each image is its top-5 predictions by Inception-v3 cite:szegedy2016-rethinking.  The original high-resolution figure is available at https://goo.gl/Li1eKU.  \advnat{}
-#+NAME: fig:7_pairs
-file:7_pairs.jpg
+#+begin_export latex
+\begin{overpic}[width=.9\textwidth]{7_pairs}
+  \put(35,12){\parbox{.4\textwidth}{%
+      \tiny In Section \ref{h2-adversarial-training-df0cc}, we trained an
+      AlexNet classifier on the 1000-class ImageNet dataset augmented with 30
+      additional classes that contain adversarial poses corresponding to the 30
+      \textsl{known} objects used in the main experiments.  We also tested this
+      model on 7 \textsl{held-out} objects.  Here, we show the renders of 7
+      pairs of (training-set object, held-out object).  The 3D objects are
+      rendered by the NR \cite{dombi2019-moderngl} at a distance of \((0,0,4)\).
+      Below each image is its top-5 predictions by
+      Inception-v3 \cite{szegedy2016-rethinking}.  The original high-resolution
+      figure is available at https://goo.gl/Li1eKU.  \advnat{}}}
+\end{overpic}
+
+#+end_export
 
 #+begin_export latex
 \begin{figure}
@@ -3408,22 +3422,22 @@ file:5_unique_objects_per_class.jpg
 \begin{figure}
   \begin{subfigure}{\linewidth}
     \centering
-    \includegraphics[width=0.9\columnwidth]{cellphone_real_AXs.jpg}
+    \includegraphics[width=0.8\columnwidth]{cellphone_real_AXs.jpg}
     \caption{\class{cellular phone}}\label{fig:real_ax_cellphone}
   \end{subfigure}
   \begin{subfigure}{\linewidth}
     \centering
-    \includegraphics[width=0.9\columnwidth]{jeans_real_AXs.jpg}
+    \includegraphics[width=0.8\columnwidth]{jeans_real_AXs.jpg}
     \caption{\class{jeans}}\label{fig:real_ax_jeans}
   \end{subfigure}
   \begin{subfigure}{\linewidth}
     \centering
-    \includegraphics[width=0.9\columnwidth]{stop_sign_real_AXs.jpg}
+    \includegraphics[width=0.8\columnwidth]{stop_sign_real_AXs.jpg}
     \caption{\class{street sign}}\label{fig:real_ax_stopsign}
   \end{subfigure}
   \begin{subfigure}{\linewidth}
     \centering
-    \includegraphics[width=0.9\columnwidth]{umbrella_real_AXs.jpg}
+    \includegraphics[width=0.8\columnwidth]{umbrella_real_AXs.jpg}
     \caption{\class{umbrella}}\label{fig:real_ax_umbrella}
   \end{subfigure}
   \caption{ Real-world, high-confidence adversarial poses can be found by taking
