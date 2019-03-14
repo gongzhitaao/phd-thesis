@@ -321,22 +321,16 @@ General directions:
    /deletion/.
 2. They may work at character, word or sentence level.
 
-** Methods in Text Space
+** Methods
 
-This class of methods need to solve two problems:
-1. what to change, e.g., random, \(\nabla L\) cite:liang2017-deep, manually
-   picking cite:samanta2017-towards.
-2. change to what, e.g., random, synonyms cite:samanta2017-towards or nearest
-   neighbors in embedding space, or forged
-   facts cite:jia2017-adversarial,liang2017-deep.
-
-** Methods in Transformed Space
-
-Autoencoder cite:hinton2006-reducing is used to map between texts and a
-continuous space cite:zhao2017-generating.  The embedded space is smooth.
-
-#+ATTR_LATEX: :width .7\textwidth
-file:Autoencoder_structure.png
+- In text space :: This class of methods need to solve two problems:
+  1. what to change, e.g., random, \(\nabla L\) cite:liang2017-deep, manually
+     picking cite:samanta2017-towards.
+  2. change to what, e.g., random, synonyms cite:samanta2017-towards or nearest
+     neighbors in embedding space, or forged
+     facts cite:jia2017-adversarial,liang2017-deep.
+- In latent space :: GAN cite:goodfellow2014-generative is used to map from a
+     latent space (e.g., Gaussian noise) to sentences cite:zhao2017-generating.
 
 ** Adversarial Text Framework
 
@@ -623,9 +617,42 @@ adversarial samples.
 
 ** Future Work
 
-#+ATTR_LATEX: :width .8\textwidth
-#+CAPTION: (Image credit cite:karparthy2016-connecting)
+*** {{{empty}}}                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.6
+:END:
+
+Image credit cite:karparthy2016-connecting
 file:scale.png
+
+*** {{{empty}}}                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.4
+:END:
+
+**** {{{empty}}}                                                        :B_onlyenv:
+:PROPERTIES:
+:BEAMER_act: 1
+:BEAMER_env: onlyenv
+:END:
+
+Machine detects
+- objects
+- faces
+- figure components
+- \(\dots\)
+
+**** {{{empty}}}                                                        :B_onlyenv:
+:PROPERTIES:
+:BEAMER_env: onlyenv
+:BEAMER_act: 2
+:END:
+
+Cannot understand
+- mirror
+- shadows
+- jokes
+- \(\dots\)
 
 #+begin_export latex
 \tikz[remember picture, overlay] \node[anchor=center] at ($(current page.center) - (4,4)$) {\includegraphics[width=3cm]{tachikoma}};
