@@ -59,6 +59,8 @@
 #+MACRO: cs231n [[http://cs231n.stanford.edu][cs231n]]
 #+MACRO: colah-blog [[http://colah.github.io/posts/2015-08-Understanding-LSTMs][colah's blog]]
 
+* Introduction
+
 * Problem Overview
 
 ** Adversarial Samples
@@ -289,6 +291,10 @@ file:adv-training-not-working.pdf
 
 * Generate Adversarial Texts
 
+** Text Classification
+
+
+
 ** Text Embedding Layer
 
 #+CAPTION: Architecture for sentence classification with CNN cite:kim2014-convolutional
@@ -297,8 +303,8 @@ file:textcnn.png
 
 ** Text Embedding Example
 
-"wait for the video" \(\xrightarrow{\text{tokenize}}\) ["wait", "for", "the",
-"video"] \(\xrightarrow{\text{indexer}}\) [2, 20, 34, 8]
+=wait for the video= \(\xrightarrow{\text{tokenize}}\) [ =wait=, =for=, =the=, =video= ]
+\(\xrightarrow{\text{indexer}}\) [2, 20, 34, 8]
 \(\xrightarrow{\text{embedding}}\) \(\mathbb{R}^{4\times D}\), where \(D\) is
 the embedding size.
 
@@ -457,13 +463,6 @@ More results: https://gongzhitaao.org/adversarial-text
 
 \(^*\) denotes the target model.  \advtxt{}
 
-** Future Work
-
-- Evaluation metrics.
-- Nearest neighbor search is non-differentiable. \\
-  #+ATTR_LATEX: :width .7\textwidth
-  file:ae-clf.pdf
-
 * Generate /Natural/ Adversarials
 
 ** Overview
@@ -480,7 +479,7 @@ A /descriptive/ study on the adversarial pose properties:
    an adversarial sample.
 3. Good transferability.  99% against Inception-v3 transfer to AlexNet and
    ResNet-50, 75% transfer to YOLO-v3.
-4. Adversarial training is not helpful.
+4. Adversarial training is not a silver bullet.
 
 Intuition: https://gongzhitaao.org/strike-with-a-pose
 
@@ -657,6 +656,15 @@ Cannot understand
 #+begin_export latex
 \tikz[remember picture, overlay] \node[anchor=center] at ($(current page.center) - (4,4)$) {\includegraphics[width=3cm]{tachikoma}};
 #+end_export
+
+** {{{empty}}}
+
+#+ATTR_LATEX: :width .7\textwidth
+file:deepmind_logo.png
+
+#+begin_center
+Fall 2019: Research Engineer at Google DeepMind (Montreal)
+#+end_center
 
 * Bibliography
 
