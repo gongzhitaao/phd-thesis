@@ -49,9 +49,9 @@
 #+LATEX_HEADER: \titlegraphic{\includegraphics[width=2.5cm]{tachikoma}}
 
 #+begin_src latex-macro
-\newcommand{\advclf}{(credit: \cite{gong2017-adversarial})}
-\newcommand{\advtxt}{(credit: \cite{gong2018-adversarial})}
-\newcommand{\advnat}{(credit: \cite{alcorn2018-strike})}
+\newcommand{\advclf}{(credit: \cite[Gong et al.]{gong2017-adversarial})}
+\newcommand{\advtxt}{(credit: \cite[Gong et al.]{gong2018-adversarial})}
+\newcommand{\advnat}{(credit: \cite[Michael et al.]{alcorn2018-strike})}
 #+end_src
 
 #+MACRO: empty {{{tex}}}
