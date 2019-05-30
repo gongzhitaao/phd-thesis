@@ -293,8 +293,6 @@ file:adv-training-not-working.pdf
 
 ** Text Classification
 
-
-
 ** Text Embedding Layer
 
 #+CAPTION: Architecture for sentence classification with CNN cite:kim2014-convolutional
@@ -339,6 +337,82 @@ General directions:
      latent space (e.g., Gaussian noise) to sentences cite:zhao2017-generating.
 
 ** Adversarial Text Framework
+
+We propose another method in the embedding space.
+
+*** {{{empty}}}                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+**** {{{empty}}}                                                           :B_only:
+:PROPERTIES:
+:BEAMER_env: only
+:BEAMER_act: 1
+:END:
+
+[[file:advtext-demo-embedding.pdf]]
+
+**** {{{empty}}}                                                           :B_only:
+:PROPERTIES:
+:BEAMER_env: only
+:BEAMER_act: 2
+:END:
+
+[[file:advtext-demo-noise.pdf]]
+
+**** {{{empty}}}                                                           :B_only:
+:PROPERTIES:
+:BEAMER_env: only
+:BEAMER_act: 3
+:END:
+
+[[file:advtext-demo-knn.pdf]]
+
+*** {{{empty}}}                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+**** Embedding                                                       :B_only:
+:PROPERTIES:
+:BEAMER_env: only
+:BEAMER_act: 1
+:END:
+
+Vocabulary is represented by a point
+{{{tex(\tikz[baseline=-0.5ex]{\draw[fill={rgb\,255:red\,213;green\,232;blue\,212}\,line
+width=0.4mm\, draw={rgb\,255:red\,130;green\,179;blue\,102}] (0\,0) circle
+(0.9mm)})}}} in a high dimensional space.  Each word of =I AM HUNGRY= is first mapped
+into embedding space.
+
+**** Perturbation                                                    :B_only:
+:PROPERTIES:
+:BEAMER_env: only
+:BEAMER_act: 2
+:END:
+
+Each point of the input word is perturbed to a new position
+{{{tex(\tikz[baseline=-0.5ex]{\draw[fill={rgb\,255:red\,255;green\,242;blue\,204}\,line
+width=0.4mm\, draw={rgb\,255:red\,214;green\,182;blue\,86}] (0\,0) circle
+(0.9mm)})}}} following a small displacement calculated by our framework.
+
+**** k Nearest Neighbor                                              :B_only:
+:PROPERTIES:
+:BEAMER_env: only
+:BEAMER_act: 3
+:END:
+
+We then replace each
+{{{tex(\tikz[baseline=-0.5ex]{\draw[fill={rgb\,255:red\,255;green\,242;blue\,204}\,line
+width=0.4mm\, draw={rgb\,255:red\,214;green\,182;blue\,86}] (0\,0) circle
+(0.9mm)})}}} with its nearest neighbor since
+{{{tex(\tikz[baseline=-0.5ex]{\draw[fill={rgb\,255:red\,255;green\,242;blue\,204}\,line
+width=0.4mm\, draw={rgb\,255:red\,214;green\,182;blue\,86}] (0\,0) circle
+(0.9mm)})}}} usually does not correspond to a word.  After the nearest neighbor
+search, we got =I AM FULL=.
+
+** COMMENT Adversarial Text Framework
 
 We propose another method in the embedding space.
 
