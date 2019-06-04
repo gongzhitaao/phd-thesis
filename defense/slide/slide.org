@@ -20,7 +20,7 @@
 #+LATEX_HEADER: \usepackage[scaled=0.85]{newtxtt}
 #+LATEX_HEADER: \usepackage{multirow}
 
-#+LATEX_HEADER: \usetikzlibrary{calc}
+#+LATEX_HEADER: \usetikzlibrary{calc,tikzmark,fit,shapes.geometric}
 
 #+LATEX_HEADER: \addbibresource{refdb.bib}
 #+LATEX_HEADER: \addbibresource{local.bib}
@@ -56,10 +56,23 @@
 
 #+MACRO: empty {{{tex}}}
 #+MACRO: tag {{{tex({\small\uppercase{$1}})}}}
+#+MACRO: img {{{tex(\tikz[baseline=-0.2em]{\node at (0\,0) {\includegraphics[height=2em]{$1}}})}}}
 #+MACRO: cs231n [[http://cs231n.stanford.edu][cs231n]]
 #+MACRO: colah-blog [[http://colah.github.io/posts/2015-08-Understanding-LSTMs][colah's blog]]
 
-* Introduction
+* Acknowledgments
+
+** Acknowledgments
+
+- Family :: Shuting, my parents
+- Advisor :: Dr. Wei-Shinn Ku and Dr. Anh Nguyen
+- Committees :: Dr. Xiao Qin, Dr. Shiwen Mao and Dr. Yang Zhou
+- Collaborators :: Dr. Bo Li
+- Colleagues :: {{{tex(\tikz[baseline=-0.2em]{\node[text width=2.7cm] at (0\,0)
+     {\textsc{\footnotesize Data Science \&\\Engineering Lab}}})}}} {{{img(google-g.pdf)}}}
+     {{{img(facebook.png)}}}
+- Thanks :: Xin Wu, Wenlu Wang
+- Funding :: {{{img(au.jpg)}}} Teaching Assistance
 
 * Problem Overview
 
@@ -68,7 +81,7 @@
 :BEAMER_opt: allowframebreaks
 :END:
 
-file:mnist-compare-all.png
+file:imgdemo.pdf
 
 1. Noises are very subtle, visually indistinguishable.
 2. Trick machines into wrong predictions with high confidence.
@@ -207,9 +220,40 @@ file:image-space.png
 
 ** Gist
 
-We investigate binary classifier as a defense method
-- Recognizes adversarial samples of the same distribution.
-- Does not generalize to arbitrary adversarial samples.
+# TODO[2019-06-03 Mon]: use pictures to illustrate that we want to separate the
+# adversarila samples with machines instead of humans.
+
+*** {{{empty}}}                                                         :B_onlyenv:
+:PROPERTIES:
+:BEAMER_env: onlyenv
+:BEAMER_act: 1
+:END:
+
+They look similar for humans.
+
+#+ATTR_LATEX: :width .8\textwidth
+file:advclf-demo-human.pdf
+
+*** {{{empty}}}                                                         :B_onlyenv:
+:PROPERTIES:
+:BEAMER_act: 2
+:BEAMER_env: onlyenv
+:END:
+
+They look different for machines.
+
+#+ATTR_LATEX: :width .8\textwidth
+file:advclf-demo-machine.pdf
+
+** Binary Classifier as A Defense
+
+We propose to use a binary classifier to separate adversarial samples from clean
+ones cite:gong2017-adversarial based on the following observations:
+1. The adversarial noise follows a specific
+   direction cite:goodfellow2014-explaining.
+2. The neural nets are sensitive to individual pixel
+   values cite:szegedy2013-intriguing.
+Code: https://github.com/gongzhitaao/adversarial-classifier
 
 ** Related Work
 
@@ -223,16 +267,6 @@ We investigate binary classifier as a defense method
      compression cite:prakash2018-protecting, quilting cite:guo2017-countering.
 - Detecting :: classifier cite:metzen2017-detecting, density
      ratio estimation cite:gondara2017-detecting.
-
-** Binary Classifier as A Defense
-
-We propose to use a binary classifier to separate adversarial samples from clean
-ones cite:gong2017-adversarial based on the following observations:
-1. The adversarial noise follows a specific
-   direction cite:goodfellow2014-explaining.
-2. The neural nets are sensitive to individual pixel
-   values cite:szegedy2013-intriguing.
-Code: https://github.com/gongzhitaao/adversarial-classifier
 
 ** Adversarial Examples
 
@@ -250,20 +284,40 @@ Code: https://github.com/gongzhitaao/adversarial-classifier
 ** Classifier Efficiency and Robustness
 
 #+ATTR_LATEX: :booktabs t
-#+CAPTION: The classifier \(g\)'s accuracy.  \(f\) is the target model.  And \(\adv{X}_f\) denotes adversarial examples targeting model \(f\).
-| Dataset  | \(X\) | \(\adv{X}_f\) | \(\adv{X}_g\) | \(\{\adv{X}_f\}_g\) |
-|----------+-------+---------------+---------------+---------------------|
-| MNIST    |  1.00 |          1.00 |          0.00 |                1.00 |
-| CIFAR-10 |  0.99 |          1.00 |          0.01 |                1.00 |
-| SVHN     |  1.00 |          1.00 |          0.00 |                1.00 |
+| Dataset  |            \(X\) |    \(\adv{X}_f\) | \(\{\adv{X}_f\}_g\) |
+|----------+------------------+------------------+---------------------|
+| MNIST    | 1\tikzmark{a}.00 | 1.0\tikzmark{b}0 |    1.\tikzmark{c}00 |
+| CIFAR-10 |             0.99 |             1.00 |                1.00 |
+| SVHN     |             1.00 |             1.00 |                1.00 |
 
-1. \(X\) and \(\adv{X}_f\) columns shows the classifier \(g\) is effective.
-2. \(\adv{X}_g\) and \(\{\adv{X}_f\}_g\) columns shows the classifier \(g\) is
-   robust.
+*** {{{empty}}}                                                         :B_onlyenv:
+:PROPERTIES:
+:BEAMER_env: onlyenv
+:BEAMER_act: 2
+:END:
+
+#+begin_export latex
+\tikz[remember picture, overlay] \node[anchor=center] at
+($(current page.center) - (1,2.5)$) {\includegraphics[width=5cm]{advclf-result}};
+#+end_export
+
+{{{tex(\tikz[remember picture\,overlay]{\node[draw\,line width=1pt\,green\,ellipse\,inner
+ysep=5pt\,yshift=1mm\,fit={(pic cs:a) (pic cs:b)}] {};})}}}
+
+*** {{{empty}}}                                                         :B_onlyenv:
+:PROPERTIES:
+:BEAMER_env: onlyenv
+:BEAMER_act: 3
+:END:
+
+The classifier is not easily fooled.
+
+{{{tex(\tikz[remember picture\,overlay]{\node[draw\,line width=1pt\,green\,ellipse\,inner
+ysep=7pt\,inner xsep=10pt\,yshift=1mm] at (pic cs:c) {};})}}}
 
 ** Problem with Classifier Defense
 
-*Limitation*: different hyperparameters, different adversarial algorithms may
+*Limitation*: different hyper-parameters, different adversarial algorithms may
 elude the binary classifier or adversarial training.
 
 #+ATTR_LATEX: :booktabs t
@@ -383,8 +437,8 @@ We propose another method in the embedding space.
 Vocabulary is represented by a point
 {{{tex(\tikz[baseline=-0.5ex]{\draw[fill={rgb\,255:red\,213;green\,232;blue\,212}\,line
 width=0.4mm\, draw={rgb\,255:red\,130;green\,179;blue\,102}] (0\,0) circle
-(0.9mm)})}}} in a high dimensional space.  Each word of =I AM HUNGRY= is first mapped
-into embedding space.
+(0.9mm)})}}} in a high dimensional space.  Each word of =I AM HUNGRY= is first
+mapped into embedding space.
 
 **** Perturbation                                                    :B_only:
 :PROPERTIES:
@@ -509,7 +563,7 @@ Result: https://github.com/gongzhitaao/adversarial-text
 \framebreak
 
 #+ATTR_LATEX: :width \textwidth
-#+CAPTION: Adversarial texts sample from Reuters-5 dataset.  \colorbox[HTML]{FFCCCC}{Original} is the original token, \colorbox[HTML]{CCFFCC}{replaced} is the adversarial token.  *[...]* denotes omitted tokens due to space constraint.  \(\epsilon=50\) in DeepFool.
+#+CAPTION: Adversarial texts sample from Reuters-5 dataset.  \colorbox[HTML]{FFCCCC}{Original} is the original token, \colorbox[HTML]{CCFFCC}{replaced} is the adversarial token.  *[...]* denotes omitted tokens due to space constraint.
 file:deepfool-showcase.pdf
 
 More results: https://gongzhitaao.org/adversarial-text
@@ -731,7 +785,7 @@ Cannot understand
 \tikz[remember picture, overlay] \node[anchor=center] at ($(current page.center) - (4,4)$) {\includegraphics[width=3cm]{tachikoma}};
 #+end_export
 
-** {{{empty}}}
+** After Graduation
 
 #+ATTR_LATEX: :width .7\textwidth
 file:deepmind_logo.png
