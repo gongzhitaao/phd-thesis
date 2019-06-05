@@ -5,19 +5,16 @@ import numpy as np
 import torch as th
 import torch.nn as nn
 
-from torchvision.datasets.mnist import MNIST
+from torchvision.datasets import CIFAR10
 import torchvision.transforms as transforms
+from torchvision.models import GoogLeNet
 from torch.utils.data import DataLoader
 
 from tqdm import tqdm
 
-import imageio
-
 import matplotlib
-matplotlib.use('Agg')           # noqa: E402
+matplotlib.use('Agg')  # noqa: E402
 import matplotlib.pyplot as plt
-
-from lenet import LeNet5
 
 
 def fgsm(net, x, eps=0.03, clip=[-1, 1]):
@@ -31,25 +28,31 @@ def fgsm(net, x, eps=0.03, clip=[-1, 1]):
     return adv.detach()
 
 
-data_test = MNIST(os.path.expanduser('~/data/large'),
-                  train=False,
-                  download=False,
-                  transform=transforms.Compose(
-                      [transforms.Resize((32, 32)),
-                       transforms.ToTensor()]))
+normalize = transforms.Normalize((0.4914, 0.4822, 0.4465),
+                                 (0.2023, 0.1994, 0.2010))
+trans = transforms.Compose([transforms.ToTensor(), normalize])
+
+unnormalize = transforms.Normalize(
+    (-0.4914 / 0.2023, -0.4822 / 0.1994, -0.4465 / 0.2010),
+    (1 / 0.2023, 1 / 0.1994, 1 / 0.2010))
+
+data_test = CIFAR10(os.path.expanduser('~/data/large'),
+                    train=False,
+                    download=True,
+                    transform=trans)
 
 data_test_loader = DataLoader(data_test,
                               batch_size=8,
+                              shuffle=False,
                               num_workers=8,
-                              pin_memory=True,
-                              shuffle=True)
+                              pin_memory=True)
 
 device = 'cuda:7'
-net = LeNet5()
+net = GoogLeNet(num_classes=10)
 net.to(device)
 crit = nn.CrossEntropyLoss()
 
-net.load_state_dict(th.load('tmp/mnist.pth'))
+net.load_state_dict(th.load('tmp/cifar10.pth'))
 net.eval()
 for p in net.parameters():
     p.requires_grad = False
@@ -61,7 +64,7 @@ pbar = tqdm(data_test_loader, ascii=True)
 pbar.set_postfix(loss='inf')
 crit = th.nn.CrossEntropyLoss()
 
-EPS = 0.2
+EPS = 0.1
 
 for batch, (images, labels) in enumerate(pbar):
     X_batch = images.to(device)
@@ -83,14 +86,15 @@ for batch, (images, labels) in enumerate(pbar):
 
     ind = np.where(yadv != ytrue)[0]
 
-    x0 = images.detach().numpy()[ind]
-    x1 = X_adv.detach().cpu().numpy()[ind]
+    x0 = th.stack([unnormalize(x) for x in images[ind]]).detach().numpy()
+    x1 = th.stack([unnormalize(x) for x in X_adv[ind]]).detach().cpu().numpy()
     y1 = yadv
 
-    print(x0.shape)
-    print(x1.shape)
-
     break
+
+# B, C, W, H
+x0 = np.moveaxis(x0, 1, -1)
+x1 = np.moveaxis(x1, 1, -1)
 
 for i, (a, b, c) in enumerate(zip(x0, x1, y1)):
     a = (np.squeeze(a) * 255).astype(np.uint8)
@@ -98,14 +102,14 @@ for i, (a, b, c) in enumerate(zip(x0, x1, y1)):
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.imshow(a, cmap='gray', interpolation='none')
+    ax.imshow(a)
     plt.axis('off')
     fig.tight_layout()
-    plt.savefig(f'tmp/get/good-{i}.jpg', bbox_inches='tight')
+    plt.savefig(f'tmp/get/cifar10-good-{i}.jpg', bbox_inches='tight')
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.imshow(b, cmap='gray', interpolation='none')
+    ax.imshow(b)
     ax.text(0.85,
             0.85,
             c,
@@ -116,4 +120,4 @@ for i, (a, b, c) in enumerate(zip(x0, x1, y1)):
             transform=ax.transAxes)
     plt.axis('off')
     fig.tight_layout()
-    plt.savefig(f'tmp/get/bad-{i}.jpg', bbox_inches='tight')
+    plt.savefig(f'tmp/get/cifar10-bad-{i}.jpg', bbox_inches='tight')
