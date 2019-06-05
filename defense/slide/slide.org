@@ -19,8 +19,10 @@
 #+LATEX_HEADER: \usepackage[backend=biber,style=authoryear-icomp,maxbibnames=3,maxcitenames=1]{biblatex}
 #+LATEX_HEADER: \usepackage[scaled=0.85]{newtxtt}
 #+LATEX_HEADER: \usepackage{multirow}
+#+LATEX_HEADER: \usepackage{chronology}
 
-#+LATEX_HEADER: \usetikzlibrary{calc,tikzmark,fit,shapes.geometric}
+#+LATEX_HEADER: \usetikzlibrary{calc,tikzmark,fit,shapes.geometric,overlay-beamer-styles}
+#+LATEX_HEADER: \tikzset{highlight on/.style={alt={#1{fill=red!80!black,color=red!80!black}{fill=gray!30!white,color=gray!30!white}}},}
 
 #+LATEX_HEADER: \addbibresource{refdb.bib}
 #+LATEX_HEADER: \addbibresource{local.bib}
@@ -219,9 +221,6 @@ file:image-space.png
 * Defend against Adversarial Samples
 
 ** Gist
-
-# TODO[2019-06-03 Mon]: use pictures to illustrate that we want to separate the
-# adversarila samples with machines instead of humans.
 
 *** {{{empty}}}                                                         :B_onlyenv:
 :PROPERTIES:
@@ -748,11 +747,23 @@ adversarial samples.
 
 * Summary
 
-** Summary
+** Work Summary
 
-1. Binary classifier as a defense is effective and limited.
-2. Text adversarials are also not difficult to generate.
-3. Objects in weird poses are also difficult for neural nets.
+#+begin_export latex
+\tikz[remember picture, overlay] \node[anchor=center] at ($(current page.center) + (-3.5,1.4)$) {\includegraphics[width=.45\textwidth]{advclf-demo-machine.pdf}};
+#+end_export
+
+#+beamer: \pause
+
+#+begin_export latex
+\tikz[remember picture, overlay] \node[anchor=center] at ($(current page.center) - (1.5,3)$) {\includegraphics[width=.8\textwidth]{deepfool-showcase.pdf}};
+#+end_export
+
+#+beamer: \pause
+
+#+begin_export latex
+\tikz[remember picture, overlay] \node[anchor=center] at ($(current page.center) + (2,1.2)$) {\includegraphics[width=.5\textwidth]{teaser.pdf}};
+#+end_export
 
 ** Future Work
 
@@ -796,6 +807,46 @@ Cannot understand
 #+begin_export latex
 \tikz[remember picture, overlay] \node[anchor=center] at ($(current page.center) - (4,4)$) {\includegraphics[width=3cm]{tachikoma}};
 #+end_export
+
+** COMMENT PhD Summary
+
+#+begin_export latex
+\begin{tikzpicture}[scale=0.9, every node/.style={scale=0.6}]
+  \draw[line width=2mm,-latex,red!20] (-0.2,0) -- (9,0);
+  \draw[line width=1mm,-latex,red!20] (-0.2,0) -- (20+0.2,0);
+  \foreach \X [evaluate=\X as \Y using int(\X-2000),count=\Z] in {2000,2001,2002,2005,2008,2015}
+  {
+    \draw[highlight on=<\Z>] ({\Y-0.2},-0.5) -- ({\Y+0.2},-0.5) -- (\Y,-0.1) -- cycle;
+    \node[anchor=south,highlight on=<\Z>,fill=white,rotate=45,anchor=south
+    west,inner sep=0pt] at (\Y,0.2) {\X};
+  }
+\end{tikzpicture}
+\begin{itemize}
+\item<1+> November 2000: marmots start hibernating
+\item<2+> August 2001: marmots eat
+\item<2+> Semptember 2001: marmots eat
+\item<3+> July 2002: marmots eat
+\item<4+> May 2005: marmots awake from hibernation
+\item<4> November 2005: marmots start hibernating again
+\item<5> May 2008: marmots drink honey liquor
+\item<6> July 2015: marmots eat pineapple cake
+\end{itemize}
+#+end_export
+
+# - Publication ::
+#   - (CVPR) Strike (with) a pose: Neural networks are easily fooled by strange
+#     poses of familiar objects
+#   - (ICIES) An improved English to Chinese Translation of Technical Text
+#   - (ArXiV) Adversarial and Clean Data Are Not Twins
+#   - (ArXiV) Adversarial Texts with Gradient Methods
+# - Projects :: (more on [[https://github.com/gongzhitaao][Github]])
+#   - tensorflow-adversarial
+#   - adversarial-classifier
+#   - adversarial-text
+#   - orgcss
+# - Internship ::
+#   - Summer 2017, Google Translate
+#   - Summer 2018, Facebook People Search
 
 ** After Graduation
 
