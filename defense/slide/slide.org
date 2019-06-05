@@ -347,13 +347,23 @@ file:adv-training-not-working.pdf
 
 ** Text Classification
 
-** Text Embedding Layer
+*** {{{empty}}}                                                         :B_onlyenv:
+:PROPERTIES:
+:BEAMER_env: onlyenv
+:BEAMER_act: 1
+:END:
 
-#+CAPTION: Architecture for sentence classification with CNN cite:kim2014-convolutional
-#+ATTR_LaTeX: :width \textwidth
-file:textcnn.png
+file:textclf.pdf
 
-** Text Embedding Example
+*** {{{empty}}}                                                         :B_onlyenv:
+:PROPERTIES:
+:BEAMER_env: onlyenv
+:BEAMER_act: 2
+:END:
+
+file:textclf-embedding.pdf
+
+** Text Embedding
 
 =wait for the video= \(\xrightarrow{\text{tokenize}}\) [ =wait=, =for=, =the=, =video= ]
 \(\xrightarrow{\text{indexer}}\) [2, 20, 34, 8]
@@ -367,6 +377,8 @@ the embedding size.
 - Embedding may also be on the character-level.
 
 ** Problem Overview
+
+- Goal :: change as few words as possible to change category.
 
 Difficulties we face:
 1. The text space is discrete.  Moving the data points in small steps following
