@@ -1,6 +1,0 @@
-#+TITLE: On the Machine Illusion
-
-Related Code
-- [[https://github.com/gongzhitaao/adversarial-classifier][gongzhitaao/adversarial-clasifier]]
-- [[https://github.com/gongzhitaao/adversarial-text][gongzhitaao/adversarial-text]]
-- [[https://github.com/gongzhitaao/tensorflow-adversarial][gongzhitaao/tensorflow-adversarial]]
