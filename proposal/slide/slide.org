@@ -21,7 +21,7 @@
 #+LATEX_HEADER: \usepackage[scaled=0.85]{newtxtt}
 
 #+LATEX_HEADER: \institute{Auburn University}
-#+LATEX_HEADER: \addbibresource{~/.local/data/bibliography/nn.bib}
+#+LATEX_HEADER: \addbibresource{refdb.bib}
 #+LATEX_HEADER: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Outline}\tableofcontents[currentsection]\end{frame}}
 #+LATEX_HEADER: \beamertemplatenavigationsymbolsempty
 #+LATEX_HEADER: \setbeamertemplate{footline}[frame number]

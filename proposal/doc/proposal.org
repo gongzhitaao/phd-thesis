@@ -28,7 +28,7 @@
 #+LATEX_HEADER: \graphicspath{{img/}}
 
 #+LATEX_HEADER: \renewcommand\maketitle{}
-#+LATEX_HEADER: \addbibresource{~/.local/data/bibliography/refdb.bib}
+#+LATEX_HEADER: \addbibresource{refdb.bib}
 
 #+LATEX_HEADER: \DeclareMathOperator{\argmax}{arg\,max}
 #+LATEX_HEADER: \DeclareMathOperator{\argmin}{arg\,min}
