@@ -1,6 +1,6 @@
 #+TITLE: On the Machine Illusion
 #+AUTHOR: Zhitao Gong
-#+DATE: Feburary, 2019
+#+DATE: December 14, 2019
 
 #+KEYWORDS: Adversarial Example, Security, Deep Learning, Computer Vision, Natural Language Processing
 
